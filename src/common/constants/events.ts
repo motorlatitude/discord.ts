@@ -1,0 +1,5 @@
+export default {
+  GATEWAY_FOUND: 'GATEWAY_FOUND',
+  DISCONNECT: 'DISCONNECT',
+  READY: 'READY',
+};

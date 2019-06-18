@@ -7,6 +7,7 @@ import ReadyEvent from './Events/ReadyEvent';
 // Constants
 import GATEWAYEVENTS from '../common/constants/gatewayevents';
 import ChannelEvent from './Events/ChannelEvent';
+import GuildEvent from './Events/GuildEvent';
 
 export default class ClientDispatcher {
   private App: DiscordClient;
@@ -49,6 +50,21 @@ export default class ClientDispatcher {
       case GATEWAYEVENTS.CHANNEL_DELETE: {
         const channel = new ChannelEvent(this.App, message.d);
         channel.HandleDelete();
+        break;
+      }
+      case GATEWAYEVENTS.GUILD_CREATE: {
+        const guild = new GuildEvent(this.App);
+        guild.HandleCreate(message.d);
+        break;
+      }
+      case GATEWAYEVENTS.GUILD_UPDATE: {
+        const guild = new GuildEvent(this.App);
+        guild.HandleUpdate(message.d);
+        break;
+      }
+      case GATEWAYEVENTS.GUILD_DELETE: {
+        const guild = new GuildEvent(this.App);
+        guild.HandleDelete(message.d);
         break;
       }
       default: {

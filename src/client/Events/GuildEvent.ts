@@ -1,4 +1,4 @@
-import { IDiscordGuild } from '../../common/types';
+import { IDiscordGuild, IDiscordUnavailableGuildObject, IGuildDeleteEventObject } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import Guild from '../../resources/Guild/Guild';
 import ClientDispatcherEvent from './ClientDispatcherEvent';
@@ -6,36 +6,82 @@ import ClientDispatcherEvent from './ClientDispatcherEvent';
 
 export default class GuildEvent extends ClientDispatcherEvent {
 
-  public readonly Message: IDiscordGuild;
 
   public EventName: string | undefined;
   public EventObject: Guild | undefined;
+  public EventDeleteObject: IGuildDeleteEventObject | undefined;
   
-  constructor(client: DiscordClient, msg: IDiscordGuild){
+  constructor(client: DiscordClient){
     super(client);
-
-    this.Message = msg;
 
   }
 
   /**
    * Handles GUILD_CREATE event
-   * GUILD_CREATE event is sent when bot lazy loads guilds after connecting to gateway and if the
-   * bot actively joins a guild during the active session.
+   * GUILD_CREATE event is sent when
+   * 1. When a user is initially connecting, to lazily load and backfill information for all unavailable guilds sent in the Ready event.
+   * 2. When a Guild becomes available again to the client.
+   * 3. When the current user joins a new Guild.
+   * https://discordapp.com/developers/docs/topics/gateway#guild-create
+   * @param Message GUILD_CREATE event package
    */
-  public HandleCreate(): void{
+  public HandleCreate(Message: IDiscordGuild): void{
     this.EventName = "GUILD_CREATE";
 
-    this.EventObject = new Guild(this.Client, this.Message);
+    this.EventObject = new Guild(this.Client, Message);
 
     this.Client.Guilds.AddGuild(this.EventObject);
 
     this.Handle();
   }
 
+  /**
+   * Handles GUILD_UPDATE event
+   * @param Message GUILD_UPDATE event package
+   */
+  public HandleUpdate(Message: IDiscordGuild): void {
+    this.EventName = "GUILD_UPDATE";
+
+    this.EventObject = new Guild(this.Client, Message);
+
+    this.Client.Guilds.ReplaceGuild(Message.id, this.EventObject);
+
+    this.Handle();
+  }
+
+  /**
+   * Handles GUILD_DELETE event
+   * @param Message GUILD_DELETE event package
+   */
+  public HandleDelete(Message: IDiscordUnavailableGuildObject): void {
+    this.EventName = "GUILD_DELETE";
+
+    let WasKicked:boolean = false;
+    if(Message.unavailable === undefined || Message.unavailable === null){
+      WasKicked = true;
+    }
+
+    this.EventDeleteObject = {
+      Unavailable: Message.unavailable,
+      WasRemoved: WasKicked,
+      id: Message.id,
+    }
+
+    this.Client.Guilds.RemoveGuild(Message.id);
+
+    this.Handle();
+  }
+
   public EmitEvent(): void {
-    if(this.EventName === "GUILD_CREATE" && this.EventObject instanceof Guild){
-      this.Client.emit("GUILD_CREATE", this.EventObject);
+    if(this.EventName === "GUILD_CREATE" || this.EventName === "GUILD_UPDATE"){
+      if(this.EventObject instanceof Guild){
+        this.Client.emit(this.EventName, this.EventObject);
+      }
+    }
+    else if(this.EventName === "GUILD_DELETE"){
+      if(this.EventDeleteObject){
+        this.Client.emit(this.EventName, this.EventDeleteObject);
+      }
     }
   }
 

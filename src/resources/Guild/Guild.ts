@@ -1,4 +1,4 @@
-import { IDiscordChannel, IDiscordGuild } from '../../common/types';
+import { IDiscordChannel, IDiscordGuild, IDiscordGuildMember } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import ChannelStore from '../../stores/ChannelStore';
 import TextChannel from '../Channel/TextChannel';
@@ -6,6 +6,8 @@ import VoiceChannel from '../Channel/VoiceChannel';
 
 import CHANNEL_TYPES from '../../common/constants/channeltypes';
 import CategoryChannel from '../Channel/CategoryChannel';
+import GuildMemberStore from '../../stores/GuildMemberStore';
+import GuildMember from './GuildMember';
 
 export default class Guild {
 
@@ -31,7 +33,7 @@ export default class Guild {
   public MaxPresences: number  | undefined;
   public Presences: any[] | undefined; // TODO
   public Channels: ChannelStore; // TODO
-  public Members: any[] | undefined; // TODO
+  public Members: GuildMemberStore;
   public VoiceStates: any[] | undefined; // TODO
   public MemberCount: number | undefined;
   public Unavailable: boolean | undefined;
@@ -80,7 +82,10 @@ export default class Guild {
     if(GuildObject.channels){
       this.ResolveChannels(GuildObject.channels);
     }
-    this.Members = GuildObject.members; // TODO
+    this.Members = new GuildMemberStore(this.Client);
+    if(GuildObject.members){
+      this.ResolveMembers(GuildObject.members);
+    }
     this.VoiceStates = GuildObject.voice_states; // TODO
     this.MemberCount = GuildObject.member_count;
     this.Unavailable = GuildObject.unavailable;
@@ -99,6 +104,11 @@ export default class Guild {
 
   }
 
+  private ResolveMembers(members: IDiscordGuildMember[]): void {
+    for(const member of members){
+      this.Members.AddGuildMember(new GuildMember(member));
+    }
+  }
 
   private ResolveChannels(channels: IDiscordChannel[]): void{
     for(const channel of channels){

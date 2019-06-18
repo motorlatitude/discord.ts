@@ -81,6 +81,30 @@ export interface IDiscordGuild {
   premium_subscription_count?: number
 }
 
+export interface IDiscordGuildMember {
+  user: IDiscordUser,
+  nick?: string,
+  roles: string[],
+  joined_at: number,
+  premium_since?: number,
+  deaf: boolean,
+  mute: boolean
+}
+
+export interface IDiscordUser {
+  id: string,
+  username: string,
+  discriminator: string,
+  avatar?: string,
+  bot?: boolean,
+  mfa_enabled?: boolean,
+  locale?: string,
+  verified?: boolean,
+  email?: string,
+  flags?: number,
+  premium_type?: number
+}
+
 // Discord Gateway Interfaces
 
 export interface IDefaultDiscordGatewayPackage {
@@ -101,27 +125,32 @@ export interface IDiscordDispatchDataPackage {
   d: any;
 }
 
-export interface IUnavailableGuildObject {
+export interface IDiscordUnavailableGuildObject {
   id: string;
-  unavailable: boolean;
+  unavailable?: boolean;
 }
 
 // Discord Gateway Event Interfaces
 
-export interface IReadyGatewayEvent {
+export interface IDiscordReadyGatewayEvent {
   v: number;
   user: any; // TODO user object
   private_channels: [];
-  guilds: IUnavailableGuildObject[]; // TODO array of guild objects
+  guilds: IDiscordUnavailableGuildObject[]; // TODO array of guild objects
   session_id: string;
   _trace: string[];
   shard?: number[];
 }
 
-export interface IChannelPinsUpdateGatewayEvent {
+export interface IDiscordChannelPinsUpdateGatewayEvent {
   channel_id: string,
   guild_id?: string,
   last_pin_timestamp?: number
+}
+
+export interface IDiscordGuildBanGatewayEvent {
+  guild_id: string,
+  user: any // TODO should be user object
 }
 
 // Discord.ts Event objects
@@ -141,4 +170,10 @@ export interface IChannelPinsUpdateEventObject {
   LastPinTimestamp?: number,
   Channel: TextChannel,
   Guild?: any // TODO
+}
+
+export interface IGuildDeleteEventObject {
+  id: string,
+  Unavailable?: boolean,
+  WasRemoved: boolean
 }

@@ -1,4 +1,4 @@
-import { IChannelPinsUpdateEventObject, IChannelPinsUpdateGatewayEvent } from '../../common/types';
+import { IChannelPinsUpdateEventObject, IDiscordChannelPinsUpdateGatewayEvent } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import CategoryChannel from '../../resources/Channel/CategoryChannel';
 import DirectMessageChannel from '../../resources/Channel/DirectMessageChannel';
@@ -9,12 +9,12 @@ import ClientDispatcherEvent from './ClientDispatcherEvent';
 
 export default class ChannelPinsUpdateEvent extends ClientDispatcherEvent {
 
-  public readonly Message: IChannelPinsUpdateGatewayEvent;
+  public readonly Message: IDiscordChannelPinsUpdateGatewayEvent;
 
   public readonly EventName: string = "CHANNEL_PINS_UPDATE";
   public EventObject: IChannelPinsUpdateEventObject | undefined;
 
-  constructor(client: DiscordClient, message: IChannelPinsUpdateGatewayEvent) {
+  constructor(client: DiscordClient, message: IDiscordChannelPinsUpdateGatewayEvent) {
     super(client);
 
     this.Message = message;

@@ -9,7 +9,13 @@ import Logger from './common/Logger';
 import DiscordManager from './rest/DiscordManager';
 
 // Types
-import { IChannelDeleteEventObject, IDiscordClientOptions, IGatewayResponse, IReadyEventObject } from './common/types';
+import {
+  IChannelDeleteEventObject,
+  IDiscordClientOptions,
+  IGatewayResponse,
+  IGuildDeleteEventObject,
+  IReadyEventObject,
+} from './common/types';
 import CategoryChannel from './resources/Channel/CategoryChannel';
 import DirectMessageChannel from './resources/Channel/DirectMessageChannel';
 import TextChannel from './resources/Channel/TextChannel';
@@ -182,6 +188,24 @@ export declare interface DiscordClient {
   on(event: 'GUILD_CREATE', listener: (Guild: Guild) => void): this;
 
   /**
+   * ### GUILD_UPDATE Event
+   *
+   * Event is emitted if a guild that the bot is a member of was updated
+   * @event GUILD_UPDATE
+   */
+  // tslint:disable-next-line:unified-signatures
+  on(event: 'GUILD_UPDATE', listener: (Guild: Guild) => void): this;
+
+  /**
+   * ### GUILD_DELETE Event
+   *
+   * Event is emitted if a guild that the bot is a member of was removed either due to a server disconnect / unavailability or the bot was kicked. Will not return a full Guild instead will return [[IGuildDeleteEventObject]]
+   * @event GUILD_DELETE
+   */
+  // tslint:disable-next-line:unified-signatures
+  on(event: 'GUILD_DELETE', listener: (DeletedGuild: IGuildDeleteEventObject) => void): this;
+
+  /**
    * ### GATEWAY_FOUND Event
    *
    * Event is emitted if the client has successfully determined the Discord Websocket URL
@@ -201,6 +225,7 @@ export declare interface DiscordClient {
   emit(event: 'CHANNEL_CREATE' | 'CHANNEL_UPDATE', Channel: TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel): boolean;
   emit(event: 'CHANNEL_DELETE', Channel: IChannelDeleteEventObject): boolean;
   emit(event: 'GUILD_CREATE' | 'GUILD_UPDATE', Guild: Guild): boolean;
+  emit(event: 'GUILD_DELETE', DeletedGuild: IGuildDeleteEventObject): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;
   // emit(event: string | symbol, ...args: any[]): boolean;

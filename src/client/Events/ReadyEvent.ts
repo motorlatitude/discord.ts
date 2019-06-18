@@ -1,14 +1,14 @@
-import { IReadyEventObject, IReadyGatewayEvent } from '../../common/types';
+import { IReadyEventObject, IDiscordReadyGatewayEvent } from '../../common/types';
 
 import DiscordClient from '../../DiscordClient';
 import ClientDispatcherEvent from './ClientDispatcherEvent';
 
 export default class ReadyEvent extends ClientDispatcherEvent {
-  public readonly Message: IReadyGatewayEvent;
+  public readonly Message: IDiscordReadyGatewayEvent;
 
   private EventObject: IReadyEventObject | undefined;
 
-  constructor(client: DiscordClient, data: IReadyGatewayEvent) {
+  constructor(client: DiscordClient, data: IDiscordReadyGatewayEvent) {
     super(client);
 
     this.Message = data;

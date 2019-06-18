@@ -1,11 +1,13 @@
 import DiscordRequester from '../DiscordRequester';
 
 export default class ChannelsMethods {
-  Requester: DiscordRequester;
+  public Requester: DiscordRequester;
 
   constructor(r: DiscordRequester) {
     this.Requester = r;
   }
 
-  createMessage(content: string, channel_id: string, options: any) {}
+  public CreateMessage(Content: string, ChannelId: string, Options: any) {
+    return true;
+  }
 }

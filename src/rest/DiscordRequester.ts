@@ -1,67 +1,69 @@
-//Node Modules
+// Node Modules
 import * as req from 'request';
 
-//NPM Modules
+// NPM Modules
 
-//Others
+// Others
+import { IDiscordHTTPResponse } from '../common/types';
 import API_CONSTANTS from './../common/constants/api';
-import { DiscordHTTPResponse } from '../common/types';
 
-//Types
+// Types
 
 export default class DiscordRequester {
-  token: string;
-  host: string;
+  public token: string;
+  public host: string;
 
   constructor(token: string) {
     this.token = token;
     this.host = API_CONSTANTS.host;
   }
 
-  SendRequest(method: string, endpoint: string, data?: any): Promise<DiscordHTTPResponse> {
-    let self = this;
+  public SendRequest(method: string, endpoint: string, data?: any): Promise<IDiscordHTTPResponse> {
+    const self = this;
     return new Promise((resolve, reject) => {
       req(
         {
-          method: method,
-          url: self.host + endpoint,
+          body: data,
           headers: {
             Authorization: 'Bot ' + self.token,
           },
           json: true,
-          body: data,
+          method,
+          url: self.host + endpoint,
         },
         (err, httpResponse, body) => {
           if (httpResponse) {
             const status = httpResponse.statusCode;
 
             if (err) {
-              throw new Error('DiscordRequest Error Occurred');
+              reject(err);
             } else if (
-              status == 400 ||
-              status == 401 ||
-              status == 403 ||
-              status == 404 ||
-              status == 405 ||
-              status == 502 ||
-              status == 500
+              status === 400 ||
+              status === 401 ||
+              status === 403 ||
+              status === 404 ||
+              status === 405 ||
+              status === 502 ||
+              status === 500
             ) {
               reject({
+                body,
+                httpResponse,
                 statusCode: status,
                 statusMessage: httpResponse.statusMessage,
-                httpResponse: httpResponse,
-                body: body,
               });
             } else {
-              resolve({ httpResponse: httpResponse, body: body });
+              resolve({ httpResponse, body });
             }
           } else {
-            reject({ statusCode: 500, statusMessage: 'No Response', httpResponse: httpResponse, body: body });
+            reject({ statusCode: 500, statusMessage: 'No Response', httpResponse, body });
           }
         },
       );
     });
   }
 
-  SendUploadRequest(method: string, endpoint: string, data: any, file: any, filename: string) {}
+  public SendUploadRequest(method: string, endpoint: string, data: any, file: any, filename: string) {
+    return true;
+  }
 }

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>client/Events/ChannelEvents.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="-_anonymous_-ChannelEvents_HandleCreate.html">HandleCreate</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="global.html#DiscordClient">DiscordClient</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#ClientConnection">ClientConnection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#connect">connect</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#EstablishGatewayConnection">EstablishGatewayConnection</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">client/Events/ChannelEvents.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+var __extends = (this &amp;&amp; this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array &amp;&amp; function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var events_1 = require("../../common/constants/events");
+var ClientDispatcherEvent_1 = require("./ClientDispatcherEvent");
+var TextChannel_1 = require("../../resources/Channel/TextChannel");
+var channeltypes_1 = require("../../common/constants/channeltypes");
+var CategoryChannel_1 = require("../../resources/Channel/CategoryChannel");
+var DirectMessageChannel_1 = require("../../resources/Channel/DirectMessageChannel");
+var VoiceChannel_1 = require("../../resources/Channel/VoiceChannel");
+var ChannelEvents = /** @class */ (function (_super) {
+    __extends(ChannelEvents, _super);
+    function ChannelEvents(client, data) {
+        var _this = _super.call(this, client) || this;
+        _this.DiscordChannel = data;
+        return _this;
+    }
+    /**
+     * Handle CHANNEL_CREATE event
+     * @constructor
+     */
+    ChannelEvents.prototype.HandleCreate = function () {
+        this.EventName = events_1.default.CHANNEL_CREATE;
+        if (this.DiscordChannel.type === channeltypes_1.default.GUILD_TEXT) {
+            var NewTextChannel = new TextChannel_1.default(this.DiscordChannel);
+            this.EventObject = NewTextChannel;
+            this.client.Channels.AddTextChannel(NewTextChannel);
+        }
+        else if (this.DiscordChannel.type === channeltypes_1.default.GUILD_VOICE) {
+            var NewVoiceChannel = new VoiceChannel_1.default(this.DiscordChannel);
+            this.EventObject = NewVoiceChannel;
+            this.client.Channels.AddVoiceChannel(NewVoiceChannel);
+        }
+        else if (this.DiscordChannel.type === channeltypes_1.default.DM || this.DiscordChannel.type === channeltypes_1.default.GROUP_DM) {
+            var NewDMChannel = new DirectMessageChannel_1.default(this.DiscordChannel);
+            this.EventObject = NewDMChannel;
+            this.client.Channels.AddDMChannel(NewDMChannel);
+        }
+        else if (this.DiscordChannel.type === channeltypes_1.default.GUILD_CATEGORY) {
+            var NewChannelCategory = new CategoryChannel_1.default(this.DiscordChannel);
+            this.EventObject = NewChannelCategory;
+            this.client.Channels.AddChannelCategory(NewChannelCategory);
+        }
+        this.Handle();
+    };
+    return ChannelEvents;
+}(ClientDispatcherEvent_1.default));
+exports.default = ChannelEvents;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Tue Jun 18 2019 01:42:32 GMT+0100 (British Summer Time) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

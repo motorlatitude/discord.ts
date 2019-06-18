@@ -1,4 +1,5 @@
-import { Greeter } from '../index';
-test('My Greeter', () => {
-  expect(Greeter('Carl')).toBe('Hello Carl');
+import DiscordClient from '../DiscordClient';
+
+test('Sanity', () => {
+  expect(true).toBe(true);
 });

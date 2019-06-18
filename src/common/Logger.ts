@@ -1,29 +1,94 @@
+// NPM Module
+import * as winston from 'winston';
+const { combine, timestamp, label, printf } = winston.format;
+
 export default class Logger {
-  level: string = 'verbose';
-  output_list: string[] = [];
+  public logger: winston.Logger;
+
+  public level: string = 'verbose';
 
   constructor(level?: string) {
     this.level = level ? level : 'verbose';
+
+    const myFormat = printf((options: any) => {
+      if (options.message instanceof Error) {
+        return (
+          '[' +
+          options.level +
+          (options.level === 'info' || options.level === 'warn' ? ' ' : '') +
+          '][' +
+          options.timestamp +
+          '] service.' +
+          (options.service ? options.service : 'discord.ts') +
+          ': ' +
+          options.message.stack +
+          (options.details ? '\nAttached Details: ' + JSON.stringify(options.details, null, '\t') : '')
+        );
+      } else {
+        return (
+          '[' +
+          options.level +
+          (options.level === 'info' || options.level === 'warn' ? ' ' : '') +
+          '][' +
+          options.timestamp +
+          '] service.' +
+          (options.service ? options.service : 'discord.ts') +
+          ': ' +
+          options.message +
+          (options.details ? '\nAttached Details: ' + JSON.stringify(options.details, null, '\t') : '')
+        );
+      }
+    });
+
+    this.logger = winston.createLogger({
+      format: winston.format.combine(timestamp({ format: 'DD/MM/YYYY HH:mm:ss' }), myFormat),
+      level: 'debug',
+      transports: [
+        new winston.transports.File({
+          filename: './logs/error.log',
+          handleExceptions: true,
+          level: 'error',
+          maxFiles: 5,
+          maxsize: 5242880,
+        }),
+        new winston.transports.File({
+          filename: './logs/combined.log',
+          handleExceptions: true,
+          level: 'info',
+          maxFiles: 5,
+          maxsize: 5242880,
+        }),
+      ],
+    });
+
+    if (process.env.NODE_ENV !== 'production') {
+      this.logger.add(
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            timestamp({ format: 'DD/MM/YYYY HH:mm:ss' }),
+            myFormat,
+          ),
+          handleExceptions: true,
+          level: 'debug', // log everything
+        }),
+      );
+    } else if (process.env.NODE_ENV === 'production') {
+      this.logger.add(
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            timestamp({ format: 'DD/MM/YYYY HH:mm:ss' }),
+            myFormat,
+          ),
+          handleExceptions: true,
+          level: 'info', // log everything info and above
+        }),
+      );
+    }
   }
 
-  write(msg: string, msg_level: string = 'debug') {
-    let l: string = '[    ]';
-    if (msg_level == 'info') {
-      l = '\x1b[34m[INFO ]\x1b[0m';
-    } else if (msg_level == 'error') {
-      l = '\x1b[31m[ERROR]\x1b[0m';
-    } else if (msg_level == 'warn') {
-      l = '\x1b[5m\x1b[33m[WARN ]\x1b[0m';
-    } else if (msg_level == 'debug') {
-      l = '\x1b[38;5;244m[DEBUG]';
-    }
-    let d: Date = new Date();
-    let time: string =
-      '[' + d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + d.toLocaleTimeString() + ']';
-    if (this.level == 'verbose') {
-      console.log(l + time + '[discord.ts] ' + msg + '\x1b[0m');
-    } else if (this.level == 'cmd') {
-      this.output_list.push(l + time + '[discord.ts] ' + msg + '\x1b[0m');
-    }
+  public write(): winston.Logger {
+    return this.logger;
   }
 }

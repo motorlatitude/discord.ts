@@ -1,23 +1,20 @@
-//Node Modules
+// Node Modules
 import * as events from 'events';
 
-//NPM Modules
+// NPM Modules
 
-//Others
-import DiscordRequester from './DiscordRequester';
+// Others
 import DiscordMethods from './DiscordMethods';
-
-//Types
-import { DiscordClientOptions } from './../common/types';
+import DiscordRequester from './DiscordRequester';
 
 export default class DiscordManager {
-  Requester: DiscordRequester;
+  public Requester: DiscordRequester;
 
   constructor(token: string) {
     this.Requester = new DiscordRequester(token);
   }
 
-  Methods(): DiscordMethods {
+  public Methods(): DiscordMethods {
     return new DiscordMethods(this.Requester);
   }
 }

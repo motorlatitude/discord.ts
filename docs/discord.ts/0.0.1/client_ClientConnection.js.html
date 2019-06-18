@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>client/ClientConnection.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="-_anonymous_-ChannelEvents_HandleCreate.html">HandleCreate</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="global.html#DiscordClient">DiscordClient</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-member">M</span><span class="nav-item-name"><a href="global.html#ClientConnection">ClientConnection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#connect">connect</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#EstablishGatewayConnection">EstablishGatewayConnection</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">client/ClientConnection.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+// Node Modules
+var zlib = require("zlib");
+// NPM Modules
+var ws = require("ws");
+var ClientDispatcher_1 = require("./ClientDispatcher");
+var ConnectFlow_1 = require("./ConnectFlow");
+// Constants
+var gateway_1 = require("../common/constants/gateway");
+/**
+ * Handles Connection With The Discord Gateway Server
+ */
+var ClientConnection = /** @class */ (function () {
+    /**
+     * Create a new connection with discords gateway server
+     * @param app - pass parent class as parameter to modify accessible vars and pass events through
+     */
+    function ClientConnection(app, log) {
+        this.GatewaySequence = 0;
+        this.GatewayPings = [];
+        this.GatewayPing = 0;
+        this.GatewaySessionId = '';
+        this.GatewayHeartbeatInterval = 0;
+        this.GatewayProtocolVersion = 6;
+        this.resuming = false;
+        this.App = app;
+        this.logger = log;
+        this.dispatcher = new ClientDispatcher_1.default(app, this, log);
+        this.connector = new ConnectFlow_1.default(this, log, app.token);
+    }
+    /**
+     * Connect to discord gateway
+     * @param GatewayURL - Discord Gateway Url Retrieved From Discord Gateway Endpoint
+     * @returns GatewayWebsocket - Websocket connection
+     */
+    ClientConnection.prototype.connect = function (GatewayURL) {
+        this.logger.write().debug({
+            message: 'Creating New Gateway Connection',
+            service: 'ClientConnection.connect',
+        });
+        this.GatewayWebsocket = new ws(GatewayURL + '/?v=6'); // Specify Version
+        // Handle websocket events
+        this.GatewayWebsocket.once('open', this.GatewayOpen);
+        this.GatewayWebsocket.once('close', this.GatewayClose);
+        this.GatewayWebsocket.once('error', this.GatewayError);
+        this.GatewayWebsocket.on('message', this.GatewayMessage);
+        return this.GatewayWebsocket;
+    };
+    /**
+     * Send Message To Gateway Websocket Server
+     * @param op - OpCode for message
+     * @param data - message body
+     */
+    ClientConnection.prototype.send = function (op, data) {
+        var GatewayPackage = {
+            d: data,
+            op: op,
+        };
+        if (this.GatewayWebsocket &amp;&amp; this.GatewayWebsocket.readyState === ws.OPEN) {
+            this.GatewayWebsocket.send(JSON.stringify(GatewayPackage));
+            this.logger.write().debug({
+                message: 'Successfully Sent A Message To Discord Gateway Server With OpCode: ' + op,
+                service: 'ClientConnection.send',
+            });
+        }
+        else {
+            this.logger.write().error({
+                details: GatewayPackage,
+                message: new Error("Couldn't Send A Message To Discord Gateway Server"),
+                service: 'ClientConnection.send',
+            });
+        }
+    };
+    ClientConnection.prototype.CanUseCompression = function () {
+        return !!zlib.inflateSync;
+    };
+    ClientConnection.prototype.SetUserId = function (UserId) {
+        this.App.UserId = UserId;
+    };
+    /**
+     * Handles GatewayWebsocket `error` event
+     */
+    ClientConnection.prototype.GatewayError = function (error) {
+        this.logger.write().error({
+            message: error,
+            service: 'ClientConnection.GatewayWebsocket.GatewayError',
+        });
+    };
+    /**
+     * Handles GatewayWebsocket `close` event
+     */
+    ClientConnection.prototype.GatewayClose = function () {
+        var _this = this;
+        this.logger.write().warn({
+            message: 'Connection to Gateway Server was Closed',
+            service: 'ClientConnection.GatewayWebsocket.GatewayClose',
+        });
+        this.logger.write().info({
+            message: 'Attempting to Reestablish Connection to Gateway Server',
+            service: 'ClientConnection.GatewayWebsocket.GatewayClose',
+        });
+        // Attempt to resume the connection after 41 seconds
+        clearInterval(this.GatewayHeartbeat);
+        setTimeout(function () {
+            _this.resuming = true;
+            _this.connector.Reconnect();
+        }, 5000);
+    };
+    /**
+     * Handles GatewayWebsocket `open` event
+     */
+    ClientConnection.prototype.GatewayOpen = function () {
+        this.logger.write().info({
+            message: 'Successfully Connected to Gateway Server',
+            service: 'ClientConnection.GatewayWebsocket.GatewayOpen',
+        });
+    };
+    /**
+     * Handles GatewayWebsocket `message` event
+     * @param message - websocket message
+     */
+    ClientConnection.prototype.GatewayMessage = function (message) {
+        var _this = this;
+        var data;
+        if (typeof message === 'string') {
+            // message is json
+            data = JSON.parse(message);
+        }
+        else {
+            // message is buffer
+            // @ts-ignore
+            var extractedData = zlib.inflateSync(message).toString();
+            data = JSON.parse(extractedData);
+        }
+        // Handle Receivable Messages OpCodes: https://discordapp.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-opcodes
+        switch (data.op) {
+            case gateway_1.default.DISPATCH: {
+                this.dispatcher.Parse(data);
+                break;
+            }
+            case gateway_1.default.HEARTBEAT: {
+                break;
+            }
+            case gateway_1.default.RECONNECT: {
+                clearInterval(this.GatewayHeartbeat);
+                this.resuming = true;
+                this.connector.Reconnect();
+                break;
+            }
+            case gateway_1.default.INVALID_SESSION: {
+                if (data.d) {
+                    // Session is resumable
+                    clearInterval(this.GatewayHeartbeat);
+                    setTimeout(function () {
+                        _this.resuming = true;
+                        _this.connector.Reconnect();
+                    }, 5000);
+                }
+                else if (this.resuming) {
+                    // failed to resume, go through standard flow
+                    var simulatedHelloPayload_1 = {
+                        _trace: [],
+                        heartbeat_interval: this.GatewayHeartbeatInterval,
+                    };
+                    setTimeout(function () {
+                        _this.connector.Start(simulatedHelloPayload_1);
+                    }, 4000);
+                }
+                else {
+                    // Couldn't Initialise Session After Receiving OpCode 2 Identify
+                    this.logger.write().error({
+                        message: new Error('Invalid Session Error: There was an error with the identify payload or the gateway has invalidated an active session'),
+                        service: 'ClientConnection.GatewayWebsocket.GatewayMessage.INVALID_SESSION',
+                    });
+                }
+                break;
+            }
+            case gateway_1.default.HELLO: {
+                this.connector.Start(data.d);
+                break;
+            }
+            case gateway_1.default.HEARTBEAT_ACK: {
+                this.connector.HeartbeatAcknowledged();
+                break;
+            }
+            default: {
+                this.logger.write().warn({
+                    message: 'Unhandled Gateway OpCode was received: ' + data.op,
+                    service: 'ClientConnection.GatewayWebsocket.GatewayMessage.UNHANDLED_OPCODE',
+                });
+                break;
+            }
+        }
+    };
+    return ClientConnection;
+}());
+exports.default = ClientConnection;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Tue Jun 18 2019 01:42:32 GMT+0100 (British Summer Time) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

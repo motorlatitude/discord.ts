@@ -1,13 +1,13 @@
-//Node Modules
+// Node Modules
 import * as os from 'os';
 
 import Logger from '../common/Logger';
 import ClientConnection from './ClientConnection';
 
-//Types
-import { DiscordHelloPackage } from '../common/types';
+// Types
+import { IDiscordHelloPackage } from '../common/types';
 
-//Constants
+// Constants
 import GATEWAY from '../common/constants/gateway';
 
 export default class ConnectFlow {
@@ -26,19 +26,24 @@ export default class ConnectFlow {
 
   /**
    * Start Connection Flow Once Hello Payload Received From Discord
-   * @param hello_package - the hello package with opcode 10
+   * @param HelloPackage - the hello package with opcode 10
    */
-  public Start(hello_package: DiscordHelloPackage): void {
-    this.logger.write('[ConnectFlow]: Received Hello Payload');
+  public Start(HelloPackage: IDiscordHelloPackage): void {
+    this.logger.write().debug({
+      message: 'Received Hello Payload',
+      service: 'ClientConnection.ConnectFlow.Start',
+    });
 
-    let _this = this;
-    this.connection.GatewayHeartbeatInterval = hello_package.heartbeat_interval;
+    this.connection.GatewayHeartbeatInterval = HelloPackage.heartbeat_interval;
     this.connection.GatewayHeartbeat = window.setInterval(() => {
-      _this.GatewayHeartbeatSendTimestamp = new Date().getTime();
-      _this.connection.send(GATEWAY.HEARTBEAT, _this.connection.GatewaySequence);
-    }, hello_package.heartbeat_interval);
+      this.GatewayHeartbeatSendTimestamp = new Date().getTime();
+      this.connection.send(GATEWAY.HEARTBEAT, this.connection.GatewaySequence);
+    }, HelloPackage.heartbeat_interval);
 
-    this.logger.write('[ConnectFlow]: Send Identify Payload');
+    this.logger.write().debug({
+      message: 'Send Identify Payload',
+      service: 'ClientConnection.ConnectFlow.Start',
+    });
     this.SendIdentifyPayload();
   }
 
@@ -46,30 +51,35 @@ export default class ConnectFlow {
    * Sent Heartbeat has been acknowledged and returned
    */
   public HeartbeatAcknowledged(): void {
-    let ping = new Date().getTime() - this.GatewayHeartbeatSendTimestamp;
+    const ping = new Date().getTime() - this.GatewayHeartbeatSendTimestamp;
     this.connection.GatewayPings.push(ping);
     this.GatewayTotalPings += ping;
     this.connection.GatewayPing = this.GatewayTotalPings / this.connection.GatewayPings.length;
-    this.logger.write(
-      '[ConnectFlow]: Heartbeat acknowledged with sequence: ' +
+    this.logger.write().debug({
+      message:
+        'Heartbeat acknowledged with sequence: ' +
         this.connection.GatewaySequence +
-        ' (' +
+        '(' +
         ping +
-        'ms - average: ' +
+        'ms - avergae: ' +
         Math.round(this.connection.GatewayPing * 100) / 100 +
         'ms)',
-    );
+      service: 'ClientConnection.ConnectFlow.HeartbeatAcknowledged',
+    });
   }
 
   /**
    * Attempt to reconnect to discord gateway server by resuming the connection
    */
   public Reconnect(): void {
-    this.logger.write('[ConnectFlow]: Trying To Reconnect, Sending Resume Payload');
+    this.logger.write().debug({
+      message: 'Trying To Reconnect, Sending Resume Payload',
+      service: 'ClientConnection.ConnectFlow.Reconnect',
+    });
     this.connection.send(GATEWAY.RESUME, {
-      token: this.token,
-      session_id: this.connection.GatewaySessionId,
       seq: this.connection.GatewaySequence,
+      session_id: this.connection.GatewaySessionId,
+      token: this.token,
     });
   }
 
@@ -78,25 +88,28 @@ export default class ConnectFlow {
    */
   private SendIdentifyPayload(): void {
     const useCompression = this.connection.CanUseCompression();
-    this.logger.write('[ConnectFlow]: Can Use Compression: ' + useCompression);
+    this.logger.write().debug({
+      message: 'Can Use Compression: ' + useCompression,
+      service: 'ClientConnection.ConnectFlow.SendIdentifyPayload',
+    });
     this.connection.send(GATEWAY.IDENTIFY, {
-      token: this.token,
-      properties: {
-        $os: os.platform(),
-        $browser: 'Discord.ts',
-        $device: 'Server',
-      },
       compress: useCompression,
       large_threshold: 250,
       presence: {
+        afk: false,
         game: {
           name: 'Identifying',
           type: 0,
         },
-        status: 'dnd',
         since: new Date().getTime(),
-        afk: false,
+        status: 'dnd',
       },
+      properties: {
+        $browser: 'Discord.ts',
+        $device: 'Server',
+        $os: os.platform(),
+      },
+      token: this.token,
     });
   }
 }

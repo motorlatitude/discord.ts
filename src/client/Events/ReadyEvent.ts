@@ -1,41 +1,50 @@
-import ClientConnection from '../ClientConnection';
-import { ReadyEventObject, ReadyGatewayEvent, UnavailabeGuildObject } from '../../common/types';
+import { IReadyEventObject, IReadyGatewayEvent } from '../../common/types';
 
 import EVENTS from '../../common/constants/events';
+import GATEWAYEVENTS from '../../common/constants/gatewayevents';
+import DiscordClient from '../../DiscordClient';
+import ClientDispatcherEvent from './ClientDispatcherEvent';
 
-export default class ReadyEvent {
-  connection: ClientConnection;
-  private readonly data: ReadyGatewayEvent;
+export default class ReadyEvent extends ClientDispatcherEvent {
+  private Client: DiscordClient;
+  private readonly EventData: IReadyGatewayEvent;
 
-  constructor(connection: ClientConnection, data: ReadyGatewayEvent) {
-    this.connection = connection;
+  constructor(client: DiscordClient, data: IReadyGatewayEvent) {
+    super(client);
 
-    this.data = data;
-
-    this.StoreGatewayProtocolVersion(data.v);
-    this.StoreSessionId(data.session_id);
-    this.StoreUserId(data.user.id);
-
-    this.PassEventOn();
+    this.Client = client;
+    this.EventData = data;
   }
 
-  private StoreGatewayProtocolVersion(protocol_version: number): void {
-    this.connection.GatewayProtocolVersion = protocol_version;
-  }
+  public Handle(): void {
+    this.StoreGatewayProtocolVersion(this.EventData.v);
+    this.StoreSessionId(this.EventData.session_id);
+    this.StoreUserId(this.EventData.user.id);
 
-  private StoreSessionId(session_id: string): void {
-    this.connection.GatewaySessionId = session_id;
-  }
+    this.EventName = EVENTS.READY;
 
-  private StoreUserId(user_id: string): void {
-    this.connection.SetUserId(user_id);
-  }
-
-  private PassEventOn(): void {
-    let ready_event: ReadyEventObject = {
-      user: this.data.user,
+    this.EventObject = {
+      user: this.EventData.user,
     };
 
-    this.connection.EmitEventListenerEvent(EVENTS.READY, ready_event);
+    super.Handle();
+  }
+
+  private StoreGatewayProtocolVersion(ProtocolVersion: number): void {
+    if (this.Client.connection) {
+      this.Client.connection.GatewayProtocolVersion = ProtocolVersion;
+    }
+  }
+
+  private StoreSessionId(SessionId: string): void {
+    if (this.Client.connection) {
+      this.Client.connection.GatewaySessionId = SessionId;
+    }
+  }
+
+  private StoreUserId(UserId: string): void {
+    if (this.Client.connection) {
+      this.Client.connection.SetUserId(UserId);
+    }
   }
 }

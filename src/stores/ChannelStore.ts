@@ -20,7 +20,7 @@ export default class ChannelStore extends Store {
    * Add a Text Channel to the Channel Store
    * @param TextChannelToBeStored - A TextChannel
    */
-  public AddTextChannel(TextChannelToBeStored: TextChannel) {
+  public AddTextChannel(TextChannelToBeStored: TextChannel): void{
     this.Add(TextChannelToBeStored.id, TextChannelToBeStored).catch((err: Error) => {
       this.Client.logger.write().error({
         message: err,
@@ -33,7 +33,7 @@ export default class ChannelStore extends Store {
    * Add a Voice Channel to the Channel Store
    * @param VoiceChannelToBeStored - A VoiceChannel
    */
-  public AddVoiceChannel(VoiceChannelToBeStored: VoiceChannel) {
+  public AddVoiceChannel(VoiceChannelToBeStored: VoiceChannel): void {
     this.Add(VoiceChannelToBeStored.id, VoiceChannelToBeStored).catch((err: Error) => {
       this.Client.logger.write().error({
         message: err,
@@ -46,7 +46,7 @@ export default class ChannelStore extends Store {
    * Add a Direct Message Channel to the Channel Store
    * @param DMChannelToBeStored - A DirectMessageChannel
    */
-  public AddDMChannel(DMChannelToBeStored: DirectMessageChannel) {
+  public AddDMChannel(DMChannelToBeStored: DirectMessageChannel): void {
     this.Add(DMChannelToBeStored.id, DMChannelToBeStored).catch((err: Error) => {
       this.Client.logger.write().error({
         message: err,
@@ -59,7 +59,7 @@ export default class ChannelStore extends Store {
    * Add a Channel Category to the Channel Store
    * @param ChannelCategory - A CategoryChannel
    */
-  public AddChannelCategory(ChannelCategory: CategoryChannel) {
+  public AddChannelCategory(ChannelCategory: CategoryChannel): void {
     this.Add(ChannelCategory.id, ChannelCategory).catch((err: Error) => {
       this.Client.logger.write().error({
         message: err,
@@ -69,10 +69,98 @@ export default class ChannelStore extends Store {
   }
 
   /**
-   * Fetch a channel with an id
+   * Replace an existing Text Channel in the Channel Store
+   * @param ChannelId - The id of the channel
+   * @param Channel - A TextChannel
+   */
+  public ReplaceTextChannel(ChannelId: string, Channel: TextChannel): void {
+    this.Replace(ChannelId, Channel).catch((err: Error) => {
+      this.Client.logger.write().error({
+        message: err,
+        service: 'DiscordClient.ChannelStore.ReplaceTextChannel.Store',
+      });
+    })
+  }
+
+  /**
+   * Replace an existing Voice Channel in the Channel Store
+   * @param ChannelId - The id of the channel
+   * @param Channel - A VoiceChannel
+   */
+  public ReplaceVoiceChannel(ChannelId: string, Channel: VoiceChannel): void {
+    this.Replace(ChannelId, Channel).catch((err: Error) => {
+      this.Client.logger.write().error({
+        message: err,
+        service: 'DiscordClient.ChannelStore.ReplaceVoiceChannel.Store',
+      });
+    })
+  }
+
+  /**
+   * Replace an existing Voice Channel in the Channel Store
+   * @param ChannelId - The id of the channel
+   * @param Channel - A VoiceChannel
+   */
+  public ReplaceDirectMessageChannel(ChannelId: string, Channel: DirectMessageChannel): void {
+    this.Replace(ChannelId, Channel).catch((err: Error) => {
+      this.Client.logger.write().error({
+        message: err,
+        service: 'DiscordClient.ChannelStore.ReplaceDirectMessageChannel.Store',
+      });
+    })
+  }
+
+  /**
+   * Replace an existing Category Channel in the Channel Store
+   * @param ChannelId - The id of the channel
+   * @param Channel - A CategoryChannel
+   */
+  public ReplaceChannelCategory(ChannelId: string, Channel: CategoryChannel): void {
+    this.Replace(ChannelId, Channel).catch((err: Error) => {
+      this.Client.logger.write().error({
+        message: err,
+        service: 'DiscordClient.ChannelStore.ReplaceChannelCategory.Store',
+      });
+    })
+  }
+
+  public ReplaceChannel(ChannelId: string, Channel: TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel): void {
+    if(Channel instanceof TextChannel){
+      this.ReplaceTextChannel(ChannelId, Channel);
+    }
+    else if (Channel instanceof  VoiceChannel){
+      this.ReplaceVoiceChannel(ChannelId, Channel);
+    }
+    else if(Channel instanceof DirectMessageChannel){
+      this.ReplaceDirectMessageChannel(ChannelId, Channel);
+    }
+    else if(Channel instanceof CategoryChannel){
+      this.ReplaceChannelCategory(ChannelId, Channel);
+    }
+    else{
+      this.Client.logger.write().error({
+        message: new Error("Unrecognised Channel Type"),
+        service: 'DiscordClient.ChannelStore.ReplaceChannel.Store',
+      });
+    }
+  }
+
+  public RemoveChannel(ChannelId: string):void {
+    this.Delete(ChannelId).catch((err: Error) => {
+      this.Client.logger.write().error({
+        message: err,
+        service: 'DiscordClient.ChannelStore.RemoveChannel.Store',
+      });
+    })
+  }
+
+  /**
+   * Fetch a TextChannel, VoiceChannel, DirectMessageChannel or CategoryChannel with an id
    * @param ChannelId - channel id
    */
-  public Fetch(ChannelId: string): TextChannel {
-    return super.Get(ChannelId);
+  public FetchAllTypes(ChannelId: string): Promise<TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel> {
+    return new Promise((resolve) => {
+      resolve(this.Get(ChannelId));
+    })
   }
 }

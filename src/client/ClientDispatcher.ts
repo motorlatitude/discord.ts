@@ -6,7 +6,7 @@ import ReadyEvent from './Events/ReadyEvent';
 
 // Constants
 import GATEWAYEVENTS from '../common/constants/gatewayevents';
-import ChannelEvents from './Events/ChannelEvents';
+import ChannelEvent from './Events/ChannelEvent';
 
 export default class ClientDispatcher {
   private App: DiscordClient;
@@ -26,7 +26,7 @@ export default class ClientDispatcher {
   public Parse(message: IDefaultDiscordGatewayPackage): void {
     this.connection.GatewaySequence = message.s || 0;
     this.logger.write().debug({
-      message: 'Received ' + message.t + ' Payload',
+      message: 'Received ' + message.t + ' Event',
       service: 'ClientConnection.ClientDispatcher.Parse',
     });
 
@@ -37,8 +37,18 @@ export default class ClientDispatcher {
         break;
       }
       case GATEWAYEVENTS.CHANNEL_CREATE: {
-        const channel = new ChannelEvents(this.App, message.d);
+        const channel = new ChannelEvent(this.App, message.d);
         channel.HandleCreate();
+        break;
+      }
+      case GATEWAYEVENTS.CHANNEL_UPDATE: {
+        const channel = new ChannelEvent(this.App, message.d);
+        channel.HandleUpdate();
+        break;
+      }
+      case GATEWAYEVENTS.CHANNEL_DELETE: {
+        const channel = new ChannelEvent(this.App, message.d);
+        channel.HandleDelete();
         break;
       }
       default: {

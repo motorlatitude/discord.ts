@@ -1,0 +1,11 @@
+{
+  "mode": "file",
+  "out": "docs",
+  "exclude": [
+    "./node_modules/*",
+    "*.test.ts",
+    "./lib/*"
+  ],
+  "excludeExternals": true,
+  "theme": "minimal"
+}

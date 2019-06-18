@@ -1,33 +1,35 @@
 import { IReadyEventObject, IReadyGatewayEvent } from '../../common/types';
 
-import EVENTS from '../../common/constants/events';
-import GATEWAYEVENTS from '../../common/constants/gatewayevents';
 import DiscordClient from '../../DiscordClient';
 import ClientDispatcherEvent from './ClientDispatcherEvent';
 
 export default class ReadyEvent extends ClientDispatcherEvent {
-  private Client: DiscordClient;
-  private readonly EventData: IReadyGatewayEvent;
+  public readonly Message: IReadyGatewayEvent;
+
+  private EventObject: IReadyEventObject | undefined;
 
   constructor(client: DiscordClient, data: IReadyGatewayEvent) {
     super(client);
 
-    this.Client = client;
-    this.EventData = data;
+    this.Message = data;
   }
 
   public Handle(): void {
-    this.StoreGatewayProtocolVersion(this.EventData.v);
-    this.StoreSessionId(this.EventData.session_id);
-    this.StoreUserId(this.EventData.user.id);
-
-    this.EventName = EVENTS.READY;
+    this.StoreGatewayProtocolVersion(this.Message.v);
+    this.StoreSessionId(this.Message.session_id);
+    this.StoreUserId(this.Message.user.id);
 
     this.EventObject = {
-      user: this.EventData.user,
+      user: this.Message.user,
     };
 
     super.Handle();
+  }
+
+  public EmitEvent(): void {
+    if(this.EventObject){
+      this.Client.emit("READY", this.EventObject);
+    }
   }
 
   private StoreGatewayProtocolVersion(ProtocolVersion: number): void {

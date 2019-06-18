@@ -27,4 +27,46 @@ export default class Store {
   public Get(key: string): any {
     return this.StoredItems[key];
   }
+
+  public Delete(key: string): Promise<null | Error> {
+    return new Promise((resolve, reject) => {
+      if(this.StoredItems[key]){
+        delete this.StoredItems[key];
+        resolve()
+      }
+      else{
+        reject(new Error('An item with that key does not exist'));
+      }
+    })
+  }
+
+  public Modify(key: string, param: string, value: any): Promise<null | Error> {
+    return new Promise((resolve, reject) => {
+      if(this.StoredItems[key]){
+        if(this.StoredItems[key][param] != null){
+          this.StoredItems[key][param] = value;
+          resolve();
+        }
+        else{
+          reject(new Error('This item does not have a parameter called '+param));
+        }
+      }
+      else{
+        reject(new Error('An item with that key does not exist'));
+      }
+    })
+  }
+
+  public Replace(key: string, item: any): Promise<null |Error> {
+    return new Promise((resolve, reject) => {
+      if(this.StoredItems[key]){
+        resolve();
+        this.StoredItems[key] = item;
+      }
+      else{
+        reject(new Error('An item with that key does not exist'))
+      }
+    })
+  }
+
 }

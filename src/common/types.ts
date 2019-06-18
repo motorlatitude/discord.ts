@@ -1,3 +1,5 @@
+import TextChannel from '../resources/Channel/TextChannel';
+
 export interface IDiscordClientOptions {
   token: string;
   debug?: string;
@@ -38,6 +40,47 @@ export interface IDiscordChannel {
   last_pin_timestamp?: number;
 }
 
+export interface IDiscordGuild {
+  id: string,
+  name: string,
+  icon?: string,
+  splash?: string,
+  owner?: boolean,
+  owner_id: string,
+  permissions?: number,
+  region: string,
+  afk_channel_id?: string,
+  afk_timeout: number,
+  embed_enabled?: boolean,
+  embed_channel_id?: string,
+  verification_level: number,
+  default_message_notifications: number,
+  explicit_content_filter: number,
+  roles: any[], // TODO
+  emojis: any[], // TODO
+  features: string[],
+  mfa_level: number,
+  application_id?: string,
+  widget_enabled?: boolean,
+  widget_channel_id?: string,
+  system_channel_id?: string,
+  joined_at?: number,
+  large?: boolean,
+  unavailable?: boolean,
+  member_count?: number,
+  voice_states?: any[], // TODO
+  members?: any[], // TODO
+  channels?: IDiscordChannel[],
+  presences?: any[], // TODO
+  max_presences?: number,
+  max_members: number,
+  vanity_url_code?: string,
+  description?: string,
+  banner?: string,
+  premium_tier: number,
+  premium_subscription_count?: number
+}
+
 // Discord Gateway Interfaces
 
 export interface IDefaultDiscordGatewayPackage {
@@ -75,8 +118,27 @@ export interface IReadyGatewayEvent {
   shard?: number[];
 }
 
-// Discord.ts Events
+export interface IChannelPinsUpdateGatewayEvent {
+  channel_id: string,
+  guild_id?: string,
+  last_pin_timestamp?: number
+}
+
+// Discord.ts Event objects
 
 export interface IReadyEventObject {
   user: any;
+}
+
+export interface IChannelDeleteEventObject {
+  Id: string,
+  Type: number
+}
+
+export interface IChannelPinsUpdateEventObject {
+  GuildId?: string,
+  ChannelId: string,
+  LastPinTimestamp?: number,
+  Channel: TextChannel,
+  Guild?: any // TODO
 }

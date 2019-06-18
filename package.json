@@ -8,7 +8,7 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
-    "docs": "npm run build && jsdoc -c ./jsdoc.json",
+    "docs": "typedoc --options ./docs.json",
     "test": "jest --config jestconfig.json",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
@@ -28,12 +28,11 @@
     "@types/winston": "^2.4.4",
     "@types/ws": "^6.0.1",
     "jest": "^24.8.0",
-    "jsdoc": "^3.6.2",
-    "minami": "^1.2.3",
     "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
     "tslint": "^5.17.0",
     "tslint-config-prettier": "^1.18.0",
+    "typedoc": "^0.14.2",
     "typescript": "^3.5.2"
   },
   "dependencies": {

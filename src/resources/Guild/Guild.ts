@@ -5,12 +5,11 @@ import TextChannel from '../Channel/TextChannel';
 import VoiceChannel from '../Channel/VoiceChannel';
 
 import CHANNEL_TYPES from '../../common/constants/channeltypes';
-import CategoryChannel from '../Channel/CategoryChannel';
 import GuildMemberStore from '../../stores/GuildMemberStore';
+import CategoryChannel from '../Channel/CategoryChannel';
 import GuildMember from './GuildMember';
 
 export default class Guild {
-
   public id: string;
   public Name: string;
   public OwnerId: string;
@@ -30,7 +29,7 @@ export default class Guild {
   public Banner: string | undefined;
   public Description: string | undefined;
   public VanityURLCode: string | undefined;
-  public MaxPresences: number  | undefined;
+  public MaxPresences: number | undefined;
   public Presences: any[] | undefined; // TODO
   public Channels: ChannelStore; // TODO
   public Members: GuildMemberStore;
@@ -53,8 +52,7 @@ export default class Guild {
 
   private Client: DiscordClient;
 
-  constructor(client: DiscordClient, GuildObject: IDiscordGuild){
-
+  constructor(client: DiscordClient, GuildObject: IDiscordGuild) {
     this.Client = client;
 
     this.id = GuildObject.id;
@@ -79,11 +77,11 @@ export default class Guild {
     this.MaxPresences = GuildObject.max_presences;
     this.Presences = GuildObject.presences; // TODO
     this.Channels = new ChannelStore(this.Client);
-    if(GuildObject.channels){
+    if (GuildObject.channels) {
       this.ResolveChannels(GuildObject.channels);
     }
     this.Members = new GuildMemberStore(this.Client);
-    if(GuildObject.members){
+    if (GuildObject.members) {
       this.ResolveMembers(GuildObject.members);
     }
     this.VoiceStates = GuildObject.voice_states; // TODO
@@ -101,28 +99,23 @@ export default class Guild {
     this.Owner = GuildObject.owner;
     this.Icon = GuildObject.icon;
     this.Splash = GuildObject.splash;
-
   }
 
   private ResolveMembers(members: IDiscordGuildMember[]): void {
-    for(const member of members){
+    for (const member of members) {
       this.Members.AddGuildMember(new GuildMember(member));
     }
   }
 
-  private ResolveChannels(channels: IDiscordChannel[]): void{
-    for(const channel of channels){
-      if(channel.type === CHANNEL_TYPES.GUILD_TEXT){
+  private ResolveChannels(channels: IDiscordChannel[]): void {
+    for (const channel of channels) {
+      if (channel.type === CHANNEL_TYPES.GUILD_TEXT) {
         this.Channels.AddTextChannel(new TextChannel(channel));
-      }
-      else if(channel.type === CHANNEL_TYPES.GUILD_VOICE){
+      } else if (channel.type === CHANNEL_TYPES.GUILD_VOICE) {
         this.Channels.AddVoiceChannel(new VoiceChannel(channel));
-      }
-      else if(channel.type === CHANNEL_TYPES.GUILD_CATEGORY){
+      } else if (channel.type === CHANNEL_TYPES.GUILD_CATEGORY) {
         this.Channels.AddChannelCategory(new CategoryChannel(channel));
       }
     }
   }
-
-
 }

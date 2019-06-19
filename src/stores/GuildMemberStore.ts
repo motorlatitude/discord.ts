@@ -1,11 +1,10 @@
-import Store from './Store';
+import { IGuildMemberList } from '../common/types';
 import DiscordClient from '../DiscordClient';
 import GuildMember from '../resources/Guild/GuildMember';
-
+import Store from './Store';
 
 export default class GuildMemberStore extends Store {
-
-  constructor(client: DiscordClient){
+  constructor(client: DiscordClient) {
     super(client);
   }
 
@@ -18,12 +17,18 @@ export default class GuildMemberStore extends Store {
     });
   }
 
-  public RemoveGuildMember(UserId: string):void {
+  public RemoveGuildMember(UserId: string): void {
     this.Delete(UserId).catch((err: Error) => {
       this.Client.logger.write().error({
         message: err,
         service: 'DiscordClient.GuildMemberStore.RemoveGuildMember.Store',
       });
-    })
+    });
+  }
+
+  public FetchAll(): Promise<IGuildMemberList> {
+    return new Promise(resolve => {
+      resolve(this.GetAll());
+    });
   }
 }

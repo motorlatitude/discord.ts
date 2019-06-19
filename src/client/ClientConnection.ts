@@ -2,7 +2,7 @@
 import * as zlib from 'zlib';
 
 // NPM Modules
-import * as ws from 'ws';
+import * as WebSocket from 'ws';
 
 // Others
 import Logger from '../common/Logger';
@@ -20,8 +20,12 @@ import GATEWAY from '../common/constants/gateway';
  * Handles Connection With The Discord Gateway Server
  */
 export default class ClientConnection {
+  public static CanUseCompression(): boolean {
+    return !!zlib.inflateSync;
+  }
+
   public GatewayHeartbeat: number | undefined;
-  public GatewayWebsocket: ws | undefined;
+  public GatewayWebsocket: WebSocket | undefined;
   public GatewaySequence: number = 0;
   public GatewayPings: number[] = [];
   public GatewayPing: number = 0;
@@ -29,17 +33,20 @@ export default class ClientConnection {
   public GatewayHeartbeatInterval: number = 0;
   public GatewayProtocolVersion: number = 6;
 
+  public resuming: boolean = false;
+
   private App: DiscordClient;
   private logger: Logger;
 
   private dispatcher: ClientDispatcher;
   private connector: ConnectFlow;
 
-  private resuming: boolean = false;
+  private GatewayURL?: string;
 
   /**
    * Create a new connection with discords gateway server
    * @param app - pass parent class as parameter to modify accessible vars and pass events through
+   * @param log
    */
   constructor(app: DiscordClient, log: Logger) {
     this.App = app;
@@ -51,21 +58,22 @@ export default class ClientConnection {
 
   /**
    * Connect to discord gateway
-   * @param GatewayURL - Discord Gateway Url Retrieved From Discord Gateway Endpoint
+   * @param LocalGatewayURL - Discord Gateway Url Retrieved From Discord Gateway Endpoint
    * @returns GatewayWebsocket - Websocket connection
    */
-  public connect(GatewayURL: string): ws {
+  public connect(LocalGatewayURL?: string): WebSocket {
     this.logger.write().debug({
       message: 'Creating New Gateway Connection',
       service: 'ClientConnection.connect',
     });
-    this.GatewayWebsocket = new ws(GatewayURL + '/?v=6'); // Specify Version
+    this.GatewayURL = LocalGatewayURL + '/?v=6';
+    this.GatewayWebsocket = new WebSocket(this.GatewayURL); // Specify Version
 
     // Handle websocket events
-    this.GatewayWebsocket.once('open', this.GatewayOpen);
-    this.GatewayWebsocket.once('close', this.GatewayClose);
-    this.GatewayWebsocket.once('error', this.GatewayError);
-    this.GatewayWebsocket.on('message', this.GatewayMessage);
+    this.GatewayWebsocket.once('open', this.GatewayOpen.bind(this));
+    this.GatewayWebsocket.once('close', this.GatewayClose.bind(this));
+    this.GatewayWebsocket.once('error', this.GatewayError.bind(this));
+    this.GatewayWebsocket.on('message', this.GatewayMessage.bind(this));
 
     return this.GatewayWebsocket;
   }
@@ -81,27 +89,40 @@ export default class ClientConnection {
       op,
     };
 
-    if (this.GatewayWebsocket && this.GatewayWebsocket.readyState === ws.OPEN) {
+    if (this.GatewayWebsocket && this.GatewayWebsocket.readyState === WebSocket.OPEN) {
       this.GatewayWebsocket.send(JSON.stringify(GatewayPackage));
       this.logger.write().debug({
         message: 'Successfully Sent A Message To Discord Gateway Server With OpCode: ' + op,
         service: 'ClientConnection.send',
       });
     } else {
-      this.logger.write().error({
+      this.logger.write().warn({
         details: GatewayPackage,
-        message: new Error("Couldn't Send A Message To Discord Gateway Server"),
+        message: "Couldn't Send A Message To Discord Gateway Server: Socket Not Open",
         service: 'ClientConnection.send',
       });
     }
   }
 
-  public CanUseCompression(): boolean {
-    return !!zlib.inflateSync;
-  }
-
-  public SetUserId(UserId: string): void {
-    this.App.UserId = UserId;
+  public SetStatus(status: string = '', type: number = 2, state: string = 'online'): void {
+    let since = null;
+    let game = null;
+    if (status) {
+      game = {
+        name: status,
+        type,
+      };
+    }
+    if (state === 'idle') {
+      since = new Date().getTime();
+    }
+    const DataMessage = {
+      afk: false,
+      game,
+      since,
+      status: state,
+    };
+    this.send(3, DataMessage);
   }
 
   /**
@@ -131,7 +152,7 @@ export default class ClientConnection {
     clearInterval(this.GatewayHeartbeat);
     setTimeout(() => {
       this.resuming = true;
-      this.connector.Reconnect();
+      this.connect();
     }, 5000);
   }
 
@@ -149,7 +170,7 @@ export default class ClientConnection {
    * Handles GatewayWebsocket `message` event
    * @param message - websocket message
    */
-  private GatewayMessage(message: ws.Data): void {
+  private GatewayMessage(message: WebSocket.Data): void {
     let data: IDefaultDiscordGatewayPackage;
     if (typeof message === 'string') {
       // message is json
@@ -183,7 +204,7 @@ export default class ClientConnection {
           clearInterval(this.GatewayHeartbeat);
           setTimeout(() => {
             this.resuming = true;
-            this.connector.Reconnect();
+            this.connect();
           }, 5000);
         } else if (this.resuming) {
           // failed to resume, go through standard flow
@@ -206,7 +227,11 @@ export default class ClientConnection {
         break;
       }
       case GATEWAY.HELLO: {
-        this.connector.Start(data.d);
+        if (this.resuming) {
+          this.connector.Reconnect();
+        } else {
+          this.connector.Start(data.d);
+        }
         break;
       }
       case GATEWAY.HEARTBEAT_ACK: {

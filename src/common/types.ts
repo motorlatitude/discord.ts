@@ -1,4 +1,10 @@
+import CategoryChannel from '../resources/Channel/CategoryChannel';
+import DirectMessageChannel from '../resources/Channel/DirectMessageChannel';
 import TextChannel from '../resources/Channel/TextChannel';
+import VoiceChannel from '../resources/Channel/VoiceChannel';
+import Guild from '../resources/Guild/Guild';
+import GuildMember from '../resources/Guild/GuildMember';
+import User from '../resources/User/User';
 
 export interface IDiscordClientOptions {
   token: string;
@@ -41,68 +47,68 @@ export interface IDiscordChannel {
 }
 
 export interface IDiscordGuild {
-  id: string,
-  name: string,
-  icon?: string,
-  splash?: string,
-  owner?: boolean,
-  owner_id: string,
-  permissions?: number,
-  region: string,
-  afk_channel_id?: string,
-  afk_timeout: number,
-  embed_enabled?: boolean,
-  embed_channel_id?: string,
-  verification_level: number,
-  default_message_notifications: number,
-  explicit_content_filter: number,
-  roles: any[], // TODO
-  emojis: any[], // TODO
-  features: string[],
-  mfa_level: number,
-  application_id?: string,
-  widget_enabled?: boolean,
-  widget_channel_id?: string,
-  system_channel_id?: string,
-  joined_at?: number,
-  large?: boolean,
-  unavailable?: boolean,
-  member_count?: number,
-  voice_states?: any[], // TODO
-  members?: any[], // TODO
-  channels?: IDiscordChannel[],
-  presences?: any[], // TODO
-  max_presences?: number,
-  max_members: number,
-  vanity_url_code?: string,
-  description?: string,
-  banner?: string,
-  premium_tier: number,
-  premium_subscription_count?: number
+  id: string;
+  name: string;
+  icon?: string;
+  splash?: string;
+  owner?: boolean;
+  owner_id: string;
+  permissions?: number;
+  region: string;
+  afk_channel_id?: string;
+  afk_timeout: number;
+  embed_enabled?: boolean;
+  embed_channel_id?: string;
+  verification_level: number;
+  default_message_notifications: number;
+  explicit_content_filter: number;
+  roles: any[]; // TODO
+  emojis: any[]; // TODO
+  features: string[];
+  mfa_level: number;
+  application_id?: string;
+  widget_enabled?: boolean;
+  widget_channel_id?: string;
+  system_channel_id?: string;
+  joined_at?: number;
+  large?: boolean;
+  unavailable?: boolean;
+  member_count?: number;
+  voice_states?: any[]; // TODO
+  members?: IDiscordGuildMember[];
+  channels?: IDiscordChannel[];
+  presences?: any[]; // TODO
+  max_presences?: number;
+  max_members: number;
+  vanity_url_code?: string;
+  description?: string;
+  banner?: string;
+  premium_tier: number;
+  premium_subscription_count?: number;
 }
 
 export interface IDiscordGuildMember {
-  user: IDiscordUser,
-  nick?: string,
-  roles: string[],
-  joined_at: number,
-  premium_since?: number,
-  deaf: boolean,
-  mute: boolean
+  user: IDiscordUser;
+  nick?: string;
+  roles: string[];
+  joined_at: number;
+  premium_since?: number;
+  deaf: boolean;
+  mute: boolean;
 }
 
 export interface IDiscordUser {
-  id: string,
-  username: string,
-  discriminator: string,
-  avatar?: string,
-  bot?: boolean,
-  mfa_enabled?: boolean,
-  locale?: string,
-  verified?: boolean,
-  email?: string,
-  flags?: number,
-  premium_type?: number
+  id: string;
+  username: string;
+  discriminator: string;
+  avatar?: string;
+  bot?: boolean;
+  mfa_enabled?: boolean;
+  locale?: string;
+  verified?: boolean;
+  email?: string;
+  flags?: number;
+  premium_type?: number;
 }
 
 // Discord Gateway Interfaces
@@ -143,37 +149,49 @@ export interface IDiscordReadyGatewayEvent {
 }
 
 export interface IDiscordChannelPinsUpdateGatewayEvent {
-  channel_id: string,
-  guild_id?: string,
-  last_pin_timestamp?: number
+  channel_id: string;
+  guild_id?: string;
+  last_pin_timestamp?: number;
 }
 
 export interface IDiscordGuildBanGatewayEvent {
-  guild_id: string,
-  user: any // TODO should be user object
+  guild_id: string;
+  user: any; // TODO should be user object
 }
 
-// Discord.ts Event objects
+export type IChannel = TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel;
 
-export interface IReadyEventObject {
-  user: any;
-}
+// discordts Event objects
 
 export interface IChannelDeleteEventObject {
-  Id: string,
-  Type: number
+  Id: string;
+  Type: number;
 }
 
 export interface IChannelPinsUpdateEventObject {
-  GuildId?: string,
-  ChannelId: string,
-  LastPinTimestamp?: number,
-  Channel: TextChannel,
-  Guild?: any // TODO
+  LastPinTimestamp?: number;
+  Channel: TextChannel | DirectMessageChannel;
+  Guild?: Guild;
 }
 
 export interface IGuildDeleteEventObject {
-  id: string,
-  Unavailable?: boolean,
-  WasRemoved: boolean
+  id: string;
+  Unavailable?: boolean;
+  WasRemoved: boolean;
+}
+
+export interface IGuildBanEventObject {
+  Guild: Guild;
+  User: User;
+}
+
+// Stores
+
+export interface IGuildMemberList {
+  [UserId: string]: GuildMember;
+}
+
+export interface IGuildBannedMember {
+  Reason?: string;
+  User: User;
 }

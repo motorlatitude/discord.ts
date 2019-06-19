@@ -3,17 +3,13 @@ import DiscordClient from '../../DiscordClient';
 import Guild from '../../resources/Guild/Guild';
 import ClientDispatcherEvent from './ClientDispatcherEvent';
 
-
 export default class GuildEvent extends ClientDispatcherEvent {
-
-
   public EventName: string | undefined;
   public EventObject: Guild | undefined;
   public EventDeleteObject: IGuildDeleteEventObject | undefined;
-  
-  constructor(client: DiscordClient){
-    super(client);
 
+  constructor(client: DiscordClient) {
+    super(client);
   }
 
   /**
@@ -25,8 +21,8 @@ export default class GuildEvent extends ClientDispatcherEvent {
    * https://discordapp.com/developers/docs/topics/gateway#guild-create
    * @param Message GUILD_CREATE event package
    */
-  public HandleCreate(Message: IDiscordGuild): void{
-    this.EventName = "GUILD_CREATE";
+  public HandleCreate(Message: IDiscordGuild): void {
+    this.EventName = 'GUILD_CREATE';
 
     this.EventObject = new Guild(this.Client, Message);
 
@@ -40,7 +36,7 @@ export default class GuildEvent extends ClientDispatcherEvent {
    * @param Message GUILD_UPDATE event package
    */
   public HandleUpdate(Message: IDiscordGuild): void {
-    this.EventName = "GUILD_UPDATE";
+    this.EventName = 'GUILD_UPDATE';
 
     this.EventObject = new Guild(this.Client, Message);
 
@@ -54,10 +50,10 @@ export default class GuildEvent extends ClientDispatcherEvent {
    * @param Message GUILD_DELETE event package
    */
   public HandleDelete(Message: IDiscordUnavailableGuildObject): void {
-    this.EventName = "GUILD_DELETE";
+    this.EventName = 'GUILD_DELETE';
 
-    let WasKicked:boolean = false;
-    if(Message.unavailable === undefined || Message.unavailable === null){
+    let WasKicked: boolean = false;
+    if (Message.unavailable === undefined || Message.unavailable === null) {
       WasKicked = true;
     }
 
@@ -65,7 +61,7 @@ export default class GuildEvent extends ClientDispatcherEvent {
       Unavailable: Message.unavailable,
       WasRemoved: WasKicked,
       id: Message.id,
-    }
+    };
 
     this.Client.Guilds.RemoveGuild(Message.id);
 
@@ -73,16 +69,14 @@ export default class GuildEvent extends ClientDispatcherEvent {
   }
 
   public EmitEvent(): void {
-    if(this.EventName === "GUILD_CREATE" || this.EventName === "GUILD_UPDATE"){
-      if(this.EventObject instanceof Guild){
+    if (this.EventName === 'GUILD_CREATE' || this.EventName === 'GUILD_UPDATE') {
+      if (this.EventObject instanceof Guild) {
         this.Client.emit(this.EventName, this.EventObject);
       }
-    }
-    else if(this.EventName === "GUILD_DELETE"){
-      if(this.EventDeleteObject){
+    } else if (this.EventName === 'GUILD_DELETE') {
+      if (this.EventDeleteObject) {
         this.Client.emit(this.EventName, this.EventDeleteObject);
       }
     }
   }
-
 }

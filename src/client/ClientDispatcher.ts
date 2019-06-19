@@ -7,6 +7,8 @@ import ReadyEvent from './Events/ReadyEvent';
 // Constants
 import GATEWAYEVENTS from '../common/constants/gatewayevents';
 import ChannelEvent from './Events/ChannelEvent';
+import ChannelPinsUpdateEvent from './Events/ChannelPinsUpdateEvent';
+import GuildBanEvent from './Events/GuildBanEvent';
 import GuildEvent from './Events/GuildEvent';
 
 export default class ClientDispatcher {
@@ -52,6 +54,11 @@ export default class ClientDispatcher {
         channel.HandleDelete();
         break;
       }
+      case GATEWAYEVENTS.CHANNEL_PINS_UPDATE: {
+        const channelPins = new ChannelPinsUpdateEvent(this.App, message.d);
+        channelPins.Handle();
+        break;
+      }
       case GATEWAYEVENTS.GUILD_CREATE: {
         const guild = new GuildEvent(this.App);
         guild.HandleCreate(message.d);
@@ -65,6 +72,16 @@ export default class ClientDispatcher {
       case GATEWAYEVENTS.GUILD_DELETE: {
         const guild = new GuildEvent(this.App);
         guild.HandleDelete(message.d);
+        break;
+      }
+      case GATEWAYEVENTS.GUILD_BAN_ADD: {
+        const guildBan = new GuildBanEvent(this.App, message.d);
+        guildBan.HandleBanAdd();
+        break;
+      }
+      case GATEWAYEVENTS.GUILD_BAN_REMOVE: {
+        const guildBan = new GuildBanEvent(this.App, message.d);
+        guildBan.HandleBanRemove();
         break;
       }
       default: {

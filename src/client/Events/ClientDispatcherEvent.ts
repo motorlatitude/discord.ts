@@ -20,5 +20,4 @@ export default class ClientDispatcherEvent {
       service: 'ClientDispatcher.Events.ClientDispatcherEvent.EmitEvent',
     });
   }
-
 }

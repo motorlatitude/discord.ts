@@ -1,8 +1,6 @@
 import { IDiscordUser } from '../../common/types';
 
-
 export default class User {
-
   public id: string;
   public Username: string;
   public Discriminator: string;
@@ -17,7 +15,6 @@ export default class User {
   public Avatar: string | undefined;
 
   constructor(UserObject: IDiscordUser) {
-
     this.id = UserObject.id;
     this.Username = UserObject.username;
     this.Discriminator = UserObject.discriminator;
@@ -29,8 +26,5 @@ export default class User {
     this.Locale = UserObject.locale;
     this.MFAEnabled = UserObject.bot;
     this.Avatar = UserObject.avatar;
-
   }
-
-
 }

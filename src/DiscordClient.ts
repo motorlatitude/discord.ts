@@ -11,18 +11,20 @@ import DiscordManager from './rest/DiscordManager';
 // Types
 import {
   IChannelDeleteEventObject,
+  IChannelPinsUpdateEventObject,
   IDiscordClientOptions,
   IGatewayResponse,
+  IGuildBanEventObject,
   IGuildDeleteEventObject,
-  IReadyEventObject,
 } from './common/types';
 import CategoryChannel from './resources/Channel/CategoryChannel';
 import DirectMessageChannel from './resources/Channel/DirectMessageChannel';
 import TextChannel from './resources/Channel/TextChannel';
 import VoiceChannel from './resources/Channel/VoiceChannel';
+import Guild from './resources/Guild/Guild';
+import User from './resources/User/User';
 import ChannelStore from './stores/ChannelStore';
 import GuildStore from './stores/GuildStore';
-import Guild from './resources/Guild/Guild';
 
 /**
  * ## DiscordClient
@@ -38,8 +40,7 @@ import Guild from './resources/Guild/Guild';
  *  client.connect();
  * ```
  */
-export class DiscordClient extends events.EventEmitter{
-
+export class DiscordClient extends events.EventEmitter {
   /**
    * @param token - Discord API Token
    */
@@ -69,6 +70,12 @@ export class DiscordClient extends events.EventEmitter{
    * @param Channels - All available DM channels, allows for the modifying and retrieval of channels
    */
   public Channels: ChannelStore;
+
+  /**
+   * @param User - The current user object. This is only available once the connection has successfully been
+   * carried out and the READY event has been sent
+   */
+  public User?: User;
 
   /**
    * @param rest - Access To Discord APIs REST methods
@@ -120,7 +127,7 @@ export class DiscordClient extends events.EventEmitter{
           message: 'Gateway Server: ' + gatewayUrl + ' (' + ping + 'ms)',
           service: 'DiscordClient.connect',
         });
-        this.emit("GATEWAY_FOUND", gatewayUrl);
+        this.emit('GATEWAY_FOUND', gatewayUrl);
 
         this.EstablishGatewayConnection(gatewayUrl);
       })
@@ -129,7 +136,7 @@ export class DiscordClient extends events.EventEmitter{
           message: err,
           service: 'DiscordClient.connect',
         });
-        this.emit("DISCONNECT");
+        this.emit('DISCONNECT');
       });
   }
 
@@ -143,7 +150,6 @@ export class DiscordClient extends events.EventEmitter{
   }
 }
 
-
 // tslint:disable-next-line:interface-name
 export declare interface DiscordClient {
   /**
@@ -152,7 +158,7 @@ export declare interface DiscordClient {
    * Event is emitted once the client has successfully connected to discord api gateway server and will return a [[IReadyEventObject]]
    * @event READY
    */
-  on(event: 'READY', listener: (ReadyEventObject: IReadyEventObject) => void): this;
+  on(event: 'READY', listener: (User: User) => void): this;
 
   /**
    * ### CHANNEL_CREATE Event
@@ -160,7 +166,10 @@ export declare interface DiscordClient {
    * Event is emitted if a new channel has been created in a guild that the client is connected to
    * @event CHANNEL_CREATE
    */
-  on(event: 'CHANNEL_CREATE', listener: (Channel: TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel) => void): this;
+  on(
+    event: 'CHANNEL_CREATE',
+    listener: (Channel: TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel) => void,
+  ): this;
 
   /**
    * ### CHANNEL_UPDATE Event
@@ -168,8 +177,11 @@ export declare interface DiscordClient {
    * Event is emitted if a channel has been updated in a guild that the client is connected to
    * @event CHANNEL_UPDATE
    */
-  // tslint:disable-next-line:unified-signatures
-  on(event: 'CHANNEL_UPDATE', listener: (Channel: TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel) => void): this;
+  on(
+    // tslint:disable-next-line:unified-signatures
+    event: 'CHANNEL_UPDATE',
+    listener: (Channel: TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel) => void,
+  ): this;
 
   /**
    * ### CHANNEL_DELETE Event
@@ -178,6 +190,14 @@ export declare interface DiscordClient {
    * @event CHANNEL_DELETE
    */
   on(event: 'CHANNEL_DELETE', listener: (Channel: IChannelDeleteEventObject) => void): this;
+
+  /**
+   * ### CHANNEL_PINS_UPDATE Event
+   *
+   * Event is emitted if a message has been pinned or unpinned in a text or direct message channel. Not sent when a pinned message is deleted
+   * @event CHANNEL_PINS_UPDATE
+   */
+  on(event: 'CHANNEL_PINS_UPDATE', listener: (ChannelPinUpdate: IChannelPinsUpdateEventObject) => void): this;
 
   /**
    * ### GUILD_CREATE Event
@@ -221,15 +241,19 @@ export declare interface DiscordClient {
    */
   on(event: 'DISCONNECT', listener: () => void): this;
 
-  emit(event: 'READY', ReadyEventObject: IReadyEventObject): boolean;
-  emit(event: 'CHANNEL_CREATE' | 'CHANNEL_UPDATE', Channel: TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel): boolean;
+  emit(event: 'READY', User: User): boolean;
+  emit(
+    event: 'CHANNEL_CREATE' | 'CHANNEL_UPDATE',
+    Channel: TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel,
+  ): boolean;
   emit(event: 'CHANNEL_DELETE', Channel: IChannelDeleteEventObject): boolean;
+  emit(event: 'CHANNEL_PINS_UPDATE', ChannelPin: IChannelPinsUpdateEventObject): boolean;
   emit(event: 'GUILD_CREATE' | 'GUILD_UPDATE', Guild: Guild): boolean;
   emit(event: 'GUILD_DELETE', DeletedGuild: IGuildDeleteEventObject): boolean;
+  emit(event: 'GUILD_BAN_ADD' | 'GUILD_BAN_REMOVE', BannedEvent: IGuildBanEventObject): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;
   // emit(event: string | symbol, ...args: any[]): boolean;
-
 }
 
 export default DiscordClient;

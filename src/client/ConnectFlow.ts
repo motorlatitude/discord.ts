@@ -33,9 +33,11 @@ export default class ConnectFlow {
       message: 'Received Hello Payload',
       service: 'ClientConnection.ConnectFlow.Start',
     });
+    this.connection.resuming = false;
 
     this.connection.GatewayHeartbeatInterval = HelloPackage.heartbeat_interval;
-    this.connection.GatewayHeartbeat = window.setInterval(() => {
+    // @ts-ignore
+    this.connection.GatewayHeartbeat = setInterval(() => {
       this.GatewayHeartbeatSendTimestamp = new Date().getTime();
       this.connection.send(GATEWAY.HEARTBEAT, this.connection.GatewaySequence);
     }, HelloPackage.heartbeat_interval);
@@ -87,7 +89,7 @@ export default class ConnectFlow {
    * Sends Identify package to Discord Gateway Websocket server
    */
   private SendIdentifyPayload(): void {
-    const useCompression = this.connection.CanUseCompression();
+    const useCompression = ClientConnection.CanUseCompression();
     this.logger.write().debug({
       message: 'Can Use Compression: ' + useCompression,
       service: 'ClientConnection.ConnectFlow.SendIdentifyPayload',

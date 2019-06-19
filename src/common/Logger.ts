@@ -1,6 +1,6 @@
 // NPM Module
 import * as winston from 'winston';
-const { combine, timestamp, label, printf } = winston.format;
+const { timestamp, printf } = winston.format;
 
 export default class Logger {
   public logger: winston.Logger;
@@ -11,15 +11,27 @@ export default class Logger {
     this.level = level ? level : 'verbose';
 
     const myFormat = printf((options: any) => {
+      const maxServiceLength: number = 65;
+      let service = options.service ? options.service : 'discordts';
+      for (let k = 0; k < maxServiceLength - options.service.length; k++) {
+        service += ' ';
+      }
+
+      let extraspace = '';
+      if (options.level.match(/warn/gim) || options.level.match(/info/gim)) {
+        extraspace = ' ';
+      }
+
       if (options.message instanceof Error) {
         return (
           '[' +
           options.level +
-          (options.level === 'info' || options.level === 'warn' ? ' ' : '') +
-          '][' +
+          ']' +
+          extraspace +
+          '[' +
           options.timestamp +
-          '] service.' +
-          (options.service ? options.service : 'discord.ts') +
+          '] ' +
+          service +
           ': ' +
           options.message.stack +
           (options.details ? '\nAttached Details: ' + JSON.stringify(options.details, null, '\t') : '')
@@ -28,11 +40,12 @@ export default class Logger {
         return (
           '[' +
           options.level +
-          (options.level === 'info' || options.level === 'warn' ? ' ' : '') +
-          '][' +
+          ']' +
+          extraspace +
+          '[' +
           options.timestamp +
-          '] service.' +
-          (options.service ? options.service : 'discord.ts') +
+          '] ' +
+          service +
           ': ' +
           options.message +
           (options.details ? '\nAttached Details: ' + JSON.stringify(options.details, null, '\t') : '')

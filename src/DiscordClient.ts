@@ -151,6 +151,10 @@ export class DiscordClient extends events.EventEmitter {
   }
 }
 
+// Other Exports For Easy Access
+
+export { User, Guild };
+
 // tslint:disable-next-line:interface-name
 export declare interface DiscordClient {
   /**
@@ -238,6 +242,15 @@ export declare interface DiscordClient {
   on(event: 'GUILD_EMOJIS_UPDATE', listener: (EmojiUpdate: IGuildEmojisUpdateEventObject) => void): this;
 
   /**
+   * ### GUILD_INTEGRATION_UPDATE Event
+   *
+   * Event is emitted if when a guild integration is updated
+   * @event GUILD_INTEGRATION_UPDATE
+   */
+  // tslint:disable-next-line:unified-signatures
+  on(event: 'GUILD_INTEGRATION_UPDATE', listener: (Guild: Guild) => void): this;
+
+  /**
    * ### GATEWAY_FOUND Event
    *
    * Event is emitted if the client has successfully determined the Discord Websocket URL
@@ -260,7 +273,7 @@ export declare interface DiscordClient {
   ): boolean;
   emit(event: 'CHANNEL_DELETE', Channel: IChannelDeleteEventObject): boolean;
   emit(event: 'CHANNEL_PINS_UPDATE', ChannelPin: IChannelPinsUpdateEventObject): boolean;
-  emit(event: 'GUILD_CREATE' | 'GUILD_UPDATE', Guild: Guild): boolean;
+  emit(event: 'GUILD_CREATE' | 'GUILD_UPDATE' | 'GUILD_INTEGRATION_UPDATE', Guild: Guild): boolean;
   emit(event: 'GUILD_DELETE', DeletedGuild: IGuildDeleteEventObject): boolean;
   emit(event: 'GUILD_BAN_ADD' | 'GUILD_BAN_REMOVE', BannedEvent: IGuildBanEventObject): boolean;
   emit(event: 'GUILD_EMOJIS_UPDATE', EmojiEvent: IGuildEmojisUpdateEventObject): boolean;

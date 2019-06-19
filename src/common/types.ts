@@ -175,6 +175,10 @@ export interface IDiscordGuildEmojiUpdateGatewayEvent {
   emojis: IDiscordEmoji[];
 }
 
+export interface IDiscordGuildIntegrationUpdateGatewayEvent {
+  guild_id: string;
+}
+
 // discordts Event objects
 
 export interface IChannelDeleteEventObject {

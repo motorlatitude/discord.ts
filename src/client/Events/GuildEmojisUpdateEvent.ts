@@ -4,7 +4,7 @@ import Emoji from '../../resources/Emoji/Emoji';
 import Guild from '../../resources/Guild/Guild';
 import ClientDispatcherEvent from './ClientDispatcherEvent';
 
-export default class GuildEmojisUpdate extends ClientDispatcherEvent {
+export default class GuildEmojisUpdateEvent extends ClientDispatcherEvent {
   public readonly Message: IDiscordGuildEmojiUpdateGatewayEvent;
 
   public readonly EventName: 'GUILD_EMOJIS_UPDATE' = 'GUILD_EMOJIS_UPDATE';

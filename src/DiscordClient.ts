@@ -16,6 +16,7 @@ import {
   IGatewayResponse,
   IGuildBanEventObject,
   IGuildDeleteEventObject,
+  IGuildEmojisUpdateEventObject,
 } from './common/types';
 import CategoryChannel from './resources/Channel/CategoryChannel';
 import DirectMessageChannel from './resources/Channel/DirectMessageChannel';
@@ -186,7 +187,8 @@ export declare interface DiscordClient {
   /**
    * ### CHANNEL_DELETE Event
    *
-   * Event is emitted if a channel has been deleted in a guild that the client is connected to and will not return a full Channel, instead will return [[IChannelDeleteEventObject]]
+   * Event is emitted if a channel has been deleted in a guild that the client is connected to and will not
+   * return a full Channel, instead will return [[IChannelDeleteEventObject]]
    * @event CHANNEL_DELETE
    */
   on(event: 'CHANNEL_DELETE', listener: (Channel: IChannelDeleteEventObject) => void): this;
@@ -194,7 +196,8 @@ export declare interface DiscordClient {
   /**
    * ### CHANNEL_PINS_UPDATE Event
    *
-   * Event is emitted if a message has been pinned or unpinned in a text or direct message channel. Not sent when a pinned message is deleted
+   * Event is emitted if a message has been pinned or unpinned in a text or direct message channel. Not sent when
+   * a pinned message is deleted
    * @event CHANNEL_PINS_UPDATE
    */
   on(event: 'CHANNEL_PINS_UPDATE', listener: (ChannelPinUpdate: IChannelPinsUpdateEventObject) => void): this;
@@ -219,11 +222,20 @@ export declare interface DiscordClient {
   /**
    * ### GUILD_DELETE Event
    *
-   * Event is emitted if a guild that the bot is a member of was removed either due to a server disconnect / unavailability or the bot was kicked. Will not return a full Guild instead will return [[IGuildDeleteEventObject]]
+   * Event is emitted if a guild that the bot is a member of was removed either due to a server
+   * disconnect / unavailability or the bot was kicked. Will not return a full Guild instead
+   * will return [[IGuildDeleteEventObject]]
    * @event GUILD_DELETE
    */
-  // tslint:disable-next-line:unified-signatures
   on(event: 'GUILD_DELETE', listener: (DeletedGuild: IGuildDeleteEventObject) => void): this;
+
+  /**
+   * ### GUILD_EMOJIS_UPDATE Event
+   *
+   * Event is emitted if an emoji in a joined guild has been updated
+   * @event GUILD_EMOJIS_UPDATE
+   */
+  on(event: 'GUILD_EMOJIS_UPDATE', listener: (EmojiUpdate: IGuildEmojisUpdateEventObject) => void): this;
 
   /**
    * ### GATEWAY_FOUND Event
@@ -251,6 +263,7 @@ export declare interface DiscordClient {
   emit(event: 'GUILD_CREATE' | 'GUILD_UPDATE', Guild: Guild): boolean;
   emit(event: 'GUILD_DELETE', DeletedGuild: IGuildDeleteEventObject): boolean;
   emit(event: 'GUILD_BAN_ADD' | 'GUILD_BAN_REMOVE', BannedEvent: IGuildBanEventObject): boolean;
+  emit(event: 'GUILD_EMOJIS_UPDATE', EmojiEvent: IGuildEmojisUpdateEventObject): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;
   // emit(event: string | symbol, ...args: any[]): boolean;

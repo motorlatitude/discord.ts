@@ -1,12 +1,14 @@
-import { IDiscordChannel, IDiscordGuild, IDiscordGuildMember } from '../../common/types';
+import { IDiscordChannel, IDiscordEmoji, IDiscordGuild, IDiscordGuildMember } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import ChannelStore from '../../stores/ChannelStore';
 import TextChannel from '../Channel/TextChannel';
 import VoiceChannel from '../Channel/VoiceChannel';
 
 import CHANNEL_TYPES from '../../common/constants/channeltypes';
+import EmojiStore from '../../stores/EmojiStore';
 import GuildMemberStore from '../../stores/GuildMemberStore';
 import CategoryChannel from '../Channel/CategoryChannel';
+import Emoji from '../Emoji/Emoji';
 import GuildMember from './GuildMember';
 
 export default class Guild {
@@ -19,7 +21,7 @@ export default class Guild {
   public DefaultMessageNotification: number;
   public ExplicitContentFilter: number;
   public Roles: any[]; // TODO
-  public Emojis: any[]; // TODO
+  public Emojis: EmojiStore;
   public Features: string[];
   public MFALevel: number;
   public MaxMembers: number;
@@ -64,7 +66,8 @@ export default class Guild {
     this.DefaultMessageNotification = GuildObject.default_message_notifications;
     this.ExplicitContentFilter = GuildObject.explicit_content_filter;
     this.Roles = GuildObject.roles || []; // TODO
-    this.Emojis = GuildObject.emojis || []; // TODO
+    this.Emojis = new EmojiStore(this.Client);
+    this.ResolveEmojis(GuildObject.emojis);
     this.Features = GuildObject.features || [];
     this.MFALevel = GuildObject.mfa_level;
     this.MaxMembers = GuildObject.max_members;
@@ -99,6 +102,12 @@ export default class Guild {
     this.Owner = GuildObject.owner;
     this.Icon = GuildObject.icon;
     this.Splash = GuildObject.splash;
+  }
+
+  private ResolveEmojis(emojis: IDiscordEmoji[]): void {
+    for (const emoji of emojis) {
+      this.Emojis.AddEmoji(new Emoji(emoji));
+    }
   }
 
   private ResolveMembers(members: IDiscordGuildMember[]): void {

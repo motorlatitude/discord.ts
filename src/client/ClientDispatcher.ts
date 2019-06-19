@@ -9,6 +9,7 @@ import GATEWAYEVENTS from '../common/constants/gatewayevents';
 import ChannelEvent from './Events/ChannelEvent';
 import ChannelPinsUpdateEvent from './Events/ChannelPinsUpdateEvent';
 import GuildBanEvent from './Events/GuildBanEvent';
+import GuildEmojisUpdate from './Events/GuildEmojisUpdate';
 import GuildEvent from './Events/GuildEvent';
 
 export default class ClientDispatcher {
@@ -82,6 +83,11 @@ export default class ClientDispatcher {
       case GATEWAYEVENTS.GUILD_BAN_REMOVE: {
         const guildBan = new GuildBanEvent(this.App, message.d);
         guildBan.HandleBanRemove();
+        break;
+      }
+      case GATEWAYEVENTS.GUILD_EMOJIS_UPDATE: {
+        const guildEmoji = new GuildEmojisUpdate(this.App, message.d);
+        guildEmoji.Handle();
         break;
       }
       default: {

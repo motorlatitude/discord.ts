@@ -124,10 +124,7 @@ export default class ChannelStore extends Store {
     });
   }
 
-  public ReplaceChannel(
-    ChannelId: string,
-    Channel: IChannel,
-  ): void {
+  public ReplaceChannel(ChannelId: string, Channel: IChannel): void {
     if (Channel instanceof TextChannel) {
       this.ReplaceTextChannel(ChannelId, Channel);
     } else if (Channel instanceof VoiceChannel) {

@@ -2,6 +2,7 @@ import CategoryChannel from '../resources/Channel/CategoryChannel';
 import DirectMessageChannel from '../resources/Channel/DirectMessageChannel';
 import TextChannel from '../resources/Channel/TextChannel';
 import VoiceChannel from '../resources/Channel/VoiceChannel';
+import Emoji from '../resources/Emoji/Emoji';
 import Guild from '../resources/Guild/Guild';
 import GuildMember from '../resources/Guild/GuildMember';
 import User from '../resources/User/User';
@@ -111,6 +112,16 @@ export interface IDiscordUser {
   premium_type?: number;
 }
 
+export interface IDiscordEmoji {
+  id: string;
+  name: string;
+  roles?: any[]; // TODO
+  user?: IDiscordUser;
+  require_colons?: boolean;
+  managed?: boolean;
+  animated?: boolean;
+}
+
 // Discord Gateway Interfaces
 
 export interface IDefaultDiscordGatewayPackage {
@@ -159,7 +170,10 @@ export interface IDiscordGuildBanGatewayEvent {
   user: any; // TODO should be user object
 }
 
-export type IChannel = TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel;
+export interface IDiscordGuildEmojiUpdateGatewayEvent {
+  guild_id: string;
+  emojis: IDiscordEmoji[];
+}
 
 // discordts Event objects
 
@@ -185,6 +199,11 @@ export interface IGuildBanEventObject {
   User: User;
 }
 
+export interface IGuildEmojisUpdateEventObject {
+  Guild: Guild;
+  Emojis: Emoji[];
+}
+
 // Stores
 
 export interface IGuildMemberList {
@@ -195,3 +214,5 @@ export interface IGuildBannedMember {
   Reason?: string;
   User: User;
 }
+
+export type IChannel = TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel;

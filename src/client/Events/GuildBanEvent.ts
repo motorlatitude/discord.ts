@@ -51,8 +51,8 @@ export default class GuildBanEvent extends ClientDispatcherEvent {
   }
 
   public EmitEvent(): void {
-    if(this.EventName && this.EventObject){
-      this.Client.emit(this.EventName, this.EventObject)
+    if (this.EventName && this.EventObject) {
+      this.Client.emit(this.EventName, this.EventObject);
     }
   }
 }

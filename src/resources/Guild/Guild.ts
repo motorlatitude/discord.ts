@@ -130,11 +130,11 @@ export default class Guild {
   private ResolveChannels(channels: IDiscordChannel[]): void {
     for (const channel of channels) {
       if (channel.type === CHANNEL_TYPES.GUILD_TEXT) {
-        this.Channels.AddTextChannel(new TextChannel(channel));
+        this.Channels.AddTextChannel(new TextChannel(this.Client, channel));
       } else if (channel.type === CHANNEL_TYPES.GUILD_VOICE) {
-        this.Channels.AddVoiceChannel(new VoiceChannel(channel));
+        this.Channels.AddVoiceChannel(new VoiceChannel(this.Client, channel));
       } else if (channel.type === CHANNEL_TYPES.GUILD_CATEGORY) {
-        this.Channels.AddChannelCategory(new CategoryChannel(channel));
+        this.Channels.AddChannelCategory(new CategoryChannel(this.Client, channel));
       }
     }
   }

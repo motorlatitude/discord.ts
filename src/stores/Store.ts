@@ -28,6 +28,14 @@ export default class Store {
     return this.StoredItems[key];
   }
 
+  public GetAllForKeys(keys: string[]): any {
+    const returnedItems = [];
+    for (const key of keys) {
+      returnedItems.push(this.StoredItems[key]);
+    }
+    return returnedItems;
+  }
+
   public GetAll(): any {
     return this.StoredItems;
   }

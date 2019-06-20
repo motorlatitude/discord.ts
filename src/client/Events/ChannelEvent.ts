@@ -32,7 +32,7 @@ export default class ChannelEvent extends ClientDispatcherEvent {
 
     if (this.Message.type === CHANNEL_TYPES.GUILD_TEXT && this.Message.guild_id) {
       this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        const NewTextChannel: TextChannel = new TextChannel(this.Message);
+        const NewTextChannel: TextChannel = new TextChannel(this.Client, this.Message);
 
         this.EventObject = NewTextChannel;
 
@@ -41,7 +41,7 @@ export default class ChannelEvent extends ClientDispatcherEvent {
       });
     } else if (this.Message.type === CHANNEL_TYPES.GUILD_VOICE && this.Message.guild_id) {
       this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        const NewVoiceChannel: VoiceChannel = new VoiceChannel(this.Message);
+        const NewVoiceChannel: VoiceChannel = new VoiceChannel(this.Client, this.Message);
 
         this.EventObject = NewVoiceChannel;
 
@@ -49,7 +49,7 @@ export default class ChannelEvent extends ClientDispatcherEvent {
         this.Handle();
       });
     } else if (this.Message.type === CHANNEL_TYPES.DM || this.Message.type === CHANNEL_TYPES.GROUP_DM) {
-      const NewDMChannel: DirectMessageChannel = new DirectMessageChannel(this.Message);
+      const NewDMChannel: DirectMessageChannel = new DirectMessageChannel(this.Client, this.Message);
 
       this.EventObject = NewDMChannel;
 
@@ -57,7 +57,7 @@ export default class ChannelEvent extends ClientDispatcherEvent {
       this.Handle();
     } else if (this.Message.type === CHANNEL_TYPES.GUILD_CATEGORY && this.Message.guild_id) {
       this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        const NewChannelCategory: CategoryChannel = new CategoryChannel(this.Message);
+        const NewChannelCategory: CategoryChannel = new CategoryChannel(this.Client, this.Message);
 
         this.EventObject = NewChannelCategory;
 
@@ -80,13 +80,13 @@ export default class ChannelEvent extends ClientDispatcherEvent {
 
     let NewChannel: TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel | undefined;
     if (this.Message.type === CHANNEL_TYPES.GUILD_TEXT) {
-      NewChannel = new TextChannel(this.Message);
+      NewChannel = new TextChannel(this.Client, this.Message);
     } else if (this.Message.type === CHANNEL_TYPES.GUILD_VOICE) {
-      NewChannel = new VoiceChannel(this.Message);
+      NewChannel = new VoiceChannel(this.Client, this.Message);
     } else if (this.Message.type === CHANNEL_TYPES.DM || this.Message.type === CHANNEL_TYPES.GROUP_DM) {
-      NewChannel = new DirectMessageChannel(this.Message);
+      NewChannel = new DirectMessageChannel(this.Client, this.Message);
     } else if (this.Message.type === CHANNEL_TYPES.GUILD_CATEGORY) {
-      NewChannel = new CategoryChannel(this.Message);
+      NewChannel = new CategoryChannel(this.Client, this.Message);
     }
     if (NewChannel) {
       this.EventObject = NewChannel;

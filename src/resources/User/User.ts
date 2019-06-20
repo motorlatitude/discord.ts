@@ -27,4 +27,20 @@ export default class User {
     this.MFAEnabled = UserObject.bot;
     this.Avatar = UserObject.avatar;
   }
+
+  public Resolve(): IDiscordUser {
+    return {
+      avatar: this.Avatar,
+      bot: this.Bot,
+      discriminator: this.Discriminator,
+      email: this.Email,
+      flags: this.Flags,
+      id: this.id,
+      locale: this.Locale,
+      mfa_enabled: this.MFAEnabled,
+      premium_type: this.PremiumType,
+      username: this.Username,
+      verified: this.Verified,
+    };
+  }
 }

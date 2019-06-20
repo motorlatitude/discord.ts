@@ -1,4 +1,5 @@
 import { IDiscordChannel } from '../../common/types';
+import DiscordClient from '../../DiscordClient';
 import Channel from './Channel';
 
 export default class CategoryChannel extends Channel {
@@ -6,8 +7,8 @@ export default class CategoryChannel extends Channel {
   public Position: number;
   public PermissionOverwrites: any[];
 
-  constructor(ChannelObject: IDiscordChannel) {
-    super(ChannelObject);
+  constructor(Client: DiscordClient, ChannelObject: IDiscordChannel) {
+    super(Client, ChannelObject);
 
     this.Name = ChannelObject.name as string;
     this.Position = ChannelObject.position as number;

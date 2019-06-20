@@ -134,6 +134,119 @@ export interface IDiscordRole {
   mentionable: boolean;
 }
 
+export interface IDiscordMessage {
+  id: string;
+  channel_id: string;
+  guild_id?: string;
+  author: IDiscordUser;
+  member?: IDiscordGuildMember; // TODO docs say partial??
+  content: string;
+  timestamp: number;
+  edited_timestamp?: number;
+  tts: boolean;
+  mention_everyone: boolean;
+  mentions: IDiscordUser[]; // TODO also has partial member field
+  mention_roles: string[];
+  attachments: IDiscordAttachment[];
+  embeds: IDiscordEmbed[];
+  reactions?: IDiscordReaction[];
+  nonce?: string;
+  pinned: boolean;
+  webhook_id?: string;
+  type: number; // TODO
+  activity?: IDiscordMessageActivity;
+  application?: IDiscordMessageApplication;
+}
+
+export interface IDiscordMessageApplication {
+  id: string;
+  cover_image?: string;
+  description: string;
+  icon?: string;
+  name?: string;
+}
+
+export interface IDiscordMessageActivity {
+  type: number; // TODO
+  party_id?: string;
+}
+
+export interface IDiscordReaction {
+  count: number;
+  me: boolean;
+  emoji: IDiscordEmoji; // TODO partial?
+}
+
+export interface IDiscordEmbed {
+  title?: string;
+  type?: string;
+  description?: string;
+  url?: string;
+  timestamp?: number;
+  color?: number;
+  footer?: IDiscordEmbedFooter;
+  image?: IDiscordEmbedImage;
+  thumbnail?: IDiscordEmbedThumbnail;
+  video?: IDiscordEmbedVideo;
+  provider?: IDiscordEmbedProvider;
+  author?: IDiscordEmbedAuthor;
+  fields?: IDiscordEmbedField[];
+}
+
+export interface IDiscordEmbedField {
+  name: string;
+  value: string;
+  inline?: boolean;
+}
+
+export interface IDiscordEmbedAuthor {
+  name?: string;
+  url?: string;
+  icon_url?: string;
+  proxy_icon_url?: string;
+}
+
+export interface IDiscordEmbedProvider {
+  name?: string;
+  url?: string;
+}
+
+export interface IDiscordEmbedVideo {
+  url?: string;
+  height?: number;
+  width?: number;
+}
+
+export interface IDiscordEmbedThumbnail {
+  url?: string;
+  proxy_url?: string;
+  width?: number;
+  height?: number;
+}
+
+export interface IDiscordEmbedImage {
+  url?: string;
+  proxy_url?: string;
+  height?: number;
+  width?: number;
+}
+
+export interface IDiscordEmbedFooter {
+  text: string;
+  icon_url?: string;
+  proxy_icon_url?: string;
+}
+
+export interface IDiscordAttachment {
+  id: string;
+  filename: string;
+  size: number;
+  url: string;
+  proxy_url: string;
+  height?: number; // if image
+  width?: number; // if image
+}
+
 // Discord Gateway Interfaces
 
 export interface IDefaultDiscordGatewayPackage {
@@ -216,6 +329,37 @@ export interface IDiscordGuildRoleEvent {
   guild_id: string;
   role?: IDiscordRole;
   role_id?: string;
+}
+
+export interface IDiscordMessageUpdateGatewayEvent {
+  id: string;
+  channel_id: string;
+  guild_id?: string;
+  author?: IDiscordUser;
+  member?: IDiscordGuildMember; // TODO docs say partial??
+  content?: string;
+  timestamp?: number;
+  edited_timestamp?: number;
+  tts?: boolean;
+  mention_everyone?: boolean;
+  mentions?: IDiscordUser[]; // TODO also has partial member field
+  mention_roles?: string[];
+  attachments?: IDiscordAttachment[];
+  embeds?: IDiscordEmbed[];
+  reactions?: IDiscordReaction[];
+  nonce?: string;
+  pinned?: boolean;
+  webhook_id?: string;
+  type?: number; // TODO
+  activity?: IDiscordMessageActivity;
+  application?: IDiscordMessageApplication;
+}
+
+export interface IDiscordMessageDeleteGatewayEvent {
+  id?: string;
+  ids?: string[];
+  channel_id: string;
+  guild_id?: string;
 }
 
 // discordts Event objects

@@ -25,4 +25,16 @@ export default class GuildMember {
     this.PremiumSince = GuildMemberObject.premium_since;
     this.Nick = GuildMemberObject.nick;
   }
+
+  public Resolve(): IDiscordGuildMember {
+    return {
+      deaf: this.Deaf,
+      joined_at: this.JoinedAt,
+      mute: this.Mute,
+      nick: this.Nick,
+      premium_since: this.PremiumSince,
+      roles: this.Roles,
+      user: this.User.Resolve(),
+    };
+  }
 }

@@ -1,4 +1,5 @@
 import { IDiscordChannel } from '../../common/types';
+import DiscordClient from '../../DiscordClient';
 import Channel from './Channel';
 
 export default class VoiceChannel extends Channel {
@@ -9,8 +10,8 @@ export default class VoiceChannel extends Channel {
   public Bitrate: number;
   public UserLimit: number;
 
-  constructor(ChannelObject: IDiscordChannel) {
-    super(ChannelObject);
+  constructor(Client: DiscordClient, ChannelObject: IDiscordChannel) {
+    super(Client, ChannelObject);
 
     this.GuildId = ChannelObject.guild_id as string;
     this.Position = ChannelObject.position as number;

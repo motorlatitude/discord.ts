@@ -14,6 +14,7 @@ import GuildEvent from './Events/GuildEvent';
 import GuildIntegrationEvent from './Events/GuildIntegrationEvent';
 import GuildMemberEvent from './Events/GuildMemberEvent';
 import GuildRoleEvent from './Events/GuildRoleEvent';
+import MessageEvent from './Events/MessageEvent';
 
 export default class ClientDispatcher {
   private readonly App: DiscordClient;
@@ -131,6 +132,21 @@ export default class ClientDispatcher {
       case GATEWAY_EVENTS.GUILD_ROLE_DELETE: {
         const guildRoleEvent = new GuildRoleEvent(this.App, message.d);
         guildRoleEvent.HandleRoleDelete();
+        break;
+      }
+      case GATEWAY_EVENTS.MESSAGE_CREATE: {
+        const messageEvent = new MessageEvent(this.App);
+        messageEvent.HandleMessageCreate(message.d);
+        break;
+      }
+      case GATEWAY_EVENTS.MESSAGE_UPDATE: {
+        const messageEvent = new MessageEvent(this.App);
+        messageEvent.HandleMessageUpdate(message.d);
+        break;
+      }
+      case GATEWAY_EVENTS.MESSAGE_DELETE || GATEWAY_EVENTS.MESSAGE_DELETE_BULK: {
+        const messageEvent = new MessageEvent(this.App);
+        messageEvent.HandleMessageDelete(message.d);
         break;
       }
       default: {

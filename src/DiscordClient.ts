@@ -26,6 +26,8 @@ import DirectMessageChannel from './resources/Channel/DirectMessageChannel';
 import TextChannel from './resources/Channel/TextChannel';
 import VoiceChannel from './resources/Channel/VoiceChannel';
 import Guild from './resources/Guild/Guild';
+import GuildMember from './resources/Guild/GuildMember';
+import Message from './resources/Message/Message';
 import User from './resources/User/User';
 import ChannelStore from './stores/ChannelStore';
 import GuildStore from './stores/GuildStore';
@@ -319,6 +321,74 @@ export declare interface DiscordClient {
   on(event: 'GUILD_ROLE_DELETE', listener: (GuildRoleEvent: IGuildRoleEventObject) => void): this;
 
   /**
+   * ### MESSAGE_CREATE Event
+   *
+   * Event is emitted if a new message is sent in a TextChannel in a guild the bot is a member of or in a DirectMessageChannel
+   * @event MESSAGE_CREATE
+   */
+  on(
+    event: 'MESSAGE_CREATE',
+    listener: (
+      MessageObject: Message,
+      ChannelObject: TextChannel | DirectMessageChannel,
+      Author: User,
+      GuildObject?: Guild,
+      GuildMemberObject?: GuildMember,
+    ) => void,
+  ): this;
+
+  /**
+   * ### MESSAGE_UPDATE Event
+   *
+   * Event is emitted if a message is updated in a TextChannel in a guild the bot is a member of or in a DirectMessageChannel
+   * @event MESSAGE_UPDATE
+   */
+  on(
+    // tslint:disable-next-line:unified-signatures
+    event: 'MESSAGE_UPDATE',
+    listener: (
+      MessageObject: Message,
+      ChannelObject: TextChannel | DirectMessageChannel,
+      Author: User,
+      GuildObject?: Guild,
+      GuildMemberObject?: GuildMember,
+    ) => void,
+  ): this;
+
+  /**
+   * ### MESSAGE_DELETE Event
+   *
+   * Event is emitted if a message is deleted in a TextChannel in a guild the bot is a member of or in a DirectMessageChannel
+   * @event MESSAGE_DELETE
+   */
+  on(
+    // tslint:disable-next-line:unified-signatures
+    event: 'MESSAGE_DELETE',
+    listener: (
+      MessageObject: Message,
+      ChannelObject: TextChannel | DirectMessageChannel,
+      Author: User,
+      GuildObject?: Guild,
+      GuildMemberObject?: GuildMember,
+    ) => void,
+  ): this;
+
+  /**
+   * ### MESSAGE_DELETE_BULK Event
+   *
+   * Event is emitted if multiple messages are deleted at one in a TextChannel in a guild the bot is a member of or in a DirectMessageChannel
+   * @event MESSAGE_DELETE_BULK
+   */
+  on(
+    event: 'MESSAGE_DELETE_BULK',
+    listener: (
+      MessageObjects: Message[],
+      ChannelObject: TextChannel | DirectMessageChannel,
+      GuildObject?: Guild,
+    ) => void,
+  ): this;
+
+  /**
    * ### GATEWAY_FOUND Event
    *
    * Event is emitted if the client has successfully determined the Discord Websocket URL
@@ -353,6 +423,20 @@ export declare interface DiscordClient {
   emit(
     event: 'GUILD_ROLE_CREATE' | 'GUILD_ROLE_UPDATE' | 'GUILD_ROLE_DELETE',
     GuildRoleEvent: IGuildRoleEventObject,
+  ): boolean;
+  emit(
+    event: 'MESSAGE_CREATE' | 'MESSAGE_UPDATE' | 'MESSAGE_DELETE',
+    MessageObject: Message,
+    ChannelObject: TextChannel | DirectMessageChannel,
+    Author: User,
+    GuildObject?: Guild,
+    GuildMemberObject?: GuildMember,
+  ): boolean;
+  emit(
+    event: 'MESSAGE_DELETE_BULK',
+    MessageObjects: Message[],
+    ChannelObject: TextChannel | DirectMessageChannel,
+    GuildObject?: Guild,
   ): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;

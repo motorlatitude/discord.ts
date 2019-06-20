@@ -146,6 +146,36 @@ export default class ChannelStore extends Store {
   }
 
   /**
+   * Fetch a Text Channel
+   * @param ChannelId - channel id of the text channel
+   */
+  public FetchTextChannel(ChannelId: string): Promise<TextChannel> {
+    return new Promise((resolve, reject) => {
+      const Channel = this.Get(ChannelId);
+      if (Channel instanceof TextChannel) {
+        resolve(Channel);
+      } else {
+        reject(new Error('The returned channel for the id is not a TextChannel'));
+      }
+    });
+  }
+
+  /**
+   * Fetch a Direct Message Channel
+   * @param ChannelId - channel id of the direct message channel
+   */
+  public FetchDirectMessageChannel(ChannelId: string): Promise<DirectMessageChannel> {
+    return new Promise((resolve, reject) => {
+      const Channel = this.Get(ChannelId);
+      if (Channel instanceof DirectMessageChannel) {
+        resolve(Channel);
+      } else {
+        reject(new Error('The returned channel for the id is not a DirectMessageChannel'));
+      }
+    });
+  }
+
+  /**
    * Fetch a TextChannel, VoiceChannel, DirectMessageChannel or CategoryChannel with an id
    * @param ChannelId - channel id
    */

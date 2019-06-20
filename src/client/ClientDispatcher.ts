@@ -13,6 +13,7 @@ import GuildEmojisUpdateEvent from './Events/GuildEmojisUpdateEvent';
 import GuildEvent from './Events/GuildEvent';
 import GuildIntegrationEvent from './Events/GuildIntegrationEvent';
 import GuildMemberEvent from './Events/GuildMemberEvent';
+import GuildRoleEvent from './Events/GuildRoleEvent';
 
 export default class ClientDispatcher {
   private readonly App: DiscordClient;
@@ -115,6 +116,21 @@ export default class ClientDispatcher {
       case GATEWAY_EVENTS.GUILD_MEMBERS_CHUNK: {
         const guildMemberEvent = new GuildMemberEvent(this.App);
         guildMemberEvent.HandleMemberChunk(message.d);
+        break;
+      }
+      case GATEWAY_EVENTS.GUILD_ROLE_CREATE: {
+        const guildRoleEvent = new GuildRoleEvent(this.App, message.d);
+        guildRoleEvent.HandleRoleCreate();
+        break;
+      }
+      case GATEWAY_EVENTS.GUILD_ROLE_UPDATE: {
+        const guildRoleEvent = new GuildRoleEvent(this.App, message.d);
+        guildRoleEvent.HandleRoleUpdate();
+        break;
+      }
+      case GATEWAY_EVENTS.GUILD_ROLE_DELETE: {
+        const guildRoleEvent = new GuildRoleEvent(this.App, message.d);
+        guildRoleEvent.HandleRoleDelete();
         break;
       }
       default: {

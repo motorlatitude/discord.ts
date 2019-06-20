@@ -46,4 +46,23 @@ export default class RoleStore extends Store {
       this.AddRole(RoleObject);
     }
   }
+
+  public RemoveRole(RoleId: string): void {
+    this.Delete(RoleId).catch((err: Error) => {
+      this.Client.logger.write().error({
+        message: err,
+        service: 'DiscordClient.ChannelStore.RemoveRole.Store',
+      });
+    });
+  }
+
+  /**
+   * Fetch role for role id
+   * @param RoleId - id of role
+   */
+  public Fetch(RoleId: string): Promise<Role> {
+    return new Promise(resolve => {
+      resolve(this.Get(RoleId));
+    });
+  }
 }

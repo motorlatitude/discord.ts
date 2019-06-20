@@ -19,6 +19,7 @@ import {
   IGuildEmojisUpdateEventObject,
   IGuildMemberEventObject,
   IGuildMembersChunkEventObject,
+  IGuildRoleEventObject,
 } from './common/types';
 import CategoryChannel from './resources/Channel/CategoryChannel';
 import DirectMessageChannel from './resources/Channel/DirectMessageChannel';
@@ -290,6 +291,34 @@ export declare interface DiscordClient {
   ): this;
 
   /**
+   * ### GUILD_ROLE_CREATE Event
+   *
+   * Event is emitted if a role is created in a guild that the bot is a member of
+   * @event GUILD_ROLE_CREATE
+   */
+  // tslint:disable-next-line:unified-signatures
+  on(event: 'GUILD_ROLE_CREATE', listener: (GuildRoleEvent: IGuildRoleEventObject) => void): this;
+
+  /**
+   * ### GUILD_ROLE_UPDATE Event
+   *
+   * Event is emitted if a role is updated in a guild that the bot is a member of
+   * @event GUILD_ROLE_UPDATE
+   */
+  // tslint:disable-next-line:unified-signatures
+  on(event: 'GUILD_ROLE_UPDATE', listener: (GuildRoleEvent: IGuildRoleEventObject) => void): this;
+
+  /**
+   * ### GUILD_ROLE_DELETE Event
+   *
+   * Event is emitted if a role is deleted in a guild that the bot is a member of, the role passed
+   * in response will no longer exist as part of the Guild
+   * @event GUILD_ROLE_DELETE
+   */
+  // tslint:disable-next-line:unified-signatures
+  on(event: 'GUILD_ROLE_DELETE', listener: (GuildRoleEvent: IGuildRoleEventObject) => void): this;
+
+  /**
    * ### GATEWAY_FOUND Event
    *
    * Event is emitted if the client has successfully determined the Discord Websocket URL
@@ -321,6 +350,10 @@ export declare interface DiscordClient {
     GuildMemberEventObject: IGuildMemberEventObject,
   ): boolean;
   emit(event: 'GUILD_MEMBERS_CHUNK', GuildMembersChunkEventObject: IGuildMembersChunkEventObject): boolean;
+  emit(
+    event: 'GUILD_ROLE_CREATE' | 'GUILD_ROLE_UPDATE' | 'GUILD_ROLE_DELETE',
+    GuildRoleEvent: IGuildRoleEventObject,
+  ): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;
   // emit(event: string | symbol, ...args: any[]): boolean;

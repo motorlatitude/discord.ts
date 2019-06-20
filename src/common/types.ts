@@ -5,6 +5,7 @@ import VoiceChannel from '../resources/Channel/VoiceChannel';
 import Emoji from '../resources/Guild/Emoji';
 import Guild from '../resources/Guild/Guild';
 import GuildMember from '../resources/Guild/GuildMember';
+import Role from '../resources/Guild/Role';
 import User from '../resources/User/User';
 
 export interface IDiscordClientOptions {
@@ -211,6 +212,12 @@ export interface IDiscordGuildMembersChunkGatewayEvent {
   members: IDiscordGuildMember[];
 }
 
+export interface IDiscordGuildRoleEvent {
+  guild_id: string;
+  role?: IDiscordRole;
+  role_id?: string;
+}
+
 // discordts Event objects
 
 export interface IChannelDeleteEventObject {
@@ -248,6 +255,11 @@ export interface IGuildMemberEventObject {
 export interface IGuildMembersChunkEventObject {
   Guild: Guild;
   GuildMembers: GuildMember[];
+}
+
+export interface IGuildRoleEventObject {
+  Guild: Guild;
+  Role: Role;
 }
 
 // Stores

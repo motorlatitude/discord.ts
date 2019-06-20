@@ -17,6 +17,8 @@ import {
   IGuildBanEventObject,
   IGuildDeleteEventObject,
   IGuildEmojisUpdateEventObject,
+  IGuildMemberEventObject,
+  IGuildMembersChunkEventObject,
 } from './common/types';
 import CategoryChannel from './resources/Channel/CategoryChannel';
 import DirectMessageChannel from './resources/Channel/DirectMessageChannel';
@@ -251,6 +253,43 @@ export declare interface DiscordClient {
   on(event: 'GUILD_INTEGRATION_UPDATE', listener: (Guild: Guild) => void): this;
 
   /**
+   * ### GUILD_MEMBER_ADD Event
+   *
+   * Event is emitted if a new member joins a guild that the bot is a part of
+   * @event GUILD_MEMBER_ADD
+   */
+  on(event: 'GUILD_MEMBER_ADD', listener: (GuildMemberEventObject: IGuildMemberEventObject) => void): this;
+
+  /**
+   * ### GUILD_MEMBER_REMOVE Event
+   *
+   * Event is emitted if a member leaves a guild that the bot is part of (leave/kick/ban).
+   * @event GUILD_MEMBER_REMOVE
+   */
+  // tslint:disable-next-line:unified-signatures
+  on(event: 'GUILD_MEMBER_REMOVE', listener: (GuildMemberEventObject: IGuildMemberEventObject) => void): this;
+
+  /**
+   * ### GUILD_MEMBER_UPDATE Event
+   *
+   * Event is emitted if a member is updated in a guild that the bot is part of
+   * @event GUILD_MEMBER_UPDATE
+   */
+  // tslint:disable-next-line:unified-signatures
+  on(event: 'GUILD_MEMBER_UPDATE', listener: (GuildMemberEventObject: IGuildMemberEventObject) => void): this;
+
+  /**
+   * ### GUILD_MEMBERS_CHUNK Event
+   *
+   * Sent in response to Guild Request Members.
+   * @event GUILD_MEMBERS_CHUNK
+   */
+  on(
+    event: 'GUILD_MEMBERS_CHUNK',
+    listener: (GuildMembersChunkEventObject: IGuildMembersChunkEventObject) => void,
+  ): this;
+
+  /**
    * ### GATEWAY_FOUND Event
    *
    * Event is emitted if the client has successfully determined the Discord Websocket URL
@@ -277,6 +316,11 @@ export declare interface DiscordClient {
   emit(event: 'GUILD_DELETE', DeletedGuild: IGuildDeleteEventObject): boolean;
   emit(event: 'GUILD_BAN_ADD' | 'GUILD_BAN_REMOVE', BannedEvent: IGuildBanEventObject): boolean;
   emit(event: 'GUILD_EMOJIS_UPDATE', EmojiEvent: IGuildEmojisUpdateEventObject): boolean;
+  emit(
+    event: 'GUILD_MEMBER_ADD' | 'GUILD_MEMBER_REMOVE' | 'GUILD_MEMBER_UPDATE',
+    GuildMemberEventObject: IGuildMemberEventObject,
+  ): boolean;
+  emit(event: 'GUILD_MEMBERS_CHUNK', GuildMembersChunkEventObject: IGuildMembersChunkEventObject): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;
   // emit(event: string | symbol, ...args: any[]): boolean;

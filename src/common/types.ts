@@ -2,7 +2,7 @@ import CategoryChannel from '../resources/Channel/CategoryChannel';
 import DirectMessageChannel from '../resources/Channel/DirectMessageChannel';
 import TextChannel from '../resources/Channel/TextChannel';
 import VoiceChannel from '../resources/Channel/VoiceChannel';
-import Emoji from '../resources/Emoji/Emoji';
+import Emoji from '../resources/Guild/Emoji';
 import Guild from '../resources/Guild/Guild';
 import GuildMember from '../resources/Guild/GuildMember';
 import User from '../resources/User/User';
@@ -39,7 +39,7 @@ export interface IDiscordChannel {
   bitrate?: number;
   user_limit?: number;
   rate_limit_per_user?: number;
-  recipients?: any[]; // TODO user object
+  recipients?: IDiscordUser[];
   icon?: string;
   owner_id?: string;
   application_id?: string;
@@ -63,8 +63,8 @@ export interface IDiscordGuild {
   verification_level: number;
   default_message_notifications: number;
   explicit_content_filter: number;
-  roles: any[]; // TODO
-  emojis: any[]; // TODO
+  roles: IDiscordRole[];
+  emojis: IDiscordEmoji[];
   features: string[];
   mfa_level: number;
   application_id?: string;
@@ -115,11 +115,22 @@ export interface IDiscordUser {
 export interface IDiscordEmoji {
   id: string;
   name: string;
-  roles?: any[]; // TODO
+  roles?: string[];
   user?: IDiscordUser;
   require_colons?: boolean;
   managed?: boolean;
   animated?: boolean;
+}
+
+export interface IDiscordRole {
+  id: string;
+  name: string;
+  color: number;
+  hoist: boolean;
+  position: number;
+  permissions: number;
+  managed: boolean;
+  mentionable: boolean;
 }
 
 // Discord Gateway Interfaces
@@ -151,9 +162,9 @@ export interface IDiscordUnavailableGuildObject {
 
 export interface IDiscordReadyGatewayEvent {
   v: number;
-  user: any; // TODO user object
+  user: IDiscordUser;
   private_channels: [];
-  guilds: IDiscordUnavailableGuildObject[]; // TODO array of guild objects
+  guilds: IDiscordUnavailableGuildObject[];
   session_id: string;
   _trace: string[];
   shard?: number[];
@@ -167,7 +178,7 @@ export interface IDiscordChannelPinsUpdateGatewayEvent {
 
 export interface IDiscordGuildBanGatewayEvent {
   guild_id: string;
-  user: any; // TODO should be user object
+  user: IDiscordUser;
 }
 
 export interface IDiscordGuildEmojiUpdateGatewayEvent {
@@ -177,6 +188,27 @@ export interface IDiscordGuildEmojiUpdateGatewayEvent {
 
 export interface IDiscordGuildIntegrationUpdateGatewayEvent {
   guild_id: string;
+}
+
+export interface IDiscordGuildMemberAddGatewayEvent extends IDiscordGuildMember {
+  guild_id: string;
+}
+
+export interface IDiscordGuildMemberRemoveGatewayEvent {
+  guild_id: string;
+  user: IDiscordUser;
+}
+
+export interface IDiscordGuildMemberUpdateGatewayEvent {
+  guild_id: string;
+  roles: string[];
+  user: IDiscordUser;
+  nick: string;
+}
+
+export interface IDiscordGuildMembersChunkGatewayEvent {
+  guild_id: string;
+  members: IDiscordGuildMember[];
 }
 
 // discordts Event objects
@@ -206,6 +238,16 @@ export interface IGuildBanEventObject {
 export interface IGuildEmojisUpdateEventObject {
   Guild: Guild;
   Emojis: Emoji[];
+}
+
+export interface IGuildMemberEventObject {
+  Guild: Guild;
+  GuildMember: GuildMember;
+}
+
+export interface IGuildMembersChunkEventObject {
+  Guild: Guild;
+  GuildMembers: GuildMember[];
 }
 
 // Stores

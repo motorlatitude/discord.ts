@@ -7,7 +7,7 @@ export default class GuildMember {
   }
 
   public User: User;
-  public Roles: any[]; // TODO
+  public Roles: string[];
   public JoinedAt: number;
   public Deaf: boolean;
   public Mute: boolean;

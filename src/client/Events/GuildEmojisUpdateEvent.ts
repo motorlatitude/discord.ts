@@ -1,6 +1,6 @@
 import { IDiscordGuildEmojiUpdateGatewayEvent, IGuildEmojisUpdateEventObject } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
-import Emoji from '../../resources/Emoji/Emoji';
+import Emoji from '../../resources/Guild/Emoji';
 import Guild from '../../resources/Guild/Guild';
 import ClientDispatcherEvent from './ClientDispatcherEvent';
 

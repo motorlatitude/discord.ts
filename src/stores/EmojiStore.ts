@@ -1,5 +1,5 @@
 import DiscordClient from '../DiscordClient';
-import Emoji from '../resources/Emoji/Emoji';
+import Emoji from '../resources/Guild/Emoji';
 import Store from './Store';
 
 export default class EmojiStore extends Store {

@@ -12,6 +12,7 @@ import GuildBanEvent from './Events/GuildBanEvent';
 import GuildEmojisUpdateEvent from './Events/GuildEmojisUpdateEvent';
 import GuildEvent from './Events/GuildEvent';
 import GuildIntegrationEvent from './Events/GuildIntegrationEvent';
+import GuildMemberEvent from './Events/GuildMemberEvent';
 
 export default class ClientDispatcher {
   private readonly App: DiscordClient;
@@ -94,6 +95,26 @@ export default class ClientDispatcher {
       case GATEWAY_EVENTS.GUILD_INTEGRATIONS_UPDATE: {
         const guildIntegration = new GuildIntegrationEvent(this.App, message.d);
         guildIntegration.Handle();
+        break;
+      }
+      case GATEWAY_EVENTS.GUILD_MEMBER_ADD: {
+        const guildMemberEvent = new GuildMemberEvent(this.App);
+        guildMemberEvent.HandleMemberAdd(message.d);
+        break;
+      }
+      case GATEWAY_EVENTS.GUILD_MEMBER_REMOVE: {
+        const guildMemberEvent = new GuildMemberEvent(this.App);
+        guildMemberEvent.HandleMemberRemove(message.d);
+        break;
+      }
+      case GATEWAY_EVENTS.GUILD_MEMBER_UPDATE: {
+        const guildMemberEvent = new GuildMemberEvent(this.App);
+        guildMemberEvent.HandleMemberUpdate(message.d);
+        break;
+      }
+      case GATEWAY_EVENTS.GUILD_MEMBERS_CHUNK: {
+        const guildMemberEvent = new GuildMemberEvent(this.App);
+        guildMemberEvent.HandleMemberChunk(message.d);
         break;
       }
       default: {

@@ -1,4 +1,4 @@
-import { IDiscordChannel, IDiscordEmoji, IDiscordGuild, IDiscordGuildMember } from '../../common/types';
+import { IDiscordChannel, IDiscordEmoji, IDiscordGuild, IDiscordGuildMember, IDiscordRole } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import ChannelStore from '../../stores/ChannelStore';
 import TextChannel from '../Channel/TextChannel';
@@ -7,9 +7,11 @@ import VoiceChannel from '../Channel/VoiceChannel';
 import CHANNEL_TYPES from '../../common/constants/channeltypes';
 import EmojiStore from '../../stores/EmojiStore';
 import GuildMemberStore from '../../stores/GuildMemberStore';
+import RoleStore from '../../stores/RoleStore';
 import CategoryChannel from '../Channel/CategoryChannel';
-import Emoji from '../Emoji/Emoji';
+import Emoji from './Emoji';
 import GuildMember from './GuildMember';
+import Role from './Role';
 
 export default class Guild {
   public id: string;
@@ -20,7 +22,7 @@ export default class Guild {
   public VerificationLevel: number;
   public DefaultMessageNotification: number;
   public ExplicitContentFilter: number;
-  public Roles: any[]; // TODO
+  public Roles: RoleStore;
   public Emojis: EmojiStore;
   public Features: string[];
   public MFALevel: number;
@@ -33,7 +35,7 @@ export default class Guild {
   public VanityURLCode: string | undefined;
   public MaxPresences: number | undefined;
   public Presences: any[] | undefined; // TODO
-  public Channels: ChannelStore; // TODO
+  public Channels: ChannelStore;
   public Members: GuildMemberStore;
   public VoiceStates: any[] | undefined; // TODO
   public MemberCount: number | undefined;
@@ -65,7 +67,10 @@ export default class Guild {
     this.VerificationLevel = GuildObject.verification_level;
     this.DefaultMessageNotification = GuildObject.default_message_notifications;
     this.ExplicitContentFilter = GuildObject.explicit_content_filter;
-    this.Roles = GuildObject.roles || []; // TODO
+    this.Roles = new RoleStore(client);
+    if (this.Roles) {
+      this.ResolveRoles(GuildObject.roles);
+    }
     this.Emojis = new EmojiStore(this.Client);
     this.ResolveEmojis(GuildObject.emojis);
     this.Features = GuildObject.features || [];
@@ -102,6 +107,12 @@ export default class Guild {
     this.Owner = GuildObject.owner;
     this.Icon = GuildObject.icon;
     this.Splash = GuildObject.splash;
+  }
+
+  private ResolveRoles(roles: IDiscordRole[]): void {
+    for (const role of roles) {
+      this.Roles.AddRole(new Role(role));
+    }
   }
 
   private ResolveEmojis(emojis: IDiscordEmoji[]): void {

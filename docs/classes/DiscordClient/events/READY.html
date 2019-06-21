@@ -1,0 +1,65 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> READY
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">READY</h1>
+<p class="class-blurb">
+    Event is emitted once the client is ready.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;READY&quot;">event: "READY"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>User: <i>User</i></code>
+    <p>
+        A User instance for the current connections user
+    </p>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted once a suitable gateway WebSocket URL was fetched and a new WebSocket connection was
+    established and the connection was opened. An <code>identify</code> packet was already sent to discord and accepted
+    with a <code>READY</code> event emitted from the active Discord gateway WebSocket connection.
+    <br/><br/>
+    This event should be used to establish that the client is ready to handle WebSocket communications and no
+    communications should be sent until then. Should the client disconnect a <code>DISCONNECT</code> event will be
+    emitted.
+    <br/><br/>
+    This user instance can now be accessed from the client as long as the client is connected;
+</p>
+<pre><code class="language-typescript">const DiscordClient = require('discordts');
+
+DiscordClient.on("READY", function(UserInstance: User){
+    console.log(UserInstance.id);
+    // Will output the user id
+    console.log(DiscordClient.User.id);
+    // Will output the same user id
+});</code></pre>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                User-Specific Properties
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/User"></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

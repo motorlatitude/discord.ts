@@ -1,4 +1,4 @@
-import { IDiscordGuildRoleEvent, IGuildRoleEventObject } from '../../common/types';
+import { IDiscordGuildRoleEvent } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import Guild from '../../resources/Guild/Guild';
 import Role from '../../resources/Guild/Role';
@@ -8,7 +8,8 @@ export default class GuildRoleEvent extends ClientDispatcherEvent {
   public readonly Message: IDiscordGuildRoleEvent;
 
   public EventName?: 'GUILD_ROLE_CREATE' | 'GUILD_ROLE_UPDATE' | 'GUILD_ROLE_DELETE';
-  public EventObject?: IGuildRoleEventObject;
+  public EventGuildObject?: Guild;
+  public EventRoleObject?: Role;
 
   constructor(client: DiscordClient, msg: IDiscordGuildRoleEvent) {
     super(client);
@@ -27,10 +28,8 @@ export default class GuildRoleEvent extends ClientDispatcherEvent {
           AffectedGuild.Roles.AddRole(role);
 
           this.EventName = 'GUILD_ROLE_CREATE';
-          this.EventObject = {
-            Guild: AffectedGuild,
-            Role: role,
-          };
+          this.EventGuildObject = AffectedGuild;
+          this.EventRoleObject = role;
 
           this.Handle();
         } else {
@@ -60,10 +59,8 @@ export default class GuildRoleEvent extends ClientDispatcherEvent {
           AffectedGuild.Roles.UpdateRole(this.Message.role.id, UpdatedRole);
 
           this.EventName = 'GUILD_ROLE_UPDATE';
-          this.EventObject = {
-            Guild: AffectedGuild,
-            Role: UpdatedRole,
-          };
+          this.EventGuildObject = AffectedGuild;
+          this.EventRoleObject = UpdatedRole;
 
           this.Handle();
         } else {
@@ -94,10 +91,8 @@ export default class GuildRoleEvent extends ClientDispatcherEvent {
               AffectedGuild.Roles.RemoveRole(AffectedRole.id);
 
               this.EventName = 'GUILD_ROLE_DELETE';
-              this.EventObject = {
-                Guild: AffectedGuild,
-                Role: AffectedRole,
-              };
+              this.EventGuildObject = AffectedGuild;
+              this.EventRoleObject = AffectedRole;
 
               this.Handle();
             })
@@ -124,8 +119,8 @@ export default class GuildRoleEvent extends ClientDispatcherEvent {
   }
 
   public EmitEvent(): void {
-    if (this.EventName && this.EventObject) {
-      this.Client.emit(this.EventName, this.EventObject);
+    if (this.EventName && this.EventGuildObject && this.EventRoleObject) {
+      this.Client.emit(this.EventName, this.EventGuildObject, this.EventRoleObject);
     }
   }
 }

@@ -1,0 +1,48 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> GUILD_DELETE
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">GUILD_DELETE</h1>
+<p class="class-blurb">
+    Event is emitted if a guild becomes unavailable.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;GUILD_DELETE&quot;">event: "GUILD_DELETE"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>DeletedGuild: <i>IGuildDeleteEventObject</i></code>
+    <p>
+        Information about the removal.
+    </p>
+    <div class="parameters-block">
+        <code><i>IGuildDeleteEventObject</i></code>
+        <p>
+            An object containing <code>id</code>, <code>Unavailable?</code> and <code>WasRemoved</code>
+        </p>
+    </div>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted if a guild becomes unavailable due to a guild outage, or when the bot leaves or is removed from
+    the guild.
+    <br/><br/>
+    <code>WasRemoved</code> argument will tell you if the bot was kicked or if there's a guild outage.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

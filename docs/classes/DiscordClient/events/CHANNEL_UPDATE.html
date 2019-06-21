@@ -1,0 +1,41 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> CHANNEL_UPDATE
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">CHANNEL_UPDATE</h1>
+<p class="class-blurb">
+    Event is emitted if a new channel has been updated.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;CHANNEL_UPDATE&quot;">event: "CHANNEL_UPDATE"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>Channel: <i>TextChannel | VoiceChannel | CategoryChannel | DirectMessageChannel</i></code>
+    <p>
+        A Channel instance containing the existing updated channel instance.
+    </p>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted if a channel is updated in a guild in which the bot is a member and will return an existing <code>TextChannel</code>,
+    <code>VoiceChannel</code> or <code>CategoryChannel</code> instance. It will also be emitted if a DM channel is updated
+    and will return an existing <code>DirectMessageChannel</code> instance in this case.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

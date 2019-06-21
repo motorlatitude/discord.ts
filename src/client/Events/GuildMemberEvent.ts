@@ -3,8 +3,6 @@ import {
   IDiscordGuildMemberRemoveGatewayEvent,
   IDiscordGuildMembersChunkGatewayEvent,
   IDiscordGuildMemberUpdateGatewayEvent,
-  IGuildMemberEventObject,
-  IGuildMembersChunkEventObject,
 } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import Guild from '../../resources/Guild/Guild';
@@ -14,9 +12,10 @@ import ClientDispatcherEvent from './ClientDispatcherEvent';
 
 export default class GuildMemberEvent extends ClientDispatcherEvent {
   public EventName?: 'GUILD_MEMBER_ADD' | 'GUILD_MEMBER_UPDATE' | 'GUILD_MEMBER_REMOVE' | 'GUILD_MEMBERS_CHUNK';
-  public EventObject?: IGuildMemberEventObject;
+  public EventGuildObject?: Guild;
+  public EventGuildMemberObject?: GuildMember;
 
-  public EventChunkObject?: IGuildMembersChunkEventObject;
+  public EventGuildMemberChunkObject?: GuildMember[];
 
   /**
    * Constructor
@@ -38,10 +37,8 @@ export default class GuildMemberEvent extends ClientDispatcherEvent {
 
         this.EventName = 'GUILD_MEMBER_ADD';
 
-        this.EventObject = {
-          Guild: AffectedGuild,
-          GuildMember: NewGuildMember,
-        };
+        this.EventGuildObject = AffectedGuild;
+        this.EventGuildMemberObject = NewGuildMember;
 
         this.Handle();
       })
@@ -66,10 +63,8 @@ export default class GuildMemberEvent extends ClientDispatcherEvent {
 
             this.EventName = 'GUILD_MEMBER_REMOVE';
 
-            this.EventObject = {
-              Guild: AffectedGuild,
-              GuildMember: AffectedMember,
-            };
+            this.EventGuildObject = AffectedGuild;
+            this.EventGuildMemberObject = AffectedMember;
 
             this.Handle();
           })
@@ -103,10 +98,8 @@ export default class GuildMemberEvent extends ClientDispatcherEvent {
 
             this.EventName = 'GUILD_MEMBER_UPDATE';
 
-            this.EventObject = {
-              Guild: AffectedGuild,
-              GuildMember: AffectedMember,
-            };
+            this.EventGuildObject = AffectedGuild;
+            this.EventGuildMemberObject = AffectedMember;
 
             this.Handle();
           })
@@ -140,11 +133,10 @@ export default class GuildMemberEvent extends ClientDispatcherEvent {
           AffectedGuild.Members.UpdateGuildMember(member.user.id, NewMember);
           EventMemberList.push(NewMember);
         }
+        this.EventName = 'GUILD_MEMBERS_CHUNK';
 
-        this.EventChunkObject = {
-          Guild: AffectedGuild,
-          GuildMembers: EventMemberList,
-        };
+        this.EventGuildObject = AffectedGuild;
+        this.EventGuildMemberChunkObject = EventMemberList;
 
         this.Handle();
       })
@@ -162,12 +154,12 @@ export default class GuildMemberEvent extends ClientDispatcherEvent {
       this.EventName === 'GUILD_MEMBER_REMOVE' ||
       this.EventName === 'GUILD_MEMBER_UPDATE'
     ) {
-      if (this.EventObject) {
-        this.Client.emit(this.EventName, this.EventObject);
+      if (this.EventGuildObject && this.EventGuildMemberObject) {
+        this.Client.emit(this.EventName, this.EventGuildObject, this.EventGuildMemberObject);
       }
     } else if (this.EventName === 'GUILD_MEMBERS_CHUNK') {
-      if (this.EventChunkObject) {
-        this.Client.emit(this.EventName, this.EventChunkObject);
+      if (this.EventGuildObject && this.EventGuildMemberChunkObject) {
+        this.Client.emit(this.EventName, this.EventGuildObject, this.EventGuildMemberChunkObject);
       }
     }
   }

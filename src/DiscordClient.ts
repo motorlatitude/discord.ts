@@ -14,19 +14,16 @@ import {
   IChannelPinsUpdateEventObject,
   IDiscordClientOptions,
   IGatewayResponse,
-  IGuildBanEventObject,
   IGuildDeleteEventObject,
-  IGuildEmojisUpdateEventObject,
-  IGuildMemberEventObject,
-  IGuildMembersChunkEventObject,
-  IGuildRoleEventObject,
 } from './common/types';
 import CategoryChannel from './resources/Channel/CategoryChannel';
 import DirectMessageChannel from './resources/Channel/DirectMessageChannel';
 import TextChannel from './resources/Channel/TextChannel';
 import VoiceChannel from './resources/Channel/VoiceChannel';
+import Emoji from './resources/Guild/Emoji';
 import Guild from './resources/Guild/Guild';
 import GuildMember from './resources/Guild/GuildMember';
+import Role from './resources/Guild/Role';
 import Message from './resources/Message/Message';
 import User from './resources/User/User';
 import ChannelStore from './stores/ChannelStore';
@@ -36,15 +33,6 @@ import GuildStore from './stores/GuildStore';
  * ## DiscordClient
  *
  * Represents DiscordClient Class and Entry Point For discord.ts
- *
- * Create a new discord client;
- * ```javascript
- *  const DiscordClient = require('discordts');
- *
- *  let client = new DiscordClient({token: "DISCORD API TOKEN"});
- *  client.on("ready", HandleReadyEvent);
- *  client.connect();
- * ```
  */
 export class DiscordClient extends events.EventEmitter {
   /**
@@ -56,16 +44,6 @@ export class DiscordClient extends events.EventEmitter {
    * @param gateway - Discord Gateway Websocket URL
    */
   public gateway: string | undefined;
-
-  /**
-   * @param connected - Are we currently connected to the gateway?
-   */
-  public connected: boolean = false;
-
-  /**
-   * @param UserId - The user_id we're currently using that is assigned to the [[token]]
-   */
-  public UserId: string = '';
 
   /**
    * @param Guilds - All available guilds
@@ -91,7 +69,7 @@ export class DiscordClient extends events.EventEmitter {
   /**
    * @param connect - Our Connection with the Discord Gateway Websocket Server
    */
-  public connection: ClientConnection | undefined;
+  public Connection?: ClientConnection;
 
   /**
    * @param logger - For writing logs
@@ -151,8 +129,8 @@ export class DiscordClient extends events.EventEmitter {
    * @param url - gateway server url
    */
   private EstablishGatewayConnection(url: string): void {
-    this.connection = new ClientConnection(this, this.logger);
-    this.connection.connect(url);
+    this.Connection = new ClientConnection(this, this.logger);
+    this.Connection.connect(url);
   }
 }
 
@@ -239,12 +217,29 @@ export declare interface DiscordClient {
   on(event: 'GUILD_DELETE', listener: (DeletedGuild: IGuildDeleteEventObject) => void): this;
 
   /**
+   * ### GUILD_BAN_ADD Event
+   *
+   * Event is emitted if a member is banned from a guild that the bot is a member of
+   * @event GUILD_BAN_ADD
+   */
+  on(event: 'GUILD_BAN_ADD', listener: (Guild: Guild, User: User) => void): this;
+
+  /**
+   * ### GUILD_BAN_REMOVE Event
+   *
+   * Event is emitted if a member is unbanned from a guild that the bot is a member of
+   * @event GUILD_BAN_ADD
+   */
+  // tslint:disable-next-line:unified-signatures
+  on(event: 'GUILD_BAN_REMOVE', listener: (Guild: Guild, User: User) => void): this;
+
+  /**
    * ### GUILD_EMOJIS_UPDATE Event
    *
    * Event is emitted if an emoji in a joined guild has been updated
    * @event GUILD_EMOJIS_UPDATE
    */
-  on(event: 'GUILD_EMOJIS_UPDATE', listener: (EmojiUpdate: IGuildEmojisUpdateEventObject) => void): this;
+  on(event: 'GUILD_EMOJIS_UPDATE', listener: (Guild: Guild, Emojis: Emoji[]) => void): this;
 
   /**
    * ### GUILD_INTEGRATION_UPDATE Event
@@ -261,7 +256,7 @@ export declare interface DiscordClient {
    * Event is emitted if a new member joins a guild that the bot is a part of
    * @event GUILD_MEMBER_ADD
    */
-  on(event: 'GUILD_MEMBER_ADD', listener: (GuildMemberEventObject: IGuildMemberEventObject) => void): this;
+  on(event: 'GUILD_MEMBER_ADD', listener: (Guild: Guild, GuildMember: GuildMember) => void): this;
 
   /**
    * ### GUILD_MEMBER_REMOVE Event
@@ -270,7 +265,7 @@ export declare interface DiscordClient {
    * @event GUILD_MEMBER_REMOVE
    */
   // tslint:disable-next-line:unified-signatures
-  on(event: 'GUILD_MEMBER_REMOVE', listener: (GuildMemberEventObject: IGuildMemberEventObject) => void): this;
+  on(event: 'GUILD_MEMBER_REMOVE', listener: (Guild: Guild, GuildMember: GuildMember) => void): this;
 
   /**
    * ### GUILD_MEMBER_UPDATE Event
@@ -279,7 +274,7 @@ export declare interface DiscordClient {
    * @event GUILD_MEMBER_UPDATE
    */
   // tslint:disable-next-line:unified-signatures
-  on(event: 'GUILD_MEMBER_UPDATE', listener: (GuildMemberEventObject: IGuildMemberEventObject) => void): this;
+  on(event: 'GUILD_MEMBER_UPDATE', listener: (Guild: Guild, GuildMember: GuildMember) => void): this;
 
   /**
    * ### GUILD_MEMBERS_CHUNK Event
@@ -287,10 +282,7 @@ export declare interface DiscordClient {
    * Sent in response to Guild Request Members.
    * @event GUILD_MEMBERS_CHUNK
    */
-  on(
-    event: 'GUILD_MEMBERS_CHUNK',
-    listener: (GuildMembersChunkEventObject: IGuildMembersChunkEventObject) => void,
-  ): this;
+  on(event: 'GUILD_MEMBERS_CHUNK', listener: (Guild: Guild, GuildMembers: GuildMember[]) => void): this;
 
   /**
    * ### GUILD_ROLE_CREATE Event
@@ -299,7 +291,7 @@ export declare interface DiscordClient {
    * @event GUILD_ROLE_CREATE
    */
   // tslint:disable-next-line:unified-signatures
-  on(event: 'GUILD_ROLE_CREATE', listener: (GuildRoleEvent: IGuildRoleEventObject) => void): this;
+  on(event: 'GUILD_ROLE_CREATE', listener: (Guild: Guild, Role: Role) => void): this;
 
   /**
    * ### GUILD_ROLE_UPDATE Event
@@ -308,7 +300,7 @@ export declare interface DiscordClient {
    * @event GUILD_ROLE_UPDATE
    */
   // tslint:disable-next-line:unified-signatures
-  on(event: 'GUILD_ROLE_UPDATE', listener: (GuildRoleEvent: IGuildRoleEventObject) => void): this;
+  on(event: 'GUILD_ROLE_UPDATE', listener: (Guild: Guild, Role: Role) => void): this;
 
   /**
    * ### GUILD_ROLE_DELETE Event
@@ -318,7 +310,7 @@ export declare interface DiscordClient {
    * @event GUILD_ROLE_DELETE
    */
   // tslint:disable-next-line:unified-signatures
-  on(event: 'GUILD_ROLE_DELETE', listener: (GuildRoleEvent: IGuildRoleEventObject) => void): this;
+  on(event: 'GUILD_ROLE_DELETE', listener: (Guild: Guild, Role: Role) => void): this;
 
   /**
    * ### MESSAGE_CREATE Event
@@ -413,17 +405,15 @@ export declare interface DiscordClient {
   emit(event: 'CHANNEL_PINS_UPDATE', ChannelPin: IChannelPinsUpdateEventObject): boolean;
   emit(event: 'GUILD_CREATE' | 'GUILD_UPDATE' | 'GUILD_INTEGRATION_UPDATE', Guild: Guild): boolean;
   emit(event: 'GUILD_DELETE', DeletedGuild: IGuildDeleteEventObject): boolean;
-  emit(event: 'GUILD_BAN_ADD' | 'GUILD_BAN_REMOVE', BannedEvent: IGuildBanEventObject): boolean;
-  emit(event: 'GUILD_EMOJIS_UPDATE', EmojiEvent: IGuildEmojisUpdateEventObject): boolean;
+  emit(event: 'GUILD_BAN_ADD' | 'GUILD_BAN_REMOVE', Guild: Guild, User: User): boolean;
+  emit(event: 'GUILD_EMOJIS_UPDATE', Guild: Guild, Emojis: Emoji[]): boolean;
   emit(
     event: 'GUILD_MEMBER_ADD' | 'GUILD_MEMBER_REMOVE' | 'GUILD_MEMBER_UPDATE',
-    GuildMemberEventObject: IGuildMemberEventObject,
+    Guild: Guild,
+    GuildMember: GuildMember,
   ): boolean;
-  emit(event: 'GUILD_MEMBERS_CHUNK', GuildMembersChunkEventObject: IGuildMembersChunkEventObject): boolean;
-  emit(
-    event: 'GUILD_ROLE_CREATE' | 'GUILD_ROLE_UPDATE' | 'GUILD_ROLE_DELETE',
-    GuildRoleEvent: IGuildRoleEventObject,
-  ): boolean;
+  emit(event: 'GUILD_MEMBERS_CHUNK', Guild: Guild, GuildMembers: GuildMember[]): boolean;
+  emit(event: 'GUILD_ROLE_CREATE' | 'GUILD_ROLE_UPDATE' | 'GUILD_ROLE_DELETE', Guild: Guild, Role: Role): boolean;
   emit(
     event: 'MESSAGE_CREATE' | 'MESSAGE_UPDATE' | 'MESSAGE_DELETE',
     MessageObject: Message,

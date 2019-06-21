@@ -2,11 +2,8 @@ import CategoryChannel from '../resources/Channel/CategoryChannel';
 import DirectMessageChannel from '../resources/Channel/DirectMessageChannel';
 import TextChannel from '../resources/Channel/TextChannel';
 import VoiceChannel from '../resources/Channel/VoiceChannel';
-import Emoji from '../resources/Guild/Emoji';
 import Guild from '../resources/Guild/Guild';
 import GuildMember from '../resources/Guild/GuildMember';
-import Role from '../resources/Guild/Role';
-import User from '../resources/User/User';
 
 export interface IDiscordClientOptions {
   token: string;
@@ -261,12 +258,6 @@ export interface IDiscordHelloPackage {
   _trace: string[];
 }
 
-export interface IDiscordDispatchDataPackage {
-  s: number;
-  t: string;
-  d: any;
-}
-
 export interface IDiscordUnavailableGuildObject {
   id: string;
   unavailable?: boolean;
@@ -381,40 +372,10 @@ export interface IGuildDeleteEventObject {
   WasRemoved: boolean;
 }
 
-export interface IGuildBanEventObject {
-  Guild: Guild;
-  User: User;
-}
-
-export interface IGuildEmojisUpdateEventObject {
-  Guild: Guild;
-  Emojis: Emoji[];
-}
-
-export interface IGuildMemberEventObject {
-  Guild: Guild;
-  GuildMember: GuildMember;
-}
-
-export interface IGuildMembersChunkEventObject {
-  Guild: Guild;
-  GuildMembers: GuildMember[];
-}
-
-export interface IGuildRoleEventObject {
-  Guild: Guild;
-  Role: Role;
-}
-
 // Stores
 
 export interface IGuildMemberList {
   [UserId: string]: GuildMember;
-}
-
-export interface IGuildBannedMember {
-  Reason?: string;
-  User: User;
 }
 
 export type IChannel = TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel;

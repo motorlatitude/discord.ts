@@ -1,4 +1,4 @@
-import { IDiscordGuildBanGatewayEvent, IGuildBanEventObject } from '../../common/types';
+import { IDiscordGuildBanGatewayEvent } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import Guild from '../../resources/Guild/Guild';
 import User from '../../resources/User/User';
@@ -8,7 +8,8 @@ export default class GuildBanEvent extends ClientDispatcherEvent {
   public readonly Message: IDiscordGuildBanGatewayEvent;
 
   public EventName?: 'GUILD_BAN_REMOVE' | 'GUILD_BAN_ADD';
-  public EventObject?: IGuildBanEventObject;
+  public EventGuildObject?: Guild;
+  public EventUserObject?: User;
 
   constructor(client: DiscordClient, msg: IDiscordGuildBanGatewayEvent) {
     super(client);
@@ -25,10 +26,8 @@ export default class GuildBanEvent extends ClientDispatcherEvent {
 
       AffectedGuild.Members.RemoveGuildMember(this.Message.user.id); // We don't store the ban, bans must be fetched separately through rest
 
-      this.EventObject = {
-        Guild: AffectedGuild,
-        User: new User(this.Message.user),
-      };
+      this.EventGuildObject = AffectedGuild;
+      this.EventUserObject = new User(this.Message.user);
 
       this.Handle();
     });
@@ -41,18 +40,16 @@ export default class GuildBanEvent extends ClientDispatcherEvent {
     this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
       this.EventName = 'GUILD_BAN_REMOVE';
 
-      this.EventObject = {
-        Guild: AffectedGuild,
-        User: new User(this.Message.user),
-      };
+      this.EventGuildObject = AffectedGuild;
+      this.EventUserObject = new User(this.Message.user);
 
       this.Handle();
     });
   }
 
   public EmitEvent(): void {
-    if (this.EventName && this.EventObject) {
-      this.Client.emit(this.EventName, this.EventObject);
+    if (this.EventName && this.EventGuildObject && this.EventUserObject) {
+      this.Client.emit(this.EventName, this.EventGuildObject, this.EventUserObject);
     }
   }
 }

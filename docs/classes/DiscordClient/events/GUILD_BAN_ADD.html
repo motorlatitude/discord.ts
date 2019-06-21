@@ -1,0 +1,44 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> GUILD_BAN_ADD
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">GUILD_BAN_ADD</h1>
+<p class="class-blurb">
+    Event is emitted if a member is banned in a guild.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;GUILD_BAN_ADD&quot;">event: "GUILD_BAN_ADD"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>Guild: <i>Guild</i></code>
+    <p>
+        The affected Guild instance.
+    </p>
+    <code>User: <i>User</i></code>
+    <p>
+        The affected User instance.
+    </p>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted if a member in a guild that the bot is a member of gets banned. No reason is supplied here. To
+    get the reason for a ban a separate REST request should be carried out on the affected guild.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,98 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient
+</div>
+
+<div class="doc-type">Instance</div>
+<h1 class="reduced">DiscordClient</h1>
+<p class="class-blurb">
+    An instance that controls events and initiates a connection with the discord gateway server.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript">class DiscordClient extends events.EventEmitter</code></pre>
+<h2>Overview</h2>
+<p>
+    Every application wanting to utilise discords API gateway will require to use a <code>DiscordClient</code> instance
+    to keep track of Channels, Guilds, Users and more. The <code>DiscordClient</code> instances will issue events as they
+    come in from the gateway after manipulating its internal components.
+    <br/><br/>
+    The <code>DiscordClient</code> instance can also be used to access discords REST API irrespective of using the gateway
+    connection.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">Topics</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Creating a Client
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/constructor"></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                User-Specific Properties
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/User"></li>
+                    <li data-load="classes/DiscordClient/topics/Channels"></li>
+                    <li data-load="classes/DiscordClient/topics/Guilds"></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Handling Connection
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/Connection"></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Handling Events
+            </td>
+        <td>
+            <ul>
+                <li data-load="classes/DiscordClient/topics/events"></li>
+                <li data-load="classes/DiscordClient/events/READY"></li>
+                <li data-load="classes/DiscordClient/events/CHANNEL_CREATE"></li>
+                <li data-load="classes/DiscordClient/events/CHANNEL_UPDATE"></li>
+                <li data-load="classes/DiscordClient/events/CHANNEL_DELETE"></li>
+                <li data-load="classes/DiscordClient/events/CHANNEL_PINS_UPDATE"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_CREATE"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_UPDATE"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_DELETE"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_BAN_ADD"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_BAN_REMOVE"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_EMOJIS_UPDATE"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_INTEGRATIONS_UPDATE"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_MEMBER_ADD"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_MEMBER_UPDATE"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_MEMBER_REMOVE"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_MEMBERS_CHUNK"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_ROLE_CREATE"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_ROLE_UPDATE"></li>
+                <li data-load="classes/DiscordClient/events/GUILD_ROLE_DELETE"></li>
+            </ul>
+        </td>
+    </tr>
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

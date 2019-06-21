@@ -1,0 +1,62 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Initializer
+</div>
+
+<div class="doc-type">Initializer</div>
+<h1 class="reduced">DiscordClient(options: {...args})</h1>
+<p class="class-blurb">
+    Returns a DiscordClient instance.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="new <span>DiscordClient</span>(<span>options</span>: {...args})">new DiscordClient(options: {...args})</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>options</code>
+    <p>
+        Options supplied to the client. This should be an object of arguments
+    </p>
+    <div class="parameters-block">
+        <code>{...args}</code>
+        <p>
+            Possible arguments;
+        </p>
+        <ul>
+            <li><code>token: <i class="type">string</i></code> - A Discord Bot Token</li>
+        </ul>
+    </div>
+</div>
+<div class="notification warn">
+    <div class="notification-title">Important</div>
+    <div class="notification-body">
+        A <code>token</code> attribute <strong>must</strong> be supplied as part of the options and must have a value
+        with type string, corresponding with a valid <a href="https://discordapp.com/developers/docs/reference#authentication">Discord API Bot Token</a>
+    </div>
+</div>
+<h2>Return Value</h2>
+<p>
+    A new <span class="link" data-link="classes/DiscordClient/DiscordClient">DiscordClient</span> instance.
+</p>
+<h2>Discussion</h2>
+<p>
+    This instance servers as the entry point for this module and most interactions will occur through it. Whilst it is
+    possible to run multiple instances at once with separate <code>tokens</code> within the same code, it is discouraged
+    due to potentially running into resource (such as memory) issues. This is, however, down to the developer to decide and
+    depends on the scope of the intended project.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,44 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> GUILD_MEMBERS_CHUNK
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">GUILD_MEMBERS_CHUNK</h1>
+<p class="class-blurb">
+    Event returns a list of guild members.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;GUILD_MEMBERS_CHUNK&quot;">event: "GUILD_MEMBERS_CHUNK"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>Guild: <i>Guild</i></code>
+    <p>
+        A Guild instance containing the existing updated Guild instance.
+    </p>
+    <code>GuildMembers: <i>GuildMember</i>[]</code>
+    <p>
+        An array of GuildMember instances.
+    </p>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted in response to requesting guild members via the gateway. This will automatically also completely
+    populate the <code>Members</code> attribute of the <code>Guild</code> instance.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

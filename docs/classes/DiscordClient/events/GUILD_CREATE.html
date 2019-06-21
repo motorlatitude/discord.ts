@@ -1,0 +1,64 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> GUILD_CREATE
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">GUILD_CREATE</h1>
+<p class="class-blurb">
+    Event is emitted if the bot joins a guild or lazy loads guilds after connecting.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;GUILD_CREATE&quot;">event: "GUILD_CREATE"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>Guild: <i>Guild</i></code>
+    <p>
+        A Guild instance containing the newly joined guild.
+    </p>
+</div>
+<br/>
+<div class="notification info">
+    <div class="notification-title">Information</div>
+    <div class="notification-body">
+        The created <code>Guild</code> Instance will be populated using available information from discords GUILD_CREATE
+        event. When initially connecting, the gateway will only send offline members if a guild has less than the set
+        <code>large_threshold</code> members. Additional members will have to be explicitly requested.
+    </div>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted if the bot joins a guild. The bot joins a guild in multiple scenarios as defined in the
+    <a href="https://discordapp.com/developers/docs/topics/gateway#guild-create">discord documentation</a>;
+</p>
+<div class="quote">
+    <div class="quote-title">Guild Create Event Scenarios</div>
+    <div class="quote-text">
+        This event can be sent in three different scenarios:
+        <ol>
+            <li>When a user is initially connecting, to lazily load and backfill information for all unavailable guilds sent in the Ready event.</li>
+            <li>When a Guild becomes available again to the client.</li>
+            <li>When the current user joins a new Guild.</li>
+        </ol>
+    </div>
+</div>
+<p>
+    The client will also emit <code>"GUILD_CREATE"</code> event in each of these cases, you should handle separating
+    these event types yourself, based on your project scope.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

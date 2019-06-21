@@ -1,0 +1,41 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> CHANNEL_PINS_UPDATE
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">CHANNEL_PINS_UPDATE</h1>
+<p class="class-blurb">
+    Event is emitted if a message is pinned or unpinned.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;CHANNEL_PINS_UPDATE&quot;">event: "CHANNEL_PINS_UPDATE"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>ChannelPinsObject: <i>IChannelPinsUpdateEventObject</i></code>
+    <p>
+        An object containing the relevant Guild and Channel instances as well as the <code>LastPinTimestamp</code> value.
+    </p>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted if a message has been pinned or unpinned in a channel that bot is a member off. If this channel is
+    part of a guild the <code>Channel</code> parameter will be of type <code>TextChannel</code>, otherwise if the channel
+    is a direct message channel the <code>Channel</code> parameter will be of type <code>DirectMessageChannel</code>.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

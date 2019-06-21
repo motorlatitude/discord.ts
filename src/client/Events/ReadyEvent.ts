@@ -22,8 +22,8 @@ export default class ReadyEvent extends ClientDispatcherEvent {
 
     this.EventObject = new User(this.Message.user);
 
-    if (this.Client.connection) {
-      this.Client.connection.SetStatus('', 2, 'online');
+    if (this.Client.Connection) {
+      this.Client.Connection.SetStatus('', 2, 'online');
     }
 
     super.Handle();
@@ -36,19 +36,19 @@ export default class ReadyEvent extends ClientDispatcherEvent {
   }
 
   private StoreGatewayProtocolVersion(ProtocolVersion: number): void {
-    if (this.Client.connection) {
-      this.Client.connection.GatewayProtocolVersion = ProtocolVersion;
+    if (this.Client.Connection) {
+      this.Client.Connection.GatewayProtocolVersion = ProtocolVersion;
     }
   }
 
   private StoreSessionId(SessionId: string): void {
-    if (this.Client.connection) {
-      this.Client.connection.GatewaySessionId = SessionId;
+    if (this.Client.Connection) {
+      this.Client.Connection.GatewaySessionId = SessionId;
     }
   }
 
   private StoreUser(UserObject: IDiscordUser): void {
-    if (this.Client.connection) {
+    if (this.Client.Connection) {
       this.Client.User = new User(UserObject);
     }
   }

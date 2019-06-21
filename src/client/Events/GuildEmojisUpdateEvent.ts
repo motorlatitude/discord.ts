@@ -1,4 +1,4 @@
-import { IDiscordGuildEmojiUpdateGatewayEvent, IGuildEmojisUpdateEventObject } from '../../common/types';
+import { IDiscordGuildEmojiUpdateGatewayEvent } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import Emoji from '../../resources/Guild/Emoji';
 import Guild from '../../resources/Guild/Guild';
@@ -8,7 +8,8 @@ export default class GuildEmojisUpdateEvent extends ClientDispatcherEvent {
   public readonly Message: IDiscordGuildEmojiUpdateGatewayEvent;
 
   public readonly EventName: 'GUILD_EMOJIS_UPDATE' = 'GUILD_EMOJIS_UPDATE';
-  public EventObject?: IGuildEmojisUpdateEventObject;
+  public EventGuildObject?: Guild;
+  public EventEmojisObject?: Emoji[];
 
   constructor(client: DiscordClient, msg: IDiscordGuildEmojiUpdateGatewayEvent) {
     super(client);
@@ -25,18 +26,16 @@ export default class GuildEmojisUpdateEvent extends ClientDispatcherEvent {
         AffectedGuild.Emojis.ReplaceEmoji(emoji.id, e);
       }
 
-      this.EventObject = {
-        Emojis: emojis,
-        Guild: AffectedGuild,
-      };
+      this.EventGuildObject = AffectedGuild;
+      this.EventEmojisObject = emojis;
     });
 
     super.Handle();
   }
 
   public EmitEvent(): void {
-    if (this.EventName && this.EventObject) {
-      this.Client.emit(this.EventName, this.EventObject);
+    if (this.EventName && this.EventGuildObject && this.EventEmojisObject) {
+      this.Client.emit(this.EventName, this.EventGuildObject, this.EventEmojisObject);
     }
   }
 }

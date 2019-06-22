@@ -171,7 +171,7 @@ export interface IDiscordMessageActivity {
 export interface IDiscordReaction {
   count: number;
   me: boolean;
-  emoji: IDiscordEmoji; // TODO partial?
+  emoji: IDiscordPartialEmoji;
 }
 
 export interface IDiscordEmbed {
@@ -242,6 +242,11 @@ export interface IDiscordAttachment {
   proxy_url: string;
   height?: number; // if image
   width?: number; // if image
+}
+
+export interface IDiscordPartialEmoji {
+  id?: string;
+  name: string;
 }
 
 // Discord Gateway Interfaces
@@ -351,6 +356,14 @@ export interface IDiscordMessageDeleteGatewayEvent {
   ids?: string[];
   channel_id: string;
   guild_id?: string;
+}
+
+export interface IDiscordMessageReactionGatewayEvent {
+  user_id?: string;
+  channel_id: string;
+  message_id: string;
+  guild_id?: string;
+  emoji: IDiscordPartialEmoji;
 }
 
 // discordts Event objects

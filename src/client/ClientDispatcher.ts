@@ -15,6 +15,7 @@ import GuildIntegrationEvent from './Events/GuildIntegrationEvent';
 import GuildMemberEvent from './Events/GuildMemberEvent';
 import GuildRoleEvent from './Events/GuildRoleEvent';
 import MessageEvent from './Events/MessageEvent';
+import MessageReactionEvent from './Events/MessageReactionEvent';
 
 export default class ClientDispatcher {
   private readonly App: DiscordClient;
@@ -147,6 +148,21 @@ export default class ClientDispatcher {
       case GATEWAY_EVENTS.MESSAGE_DELETE || GATEWAY_EVENTS.MESSAGE_DELETE_BULK: {
         const messageEvent = new MessageEvent(this.App);
         messageEvent.HandleMessageDelete(message.d);
+        break;
+      }
+      case GATEWAY_EVENTS.MESSAGE_REACTION_ADD: {
+        const messageReactionEvent = new MessageReactionEvent(this.App, message.d);
+        messageReactionEvent.HandleReactionAdd();
+        break;
+      }
+      case GATEWAY_EVENTS.MESSAGE_REACTION_REMOVE: {
+        const messageReactionEvent = new MessageReactionEvent(this.App, message.d);
+        messageReactionEvent.HandleReactionRemove();
+        break;
+      }
+      case GATEWAY_EVENTS.MESSAGE_REACTION_REMOVE_ALL: {
+        const messageReactionEvent = new MessageReactionEvent(this.App, message.d);
+        messageReactionEvent.HandleReactionRemoveAll();
         break;
       }
       default: {

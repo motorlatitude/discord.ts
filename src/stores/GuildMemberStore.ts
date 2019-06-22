@@ -1,4 +1,3 @@
-import { IGuildMemberList } from '../common/types';
 import DiscordClient from '../DiscordClient';
 import GuildMember from '../resources/Guild/GuildMember';
 import Store from './Store';
@@ -64,12 +63,6 @@ export default class GuildMemberStore extends Store {
   public Fetch(UserId: string): Promise<GuildMember> {
     return new Promise(resolve => {
       resolve(this.Get(UserId));
-    });
-  }
-
-  public FetchAll(): Promise<IGuildMemberList> {
-    return new Promise(resolve => {
-      resolve(this.GetAll());
     });
   }
 }

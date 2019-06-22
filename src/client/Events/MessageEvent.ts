@@ -38,7 +38,7 @@ export default class MessageEvent extends ClientDispatcherEvent {
             .then((AffectedChannel: TextChannel) => {
               AffectedGuild.Members.Fetch(msg.author.id)
                 .then((AffectedMember: GuildMember) => {
-                  const NewMessage = new Message(msg);
+                  const NewMessage = new Message(this.Client, msg);
                   NewMessage.SetGuildMessage(msg.guild_id as string, AffectedGuild, AffectedMember, AffectedChannel);
 
                   AffectedChannel.Messages.AddMessage(NewMessage);
@@ -77,7 +77,7 @@ export default class MessageEvent extends ClientDispatcherEvent {
       // Message is not part of a guild, so DM
       this.Client.Channels.FetchDirectMessageChannel(msg.channel_id)
         .then((AffectedChannel: DirectMessageChannel) => {
-          const NewMessage = new Message(msg);
+          const NewMessage = new Message(this.Client, msg);
           NewMessage.SetDirectMessage(AffectedChannel);
 
           AffectedChannel.Messages.AddMessage(NewMessage);
@@ -123,7 +123,7 @@ export default class MessageEvent extends ClientDispatcherEvent {
                     }
                   }
 
-                  const NewMessage = new Message(ResolvedMessage);
+                  const NewMessage = new Message(this.Client, ResolvedMessage);
                   NewMessage.SetGuildMessage(
                     msg.guild_id as string,
                     AffectedGuild,
@@ -180,7 +180,7 @@ export default class MessageEvent extends ClientDispatcherEvent {
                 }
               }
 
-              const NewMessage = new Message(ResolvedMessage);
+              const NewMessage = new Message(this.Client, ResolvedMessage);
               NewMessage.SetDirectMessage(AffectedChannel);
 
               AffectedChannel.Messages.ReplaceMessage(msg.id, NewMessage);

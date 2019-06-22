@@ -4,10 +4,10 @@ import User from '../User/User';
 export default class Emoji {
   // 🥳 👨🏻‍💻 🦋 ✨
 
-  public id: string;
   public Name: string;
+  public id: string;
 
-  public Roles?: any[]; // TODO
+  public Roles?: string[];
   public User?: User;
   public RequireColons?: boolean;
   public Managed?: boolean;
@@ -24,5 +24,17 @@ export default class Emoji {
     this.RequireColons = EmojiObject.require_colons;
     this.Managed = EmojiObject.managed;
     this.Animated = EmojiObject.animated;
+  }
+
+  public Resolve(): IDiscordEmoji {
+    return {
+      animated: this.Animated,
+      id: this.id,
+      managed: this.Managed,
+      name: this.Name,
+      require_colons: this.RequireColons,
+      roles: this.Roles,
+      user: this.User ? this.User.Resolve() : undefined,
+    };
   }
 }

@@ -25,6 +25,7 @@ import Guild from './resources/Guild/Guild';
 import GuildMember from './resources/Guild/GuildMember';
 import Role from './resources/Guild/Role';
 import Message from './resources/Message/Message';
+import ReactionEmoji from './resources/Message/ReactionEmoji';
 import User from './resources/User/User';
 import ChannelStore from './stores/ChannelStore';
 import GuildStore from './stores/GuildStore';
@@ -381,6 +382,52 @@ export declare interface DiscordClient {
   ): this;
 
   /**
+   * ### MESSAGE_REACTION_ADD Event
+   *
+   * Event is emitted if a message has a reaction added
+   * @event MESSAGE_REACTION_ADD
+   */
+  on(
+    event: 'MESSAGE_REACTION_ADD',
+    listener: (
+      Channel: TextChannel | DirectMessageChannel,
+      MessageId: string,
+      Emoji: ReactionEmoji,
+      User: User,
+      Guild?: Guild,
+    ) => void,
+  ): this;
+
+  /**
+   * ### MESSAGE_REACTION_REMOVE Event
+   *
+   * Event is emitted if a message has a reaction added
+   * @event MESSAGE_REACTION_REMOVE
+   */
+  on(
+    // tslint:disable-next-line:unified-signatures
+    event: 'MESSAGE_REACTION_REMOVE',
+    listener: (
+      Channel: TextChannel | DirectMessageChannel,
+      MessageId: string,
+      Emoji: ReactionEmoji,
+      User: User,
+      Guild?: Guild,
+    ) => void,
+  ): this;
+
+  /**
+   * ### MESSAGE_REACTION_REMOVE_ALL Event
+   *
+   * Event is emitted if a message has a reaction added
+   * @event MESSAGE_REACTION_REMOVE_ALL
+   */
+  on(
+    event: 'MESSAGE_REACTION_REMOVE_ALL',
+    listener: (Channel: TextChannel | DirectMessageChannel, MessageId: string, Guild?: Guild) => void,
+  ): this;
+
+  /**
    * ### GATEWAY_FOUND Event
    *
    * Event is emitted if the client has successfully determined the Discord Websocket URL
@@ -427,6 +474,20 @@ export declare interface DiscordClient {
     MessageObjects: Message[],
     ChannelObject: TextChannel | DirectMessageChannel,
     GuildObject?: Guild,
+  ): boolean;
+  emit(
+    event: 'MESSAGE_REACTION_ADD' | 'MESSAGE_REACTION_REMOVE',
+    Channel: TextChannel | DirectMessageChannel,
+    MessageId: string,
+    Emoji: ReactionEmoji,
+    User: User,
+    Guild?: Guild,
+  ): boolean;
+  emit(
+    event: 'MESSAGE_REACTION_REMOVE_ALL',
+    Channel: TextChannel | DirectMessageChannel,
+    MessageId: string,
+    Guild?: Guild,
   ): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;

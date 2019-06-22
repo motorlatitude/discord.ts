@@ -1,11 +1,13 @@
-import { IDiscordChannel } from '../../common/types';
+import { IDiscordChannel, IDiscordUser } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import MessageStore from '../../stores/MessageStore';
+import UserStore from '../../stores/UserStore';
+import User from '../User/User';
 import Channel from './Channel';
 
 export default class DirectMessageChannel extends Channel {
   public Name: string;
-  public Recipients: any[];
+  public Recipients: UserStore;
   public Icon: string;
   public OwnerId: string;
 
@@ -20,7 +22,10 @@ export default class DirectMessageChannel extends Channel {
 
     this.Name = ChannelObject.name as string;
     this.LastMessageId = ChannelObject.last_message_id;
-    this.Recipients = ChannelObject.recipients as any[];
+    this.Recipients = new UserStore(Client);
+    if (ChannelObject.recipients) {
+      this.ResolveRecipients(ChannelObject.recipients);
+    }
     this.Icon = ChannelObject.icon ? ChannelObject.icon : '';
     this.OwnerId = ChannelObject.owner_id as string;
 
@@ -29,5 +34,11 @@ export default class DirectMessageChannel extends Channel {
     this.LastMessageId = ChannelObject.last_message_id ? ChannelObject.last_message_id : undefined;
     this.ApplicationId = ChannelObject.application_id ? ChannelObject.application_id : undefined;
     this.LastPinTimestamp = ChannelObject.last_pin_timestamp ? ChannelObject.last_pin_timestamp : undefined;
+  }
+
+  private ResolveRecipients(Recipients: IDiscordUser[]): void {
+    for (const user of Recipients) {
+      this.Recipients.AddUser(new User(user));
+    }
   }
 }

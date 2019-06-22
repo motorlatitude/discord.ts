@@ -1,9 +1,12 @@
-import { IDiscordGuildMember, IDiscordMessage, IDiscordUser } from '../../common/types';
+import { IDiscordGuildMember, IDiscordMessage, IDiscordReaction, IDiscordUser } from '../../common/types';
+import DiscordClient from '../../DiscordClient';
+import ReactionStore from '../../stores/ReactionStore';
 import DirectMessageChannel from '../Channel/DirectMessageChannel';
 import TextChannel from '../Channel/TextChannel';
 import Guild from '../Guild/Guild';
 import GuildMember from '../Guild/GuildMember';
 import User from '../User/User';
+import Reaction from './Reaction';
 
 export default class Message {
   public id: string;
@@ -27,13 +30,13 @@ export default class Message {
   public Channel?: TextChannel | DirectMessageChannel;
 
   public EditedTimestamp?: number;
-  public Reactions?: any[]; // TODO
+  public Reactions: ReactionStore; // TODO
   public Nonce?: string;
   public WebhookId?: string;
   public Activity?: any; // TODO
   public Application?: any; // TODO
 
-  constructor(MessageObject: IDiscordMessage) {
+  constructor(client: DiscordClient, MessageObject: IDiscordMessage) {
     this.id = MessageObject.id;
     this.ChannelId = MessageObject.channel_id;
     this.Author = new User(MessageObject.author);
@@ -53,7 +56,10 @@ export default class Message {
 
     this.GuildId = MessageObject.guild_id;
     this.EditedTimestamp = MessageObject.edited_timestamp;
-    this.Reactions = MessageObject.reactions;
+    this.Reactions = new ReactionStore(client);
+    if (MessageObject.reactions) {
+      this.ResolveReactions(MessageObject.reactions);
+    }
     this.Nonce = MessageObject.nonce;
     this.WebhookId = MessageObject.webhook_id;
     this.Activity = MessageObject.activity;
@@ -91,6 +97,10 @@ export default class Message {
     for (const mention of this.Mentions) {
       ResolvedMentions.push(mention.Resolve());
     }
+    const ResolvedReactions: IDiscordReaction[] = [];
+    for (const reaction of this.Reactions.AsyncFetchAll()) {
+      ResolvedReactions.push(reaction.Resolve());
+    }
     const ResolvedMember: IDiscordGuildMember | undefined = this.Member ? this.Member.Resolve() : undefined;
     // WARN make sure when solving above TODOs that they are accurately resolved below
     return {
@@ -110,11 +120,21 @@ export default class Message {
       mentions: ResolvedMentions,
       nonce: this.Nonce,
       pinned: this.Pinned,
-      reactions: this.Reactions,
+      reactions: ResolvedReactions,
       timestamp: this.Timestamp,
       tts: this.TTS,
       type: this.Type,
       webhook_id: this.WebhookId,
     };
+  }
+
+  /**
+   * Resolves IDiscordReaction[] to Reaction[] and insert into ReactionStore
+   * @param ReactionObjects - array of IDiscordReactions
+   */
+  private ResolveReactions(ReactionObjects: IDiscordReaction[]): void {
+    for (const reaction of ReactionObjects) {
+      this.Reactions.AddReaction(new Reaction(reaction));
+    }
   }
 }

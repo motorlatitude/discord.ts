@@ -303,6 +303,19 @@ export interface IDiscordPresenceUpdate {
   client_status: IDiscordClientStatus;
 }
 
+export interface IDiscordVoiceState {
+  guild_id?: string;
+  channel_id?: string;
+  user_id: string;
+  member?: IDiscordGuildMember;
+  session_id: string;
+  deaf: boolean;
+  mute: boolean;
+  self_deaf: boolean;
+  self_mute: boolean;
+  suppress: boolean;
+}
+
 // Discord Gateway Interfaces
 
 export interface IDefaultDiscordGatewayPackage {

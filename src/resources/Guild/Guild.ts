@@ -1,3 +1,4 @@
+import CHANNEL_TYPES from '../../common/constants/channeltypes';
 import {
   IDiscordChannel,
   IDiscordEmoji,
@@ -5,19 +6,20 @@ import {
   IDiscordGuildMember,
   IDiscordPresenceUpdate,
   IDiscordRole,
+  IDiscordVoiceState,
 } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import ChannelStore from '../../stores/ChannelStore';
-import TextChannel from '../Channel/TextChannel';
-import VoiceChannel from '../Channel/VoiceChannel';
-
-import CHANNEL_TYPES from '../../common/constants/channeltypes';
 import EmojiStore from '../../stores/EmojiStore';
 import GuildMemberStore from '../../stores/GuildMemberStore';
 import PresenceStore from '../../stores/PresenceStore';
 import RoleStore from '../../stores/RoleStore';
+import VoiceStateStore from '../../stores/VoiceStateStore';
 import CategoryChannel from '../Channel/CategoryChannel';
+import TextChannel from '../Channel/TextChannel';
+import VoiceChannel from '../Channel/VoiceChannel';
 import Presence from '../User/Presence';
+import VoiceState from '../Voice/VoiceState';
 import Emoji from './Emoji';
 import GuildMember from './GuildMember';
 import Role from './Role';
@@ -46,7 +48,7 @@ export default class Guild {
   public Presences: PresenceStore;
   public Channels: ChannelStore;
   public Members: GuildMemberStore;
-  public VoiceStates: any[] | undefined; // TODO
+  public VoiceStates: VoiceStateStore;
   public MemberCount: number | undefined;
   public Unavailable: boolean | undefined;
   public Large: boolean | undefined;
@@ -104,7 +106,10 @@ export default class Guild {
     if (GuildObject.members) {
       this.ResolveMembers(GuildObject.members);
     }
-    this.VoiceStates = GuildObject.voice_states; // TODO
+    this.VoiceStates = new VoiceStateStore(this.Client);
+    if (GuildObject.voice_states) {
+      this.ResolveVoiceStates(GuildObject.voice_states);
+    }
     this.MemberCount = GuildObject.member_count;
     this.Unavailable = GuildObject.unavailable;
     this.Large = GuildObject.large;
@@ -119,6 +124,15 @@ export default class Guild {
     this.Owner = GuildObject.owner;
     this.Icon = GuildObject.icon;
     this.Splash = GuildObject.splash;
+  }
+
+  private ResolveVoiceStates(VoiceStates: IDiscordVoiceState[]): void {
+    for (const voiceState of VoiceStates) {
+      const NewVoiceState: VoiceState = new VoiceState(this.Client, voiceState);
+      NewVoiceState.GuildId = this.id;
+      NewVoiceState.Guild = this;
+      this.VoiceStates.AddVoiceState(NewVoiceState);
+    }
   }
 
   private ResolvePresences(presences: IDiscordPresenceUpdate[]): void {

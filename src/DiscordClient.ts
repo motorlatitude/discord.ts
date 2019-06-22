@@ -20,9 +20,11 @@ import Message from './resources/Message/Message';
 import ReactionEmoji from './resources/Message/ReactionEmoji';
 import Presence from './resources/User/Presence';
 import User from './resources/User/User';
+import VoiceState from './resources/Voice/VoiceState';
 import DiscordManager from './rest/DiscordManager';
 import ChannelStore from './stores/ChannelStore';
 import GuildStore from './stores/GuildStore';
+import VoiceStateStore from './stores/VoiceStateStore';
 
 /**
  * ## DiscordClient
@@ -57,6 +59,11 @@ export class DiscordClient extends events.EventEmitter {
   public User?: User;
 
   /**
+   * @param VoiceStates - The current users voice states for direct messaging channels
+   */
+  public VoiceStates: VoiceStateStore;
+
+  /**
    * @param rest - Access To Discord APIs REST methods
    */
   public rest: DiscordManager;
@@ -84,6 +91,7 @@ export class DiscordClient extends events.EventEmitter {
 
     this.Channels = new ChannelStore(this);
     this.Guilds = new GuildStore(this);
+    this.VoiceStates = new VoiceStateStore(this);
 
     this.rest = new DiscordManager(this.token);
   }
@@ -441,6 +449,17 @@ export declare interface DiscordClient {
   ): this;
 
   /**
+   * ### VOICE_STATE_UPDATE
+   *
+   * Event is emitted when someone joins/leaves/moves voice channels
+   * @event VOICE_STATE_UPDATE
+   */
+  on(
+    event: 'VOICE_STATE_UPDATE',
+    listener: (EventType: 'JOINED' | 'UPDATED' | 'LEFT', VoiceState: VoiceState) => void,
+  ): this;
+
+  /**
    * ### GATEWAY_FOUND Event
    *
    * Event is emitted if the client has successfully determined the Discord Websocket URL
@@ -510,6 +529,7 @@ export declare interface DiscordClient {
     Timestamp: number,
     Guild?: Guild,
   ): boolean;
+  emit(event: 'VOICE_STATE_UPDATE', EventType: 'JOINED' | 'UPDATED' | 'LEFT', VoiceState: VoiceState): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;
   // emit(event: string | symbol, ...args: any[]): boolean;

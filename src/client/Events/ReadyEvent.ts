@@ -1,5 +1,4 @@
 import { IDiscordReadyGatewayEvent, IDiscordUser } from '../../common/types';
-
 import DiscordClient from '../../DiscordClient';
 import User from '../../resources/User/User';
 import ClientDispatcherEvent from './ClientDispatcherEvent';

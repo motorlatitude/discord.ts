@@ -1,11 +1,8 @@
+import GATEWAY_EVENTS from '../common/constants/gatewayevents';
 import Logger from '../common/Logger';
 import { IDefaultDiscordGatewayPackage } from '../common/types';
 import DiscordClient from '../DiscordClient';
 import ClientConnection from './ClientConnection';
-import ReadyEvent from './Events/ReadyEvent';
-
-// Constants
-import GATEWAY_EVENTS from '../common/constants/gatewayevents';
 import ChannelEvent from './Events/ChannelEvent';
 import ChannelPinsUpdateEvent from './Events/ChannelPinsUpdateEvent';
 import GuildBanEvent from './Events/GuildBanEvent';
@@ -16,6 +13,8 @@ import GuildMemberEvent from './Events/GuildMemberEvent';
 import GuildRoleEvent from './Events/GuildRoleEvent';
 import MessageEvent from './Events/MessageEvent';
 import MessageReactionEvent from './Events/MessageReactionEvent';
+import PresenceUpdateEvent from './Events/PresenceUpdateEvent';
+import ReadyEvent from './Events/ReadyEvent';
 
 export default class ClientDispatcher {
   private readonly App: DiscordClient;
@@ -163,6 +162,11 @@ export default class ClientDispatcher {
       case GATEWAY_EVENTS.MESSAGE_REACTION_REMOVE_ALL: {
         const messageReactionEvent = new MessageReactionEvent(this.App, message.d);
         messageReactionEvent.HandleReactionRemoveAll();
+        break;
+      }
+      case GATEWAY_EVENTS.PRESENCE_UPDATE: {
+        const presenceUpdate = new PresenceUpdateEvent(this.App, message.d);
+        presenceUpdate.Handle();
         break;
       }
       default: {

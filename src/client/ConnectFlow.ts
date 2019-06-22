@@ -1,14 +1,8 @@
-// Node Modules
 import * as os from 'os';
-
-import Logger from '../common/Logger';
-import ClientConnection from './ClientConnection';
-
-// Types
-import { IDiscordHelloPackage } from '../common/types';
-
-// Constants
 import GATEWAY from '../common/constants/gateway';
+import Logger from '../common/Logger';
+import { IDiscordHelloPackage } from '../common/types';
+import ClientConnection from './ClientConnection';
 
 export default class ConnectFlow {
   private logger: Logger;

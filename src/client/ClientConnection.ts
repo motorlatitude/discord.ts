@@ -1,20 +1,11 @@
-// Node Modules
-import * as zlib from 'zlib';
-
-// NPM Modules
 import * as WebSocket from 'ws';
-
-// Others
+import * as zlib from 'zlib';
+import GATEWAY from '../common/constants/gateway';
 import Logger from '../common/Logger';
+import { IDefaultDiscordGatewayPackage, IDiscordHelloPackage } from '../common/types';
 import DiscordClient from '../DiscordClient';
 import ClientDispatcher from './ClientDispatcher';
 import ConnectFlow from './ConnectFlow';
-
-// Types
-import { IDefaultDiscordGatewayPackage, IDiscordHelloPackage } from '../common/types';
-
-// Constants
-import GATEWAY from '../common/constants/gateway';
 
 /**
  * Handles Connection With The Discord Gateway Server

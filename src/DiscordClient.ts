@@ -1,14 +1,6 @@
-// Node Modules
 import * as events from 'events';
-
-// NPM Modules
-
-// Others
 import ClientConnection from './client/ClientConnection';
 import Logger from './common/Logger';
-import DiscordManager from './rest/DiscordManager';
-
-// Types
 import {
   IChannelDeleteEventObject,
   IChannelPinsUpdateEventObject,
@@ -26,7 +18,9 @@ import GuildMember from './resources/Guild/GuildMember';
 import Role from './resources/Guild/Role';
 import Message from './resources/Message/Message';
 import ReactionEmoji from './resources/Message/ReactionEmoji';
+import Presence from './resources/User/Presence';
 import User from './resources/User/User';
+import DiscordManager from './rest/DiscordManager';
 import ChannelStore from './stores/ChannelStore';
 import GuildStore from './stores/GuildStore';
 
@@ -428,6 +422,14 @@ export declare interface DiscordClient {
   ): this;
 
   /**
+   * ### PRESENCE_UPDATE
+   *
+   * Event is emitted when a user's presence or info, such as name or avatar, is updated.
+   * @event PRESENCE_UPDATE
+   */
+  on(event: 'PRESENCE_UPDATE', listener: (NewPresence: Presence, OldPresence?: Presence) => void): this;
+
+  /**
    * ### GATEWAY_FOUND Event
    *
    * Event is emitted if the client has successfully determined the Discord Websocket URL
@@ -489,6 +491,7 @@ export declare interface DiscordClient {
     MessageId: string,
     Guild?: Guild,
   ): boolean;
+  emit(event: 'PRESENCE_UPDATE', NewPresence: Presence, OldPresence?: Presence): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;
   // emit(event: string | symbol, ...args: any[]): boolean;

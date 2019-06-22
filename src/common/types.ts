@@ -249,6 +249,60 @@ export interface IDiscordPartialEmoji {
   name: string;
 }
 
+export interface IDiscordActivity {
+  name: string;
+  type: number;
+  url?: string;
+  timestamps?: IDiscordActivityTimestamp;
+  application_id?: string;
+  details?: string;
+  state?: string;
+  party?: IDiscordParty;
+  assets?: IDiscordAssets;
+  secrets?: IDiscordSecrets;
+  instance?: boolean;
+  flags?: number;
+}
+
+export interface IDiscordSecrets {
+  join?: string;
+  spectate?: string;
+  match?: string;
+}
+
+export interface IDiscordAssets {
+  large_image?: string;
+  large_text?: string;
+  small_image?: string;
+  small_text?: string;
+}
+
+export interface IDiscordParty {
+  id?: string;
+  size: [number, number];
+}
+
+export interface IDiscordActivityTimestamp {
+  start?: number;
+  end?: number;
+}
+
+export interface IDiscordClientStatus {
+  desktop?: string;
+  mobile?: string;
+  web?: string;
+}
+
+export interface IDiscordPresenceUpdate {
+  user: IDiscordUser;
+  roles: string[];
+  game?: IDiscordActivity;
+  guild_id: string;
+  status: string;
+  activities: IDiscordActivity[];
+  client_status: IDiscordClientStatus;
+}
+
 // Discord Gateway Interfaces
 
 export interface IDefaultDiscordGatewayPackage {

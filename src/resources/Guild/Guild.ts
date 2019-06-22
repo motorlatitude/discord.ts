@@ -1,4 +1,11 @@
-import { IDiscordChannel, IDiscordEmoji, IDiscordGuild, IDiscordGuildMember, IDiscordRole } from '../../common/types';
+import {
+  IDiscordChannel,
+  IDiscordEmoji,
+  IDiscordGuild,
+  IDiscordGuildMember,
+  IDiscordPresenceUpdate,
+  IDiscordRole,
+} from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import ChannelStore from '../../stores/ChannelStore';
 import TextChannel from '../Channel/TextChannel';
@@ -7,8 +14,10 @@ import VoiceChannel from '../Channel/VoiceChannel';
 import CHANNEL_TYPES from '../../common/constants/channeltypes';
 import EmojiStore from '../../stores/EmojiStore';
 import GuildMemberStore from '../../stores/GuildMemberStore';
+import PresenceStore from '../../stores/PresenceStore';
 import RoleStore from '../../stores/RoleStore';
 import CategoryChannel from '../Channel/CategoryChannel';
+import Presence from '../User/Presence';
 import Emoji from './Emoji';
 import GuildMember from './GuildMember';
 import Role from './Role';
@@ -34,7 +43,7 @@ export default class Guild {
   public Description: string | undefined;
   public VanityURLCode: string | undefined;
   public MaxPresences: number | undefined;
-  public Presences: any[] | undefined; // TODO
+  public Presences: PresenceStore;
   public Channels: ChannelStore;
   public Members: GuildMemberStore;
   public VoiceStates: any[] | undefined; // TODO
@@ -83,7 +92,10 @@ export default class Guild {
     this.Description = GuildObject.description;
     this.VanityURLCode = GuildObject.vanity_url_code;
     this.MaxPresences = GuildObject.max_presences;
-    this.Presences = GuildObject.presences; // TODO
+    this.Presences = new PresenceStore(this.Client);
+    if (GuildObject.presences) {
+      this.ResolvePresences(GuildObject.presences);
+    }
     this.Channels = new ChannelStore(this.Client);
     if (GuildObject.channels) {
       this.ResolveChannels(GuildObject.channels);
@@ -107,6 +119,12 @@ export default class Guild {
     this.Owner = GuildObject.owner;
     this.Icon = GuildObject.icon;
     this.Splash = GuildObject.splash;
+  }
+
+  private ResolvePresences(presences: IDiscordPresenceUpdate[]): void {
+    for (const presence of presences) {
+      this.Presences.AddPresence(new Presence(this.Client, presence));
+    }
   }
 
   private ResolveRoles(roles: IDiscordRole[]): void {

@@ -15,6 +15,7 @@ import MessageEvent from './Events/MessageEvent';
 import MessageReactionEvent from './Events/MessageReactionEvent';
 import PresenceUpdateEvent from './Events/PresenceUpdateEvent';
 import ReadyEvent from './Events/ReadyEvent';
+import TypingStartEvent from './Events/TypingStartEvent';
 
 export default class ClientDispatcher {
   private readonly App: DiscordClient;
@@ -167,6 +168,11 @@ export default class ClientDispatcher {
       case GATEWAY_EVENTS.PRESENCE_UPDATE: {
         const presenceUpdate = new PresenceUpdateEvent(this.App, message.d);
         presenceUpdate.Handle();
+        break;
+      }
+      case GATEWAY_EVENTS.TYPING_START: {
+        const typingStartEvent = new TypingStartEvent(this.App, message.d);
+        typingStartEvent.Handle();
         break;
       }
       default: {

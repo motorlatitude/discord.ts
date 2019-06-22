@@ -420,6 +420,13 @@ export interface IDiscordMessageReactionGatewayEvent {
   emoji: IDiscordPartialEmoji;
 }
 
+export interface IDiscordTypingStartGatewayEvent {
+  channel_id: string;
+  guild_id?: string;
+  user_id: string;
+  timestamp: number;
+}
+
 // discordts Event objects
 
 export interface IChannelDeleteEventObject {

@@ -430,6 +430,17 @@ export declare interface DiscordClient {
   on(event: 'PRESENCE_UPDATE', listener: (NewPresence: Presence, OldPresence?: Presence) => void): this;
 
   /**
+   * ### TYPING_START
+   *
+   * Sent when a user starts typing in a channel
+   * @event TYPING_START
+   */
+  on(
+    event: 'TYPING_START',
+    listener: (Channel: TextChannel | DirectMessageChannel, User: User, Timestamp: number, Guild?: Guild) => void,
+  ): this;
+
+  /**
    * ### GATEWAY_FOUND Event
    *
    * Event is emitted if the client has successfully determined the Discord Websocket URL
@@ -492,6 +503,13 @@ export declare interface DiscordClient {
     Guild?: Guild,
   ): boolean;
   emit(event: 'PRESENCE_UPDATE', NewPresence: Presence, OldPresence?: Presence): boolean;
+  emit(
+    event: 'TYPING_START',
+    Channel: TextChannel | DirectMessageChannel,
+    User: User,
+    Timestamp: number,
+    Guild?: Guild,
+  ): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;
   // emit(event: string | symbol, ...args: any[]): boolean;

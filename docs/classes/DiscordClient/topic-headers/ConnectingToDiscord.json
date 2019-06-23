@@ -1,0 +1,6 @@
+{
+  "title": "Connecting to Discord",
+  "values": [
+    "classes/DiscordClient/topics/connect"
+  ]
+}

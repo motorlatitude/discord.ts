@@ -440,6 +440,17 @@ export interface IDiscordTypingStartGatewayEvent {
   timestamp: number;
 }
 
+export interface IDiscordVoiceServerGatewayEvent {
+  token: string,
+  guild_id: string,
+  endpoint: string
+}
+
+export interface IDiscordWebhooksUpdateGatewayEvent {
+  guild_id: string,
+  channel_id: string
+}
+
 // discordts Event objects
 
 export interface IChannelDeleteEventObject {

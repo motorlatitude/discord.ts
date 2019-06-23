@@ -24,6 +24,11 @@ html {
     padding: 0 20px;
 }
 
+.header .title img{
+    height: 40px;
+    margin-top: 10px;
+}
+
 .site-wrapper {
     display: flex;
     flex-direction: row;
@@ -295,11 +300,11 @@ html {
 }
 
 .content .quote {
-    margin: 0;
     padding: 0;
     background: #eee;
     border-radius: 3px;
     overflow: hidden;
+    margin: 30px 0;
 }
 
 .content .quote .quote-title{
@@ -316,7 +321,7 @@ html {
 
 .content .notification {
     padding: 10px 20px;
-    margin: 0;
+    margin: 30px 0;
     width: calc(100% - 44px);
     height: auto;
     border-radius: 4px;

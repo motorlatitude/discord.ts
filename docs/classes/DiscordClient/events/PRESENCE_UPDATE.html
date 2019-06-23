@@ -1,0 +1,50 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> PRESENCE_UPDATE
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">PRESENCE_UPDATE</h1>
+<p class="class-blurb">
+    Event is emitted when a user's presence or information changes.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;PRESENCE_UPDATE&quot;">event: "PRESENCE_UPDATE"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>NewPresence: <i>Presence</i></code>
+    <p>
+        The updated Presence instance
+    </p>
+    <code>OldPresence?: <i>Presence</i></code>
+    <p>
+        The previous presence object, this is not present if no previous presence exists for the user
+    </p>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted when a user's presence or information such as name or avatar are updated.
+</p>
+<div class="notification warn">
+    <div class="notification-title">Careful</div>
+    <div class="notification-body">
+        This event emitted from discord could only hold partial information and the Presence instance may not have all
+        properties as a result, take care and do not assume that all properties have values.
+    </div>
+</div>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -396,7 +396,7 @@ export declare interface DiscordClient {
       MessageId: string,
       Emoji: ReactionEmoji,
       User: User,
-      Guild?: Guild,
+      Guild?: Guild
     ) => void,
   ): this;
 
@@ -414,7 +414,7 @@ export declare interface DiscordClient {
       MessageId: string,
       Emoji: ReactionEmoji,
       User: User,
-      Guild?: Guild,
+      Guild?: Guild
     ) => void,
   ): this;
 
@@ -449,6 +449,15 @@ export declare interface DiscordClient {
   ): this;
 
   /**
+   * ### USER_UPDATE Event
+   *
+   * Event is emitted if properties of the current user change
+   * @event USER_UPDATE
+   */
+  // tslint:disable-next-line:unified-signatures
+  on(event: 'USER_UPDATE', listener: (User: User) => void): this;
+
+  /**
    * ### VOICE_STATE_UPDATE
    *
    * Event is emitted when someone joins/leaves/moves voice channels
@@ -458,6 +467,14 @@ export declare interface DiscordClient {
     event: 'VOICE_STATE_UPDATE',
     listener: (EventType: 'JOINED' | 'UPDATED' | 'LEFT', VoiceState: VoiceState) => void,
   ): this;
+
+  /**
+   * ### WEBHOOKS_UPDATE Event
+   *
+   * Event is emitted when a guild channel's webhook is created, updated, or deleted.
+   * @event WEBHOOKS_UPDATE
+   */
+  on(event: 'WEBHOOKS_UPDATE', listener: ( Channel: TextChannel, Guild: Guild) => void): this;
 
   /**
    * ### GATEWAY_FOUND Event
@@ -475,7 +492,7 @@ export declare interface DiscordClient {
    */
   on(event: 'DISCONNECT', listener: () => void): this;
 
-  emit(event: 'READY', User: User): boolean;
+  emit(event: 'READY' | 'USER_UPDATE', User: User): boolean;
   emit(
     event: 'CHANNEL_CREATE' | 'CHANNEL_UPDATE',
     Channel: TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel,
@@ -530,6 +547,7 @@ export declare interface DiscordClient {
     Guild?: Guild,
   ): boolean;
   emit(event: 'VOICE_STATE_UPDATE', EventType: 'JOINED' | 'UPDATED' | 'LEFT', VoiceState: VoiceState): boolean;
+  emit(event: 'WEBHOOKS_UPDATE', Channel: TextChannel, Guild: Guild): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;
   // emit(event: string | symbol, ...args: any[]): boolean;

@@ -1,0 +1,51 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> MESSAGE_DELETE_BULK
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">MESSAGE_DELETE_BULK</h1>
+<p class="class-blurb">
+    Event is emitted when multiple messages are deleted in a channel.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;MESSAGE_DELETE_BULK&quot;">event: "MESSAGE_DELETE_BULK"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>Messages: <i>Message[]</i></code>
+    <p>
+        An array containing the old Message instances.
+    </p>
+    <code>Channel: <i>TextChannel</i> | <i>DirectMessageChannel</i></code>
+    <p>
+        The channel instance describing the channel in which the messages were created
+    </p>
+    <code>Guild?: <i>Guild</i></code>
+    <p>
+        The Guild instance in which the TextChannel instance resides
+    </p>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted when multiple message are delete in a channel that the bot user is a member of.
+    <br/><br/>
+    The <code>Guild</code> parameter will only be populated if the message was sent within a guild. Otherwise the
+    message originates as a direct message, and the <code>Channel</code> parameter will hold a
+    DirectMessageChannel instances and the <code>Guild</code> parameter will be <code>undefined</code>.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

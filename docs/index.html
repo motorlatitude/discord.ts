@@ -11,7 +11,7 @@
     <body>
         <div class="header">
             <div class="title">
-                DiscordTS
+                <img src="assets/images/logo_extended.png">
             </div>
         </div>
         <div class="site-wrapper">
@@ -81,8 +81,40 @@
             xhttp.send();
         }
 
+        function loadTopicTitles(element, path){
+          const xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+              let parsed = JSON.parse(this.responseText);
+              let elTr = document.createElement("tr");
+              let elTitleTd = document.createElement("td");
+              elTitleTd.innerHTML = parsed.title;
+              elTr.appendChild(elTitleTd);
+              let elContentTd = document.createElement("td");
+              let elUl = document.createElement("ul");
+              for(var i=0;i<parsed.values.length;i++){
+                let elLi = document.createElement("li");
+                elLi.setAttribute("data-load",parsed.values[i]);
+                elUl.appendChild(elLi);
+              }
+              elContentTd.appendChild(elUl);
+            }
+          };
+          xhttp.open("GET", "./"+path+".json");
+          xhttp.send();
+        }
+
         function loadTopics(){
           let elPageContent = document.querySelector(".content");
+          let elTopicTable = elPageContent.querySelector("table.topic-table");
+          if(elTopicTable){
+            let Topics = elTopicTable.getAttribute("data-load-topics");
+            if(Topics){
+              Topics.split(";").forEach(function(TopHeader){
+
+              });
+            }
+          }
           elPageContent.querySelectorAll("li").forEach(function(li_element){
             let loadPath = li_element.getAttribute("data-load");
             if(loadPath){

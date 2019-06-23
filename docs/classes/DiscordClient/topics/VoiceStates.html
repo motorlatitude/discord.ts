@@ -1,23 +1,23 @@
 <div class="location">
-    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Connection
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> VoiceStates
 </div>
 
 <div class="doc-type">Instance Property</div>
-<h1 class="reduced">Connection</h1>
+<h1 class="reduced">VoiceStates</h1>
 <p class="class-blurb">
-    The ClientConnection instance used for gateway communication.
+    The VoiceStates for non-guild voice connections.
 </p>
 <hr>
 <h2>Declaration</h2>
-<pre><code class="language-typescript" id="declaration" data-topic="var <span>Connection</span>?: ClientConnection">var Connection?: ClientConnection</code></pre>
+<pre><code class="language-typescript" id="declaration" data-topic="var <span>VoiceStates</span>: VoiceStateStore">var VoiceStates: VoiceStateStore</code></pre>
 <h2>Discussion</h2>
 <p>
-    This property stores the <span class="link" data-link="classes/ClientConnection/ClientConnection">ClientConnection</span> instances through which all gateway communication occurs.
+    This property stores the VoiceState instance's that are not part of a guild in a VoiceStateStore instance.
 </p>
-<div class="notification warn">
+<div class="notification info">
     <div class="notification-title">Note</div>
     <div class="notification-body">
-        This property will be undefined until the <code>READY</code> event has been sent.
+        This property will contain no VoiceStates until the <code>READY</code> event has been sent.
     </div>
 </div>
 <br/><br/>

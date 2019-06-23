@@ -25,6 +25,7 @@ import DiscordManager from './rest/DiscordManager';
 import ChannelStore from './stores/ChannelStore';
 import GuildStore from './stores/GuildStore';
 import VoiceStateStore from './stores/VoiceStateStore';
+import VoiceConnection from './voice/VoiceConnection';
 
 /**
  * ## DiscordClient
@@ -396,7 +397,7 @@ export declare interface DiscordClient {
       MessageId: string,
       Emoji: ReactionEmoji,
       User: User,
-      Guild?: Guild
+      Guild?: Guild,
     ) => void,
   ): this;
 
@@ -414,7 +415,7 @@ export declare interface DiscordClient {
       MessageId: string,
       Emoji: ReactionEmoji,
       User: User,
-      Guild?: Guild
+      Guild?: Guild,
     ) => void,
   ): this;
 
@@ -469,12 +470,20 @@ export declare interface DiscordClient {
   ): this;
 
   /**
+   * ### VOICE_SERVER_UPDATE
+   *
+   * Sent when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
+   * @event VOICE_SERVER_UPDATE
+   */
+  on(event: 'VOICE_SERVER_UPDATE', listener: (VoiceConnection: VoiceConnection) => void): this;
+
+  /**
    * ### WEBHOOKS_UPDATE Event
    *
    * Event is emitted when a guild channel's webhook is created, updated, or deleted.
    * @event WEBHOOKS_UPDATE
    */
-  on(event: 'WEBHOOKS_UPDATE', listener: ( Channel: TextChannel, Guild: Guild) => void): this;
+  on(event: 'WEBHOOKS_UPDATE', listener: (Channel: TextChannel, Guild: Guild) => void): this;
 
   /**
    * ### GATEWAY_FOUND Event
@@ -547,6 +556,7 @@ export declare interface DiscordClient {
     Guild?: Guild,
   ): boolean;
   emit(event: 'VOICE_STATE_UPDATE', EventType: 'JOINED' | 'UPDATED' | 'LEFT', VoiceState: VoiceState): boolean;
+  emit(event: 'VOICE_SERVER_UPDATE', VoiceConnection: VoiceConnection): boolean;
   emit(event: 'WEBHOOKS_UPDATE', Channel: TextChannel, Guild: Guild): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;

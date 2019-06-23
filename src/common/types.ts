@@ -335,6 +335,30 @@ export interface IDiscordUnavailableGuildObject {
   unavailable?: boolean;
 }
 
+// Discord Voice Endpoint Interfaces
+
+export interface IDefaultDiscordVoiceEndpointPackage {
+  op: number;
+  d: any;
+}
+
+export interface IDiscordReadyVoiceEndpointPackage {
+  ssrc: number;
+  ip: string;
+  port: number;
+  modes: string[];
+  heartbeat_interval: number; // erroneous field and should be ignored
+}
+
+export interface IDiscordHelloVoiceEndpointPackage {
+  heartbeat_interval: number;
+}
+
+export interface IDiscordSessionDescriptionVoiceEndpointPackage {
+  mode: string;
+  secret_key: number[];
+}
+
 // Discord Gateway Event Interfaces
 
 export interface IDiscordReadyGatewayEvent {
@@ -441,14 +465,14 @@ export interface IDiscordTypingStartGatewayEvent {
 }
 
 export interface IDiscordVoiceServerGatewayEvent {
-  token: string,
-  guild_id: string,
-  endpoint: string
+  token: string;
+  guild_id: string;
+  endpoint: string;
 }
 
 export interface IDiscordWebhooksUpdateGatewayEvent {
-  guild_id: string,
-  channel_id: string
+  guild_id: string;
+  channel_id: string;
 }
 
 // discordts Event objects

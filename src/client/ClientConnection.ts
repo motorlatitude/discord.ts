@@ -4,8 +4,8 @@ import GATEWAY from '../common/constants/gateway';
 import Logger from '../common/Logger';
 import { IDefaultDiscordGatewayPackage, IDiscordHelloPackage } from '../common/types';
 import DiscordClient from '../DiscordClient';
+import ClientConnectFlow from './ClientConnectFlow';
 import ClientDispatcher from './ClientDispatcher';
-import ConnectFlow from './ConnectFlow';
 
 /**
  * Handles Connection With The Discord Gateway Server
@@ -16,7 +16,6 @@ export default class ClientConnection {
   }
 
   public GatewayHeartbeat: number | undefined;
-  public GatewayWebsocket: WebSocket | undefined;
   public GatewaySequence: number = 0;
   public GatewayPings: number[] = [];
   public GatewayPing: number = 0;
@@ -26,11 +25,13 @@ export default class ClientConnection {
 
   public resuming: boolean = false;
 
+  private GatewayWebsocket: WebSocket | undefined;
+
   private App: DiscordClient;
   private logger: Logger;
 
   private dispatcher: ClientDispatcher;
-  private connector: ConnectFlow;
+  private connector: ClientConnectFlow;
 
   private GatewayURL?: string;
 
@@ -44,7 +45,7 @@ export default class ClientConnection {
     this.logger = log;
 
     this.dispatcher = new ClientDispatcher(app, this, log);
-    this.connector = new ConnectFlow(this, log, app.token);
+    this.connector = new ClientConnectFlow(this, log, app.token);
   }
 
   /**

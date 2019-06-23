@@ -3,6 +3,7 @@ import DiscordClient from '../../DiscordClient';
 import Guild from '../../resources/Guild/Guild';
 import VoiceState from '../../resources/Voice/VoiceState';
 import ClientDispatcherEvent from './ClientDispatcherEvent';
+import VoiceServerUpdateEvent from './VoiceServerUpdateEvent';
 
 export default class VoiceStateEvent extends ClientDispatcherEvent {
   public readonly Message: IDiscordVoiceState;
@@ -34,6 +35,15 @@ export default class VoiceStateEvent extends ClientDispatcherEvent {
           } else {
             this.EventType = 'JOINED';
           }
+
+          if (AffectedGuild.PendingVoiceConnection && AffectedGuild.PendingVoiceServerDetails) {
+            const voiceServerUpdateEvent = new VoiceServerUpdateEvent(
+              this.Client,
+              AffectedGuild.PendingVoiceServerDetails,
+            );
+            voiceServerUpdateEvent.HandlePendingVoiceConnection();
+          }
+
           this.EventObject = NewVoiceState;
 
           super.Handle();

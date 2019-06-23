@@ -44,6 +44,20 @@ html {
     min-width: 275px;
     border-right: 2px solid #eee;
     height: 100%;
+    position: relative;
+    top: 0;
+    overflow-x: hidden;
+}
+
+.sidebar .background-logo {
+    position: absolute;
+    bottom: 20px;
+    left: -40px;
+    opacity: 0.2;
+}
+
+.sidebar .background-logo img{
+    height: 250px;
 }
 
 .sidebar .sidebar-title {
@@ -118,6 +132,8 @@ html {
     margin: -30px;
     padding: 30px;
     background: #f8f8f8;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 .content .topic-table {
@@ -167,7 +183,7 @@ html {
 }
 
 .content .topic-table tr td:last-child ul li .title span{
-    color:  #1373d1;
+    color:  #4c6ef5;
 }
 
 .content .topic-table tr td:last-child ul li .title:hover{
@@ -233,7 +249,7 @@ html {
 .content a,
 .content .link{
     text-decoration: none;
-    color: #1373d1;
+    color: #4c6ef5;
     cursor: pointer;
 }
 
@@ -286,7 +302,7 @@ html {
 }
 
 .content .parameters-block code i{
-    color: #1373d1;
+    color: #4c6ef5;
     font-weight: normal;
 }
 
@@ -391,5 +407,5 @@ html {
 
 .content .page-content ul li.active{
     font-weight: 500;
-    color: #1373d1;
+    color: #4c6ef5;
 }

@@ -16,9 +16,9 @@ import MessageReactionEvent from './Events/MessageReactionEvent';
 import PresenceUpdateEvent from './Events/PresenceUpdateEvent';
 import ReadyEvent from './Events/ReadyEvent';
 import TypingStartEvent from './Events/TypingStartEvent';
-import WebhooksUpdateEvent from './Events/WebhooksUpdateEvent';
 import UserUpdateEvent from './Events/UserUpdateEvent';
 import VoiceStateEvent from './Events/VoiceStateEvent';
+import WebhooksUpdateEvent from './Events/WebhooksUpdateEvent';
 
 export default class ClientDispatcher {
   private readonly App: DiscordClient;

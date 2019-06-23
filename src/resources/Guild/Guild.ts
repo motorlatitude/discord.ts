@@ -6,6 +6,7 @@ import {
   IDiscordGuildMember,
   IDiscordPresenceUpdate,
   IDiscordRole,
+  IDiscordVoiceServerGatewayEvent,
   IDiscordVoiceState,
 } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
@@ -15,6 +16,7 @@ import GuildMemberStore from '../../stores/GuildMemberStore';
 import PresenceStore from '../../stores/PresenceStore';
 import RoleStore from '../../stores/RoleStore';
 import VoiceStateStore from '../../stores/VoiceStateStore';
+import VoiceConnection from '../../voice/VoiceConnection';
 import CategoryChannel from '../Channel/CategoryChannel';
 import TextChannel from '../Channel/TextChannel';
 import VoiceChannel from '../Channel/VoiceChannel';
@@ -39,6 +41,10 @@ export default class Guild {
   public MFALevel: number;
   public MaxMembers: number;
   public PremiumTier: number;
+
+  public VoiceConnection?: VoiceConnection;
+  public PendingVoiceConnection?: boolean;
+  public PendingVoiceServerDetails?: IDiscordVoiceServerGatewayEvent;
 
   public PremiumSubscriptionCount: number | undefined;
   public Banner: string | undefined;
@@ -65,7 +71,7 @@ export default class Guild {
   public Icon: string | undefined;
   public Splash: string | undefined;
 
-  private Client: DiscordClient;
+  private readonly Client: DiscordClient;
 
   constructor(client: DiscordClient, GuildObject: IDiscordGuild) {
     this.Client = client;
@@ -117,6 +123,7 @@ export default class Guild {
     this.SystemChannelId = GuildObject.system_channel_id;
     this.WidgetChannelId = GuildObject.widget_channel_id;
     this.WidgetEnabled = GuildObject.widget_enabled;
+    this.ApplicationId = GuildObject.application_id;
     this.EmbedChannelId = GuildObject.embed_channel_id;
     this.EmbedEnabled = GuildObject.embed_enabled;
     this.AfkChannelId = GuildObject.afk_channel_id;
@@ -124,6 +131,27 @@ export default class Guild {
     this.Owner = GuildObject.owner;
     this.Icon = GuildObject.icon;
     this.Splash = GuildObject.splash;
+  }
+
+  public CreateVoiceConnection(Token: string, Endpoint: string): VoiceConnection | false {
+    if (this.Client.User) {
+      const RelevantVoiceState: VoiceState = this.VoiceStates.Get(this.Client.User.id);
+      if (RelevantVoiceState.SessionId) {
+        const NewVoiceConnection: VoiceConnection = new VoiceConnection(
+          this.Client,
+          this,
+          Token,
+          Endpoint,
+          RelevantVoiceState.SessionId,
+        );
+        NewVoiceConnection.Connect();
+        return NewVoiceConnection;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   private ResolveVoiceStates(VoiceStates: IDiscordVoiceState[]): void {

@@ -1,16 +1,15 @@
-import ClientDispatcherEvent from './ClientDispatcherEvent';
-import DiscordClient from '../../DiscordClient';
 import { IDiscordUser } from '../../common/types';
+import DiscordClient from '../../DiscordClient';
 import User from '../../resources/User/User';
+import ClientDispatcherEvent from './ClientDispatcherEvent';
 
 export default class UserUpdateEvent extends ClientDispatcherEvent {
-
   public readonly Message: IDiscordUser;
 
   public readonly EventName: 'USER_UPDATE' = 'USER_UPDATE';
   public EventUserObject?: User;
 
-  constructor(client: DiscordClient, msg: IDiscordUser){
+  constructor(client: DiscordClient, msg: IDiscordUser) {
     super(client);
 
     this.Message = msg;
@@ -30,9 +29,8 @@ export default class UserUpdateEvent extends ClientDispatcherEvent {
   }
 
   public EmitEvent(): void {
-    if(this.EventUserObject){
+    if (this.EventUserObject) {
       this.Client.emit(this.EventName, this.EventUserObject);
     }
   }
-
 }

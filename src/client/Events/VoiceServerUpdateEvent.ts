@@ -1,14 +1,14 @@
 import { IDiscordVoiceServerGatewayEvent } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import Guild from '../../resources/Guild/Guild';
-import VoiceConnection from '../../voice/VoiceConnection';
+import VoiceManager from '../../voice/VoiceManager';
 import ClientDispatcherEvent from './ClientDispatcherEvent';
 
 export default class VoiceServerUpdateEvent extends ClientDispatcherEvent {
   public readonly Message: IDiscordVoiceServerGatewayEvent;
 
   public EventName: 'VOICE_SERVER_UPDATE' = 'VOICE_SERVER_UPDATE';
-  public EventObject?: VoiceConnection;
+  public EventObject?: VoiceManager;
 
   constructor(client: DiscordClient, msg: IDiscordVoiceServerGatewayEvent) {
     super(client);
@@ -22,15 +22,18 @@ export default class VoiceServerUpdateEvent extends ClientDispatcherEvent {
    */
   public Handle(): void {
     this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-      const NewVoiceConnection: VoiceConnection | false = AffectedGuild.CreateVoiceConnection(
+      this.Client.logger.write().info({
+        message: "A Server Update Event Occurred with these details; token: "+this.Message.token+", endpoint: "+this.Message.endpoint,
+        service: "ClientDispatcher.Events.VoiceServerUpdate.Handle"
+      })
+      AffectedGuild.CreateVoiceConnection(
         this.Message.token,
         this.Message.endpoint,
-      );
-      if (NewVoiceConnection instanceof VoiceConnection) {
-        this.EventObject = NewVoiceConnection;
+      ).then((NewVoiceManager: VoiceManager) => {
+        this.EventObject = NewVoiceManager;
 
         super.Handle();
-      } else {
+      }).catch((err: Error) => {
         // Failed to establish new voice connection, either we don't have a user or session_id has not be received yet
         AffectedGuild.PendingVoiceConnection = true;
         AffectedGuild.PendingVoiceServerDetails = this.Message;
@@ -39,7 +42,7 @@ export default class VoiceServerUpdateEvent extends ClientDispatcherEvent {
           AffectedGuild.PendingVoiceConnection = false;
           delete AffectedGuild.PendingVoiceServerDetails;
         }, 5000);
-      }
+      });
     });
   }
 
@@ -48,17 +51,24 @@ export default class VoiceServerUpdateEvent extends ClientDispatcherEvent {
    */
   public HandlePendingVoiceConnection(): void {
     this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-      const NewVoiceConnection: VoiceConnection | false = AffectedGuild.CreateVoiceConnection(
+      this.Client.logger.write().info({
+        message: "A Delayed Server Update Event Occurred with these details; token: "+this.Message.token+", endpoint: "+this.Message.endpoint,
+        service: "ClientDispatcher.Events.VoiceServerUpdate.HandlePendingVoiceConnection"
+      })
+      AffectedGuild.CreateVoiceConnection(
         this.Message.token,
         this.Message.endpoint,
-      );
-      if (NewVoiceConnection instanceof VoiceConnection) {
-        this.EventObject = NewVoiceConnection;
+      ).then((NewVoiceManager: VoiceManager) => {
+        this.EventObject = NewVoiceManager;
 
         super.Handle();
-      } else {
-        // Completely failed to establish a connection
-      }
+      }).catch((err: Error) => {
+        // Complete failure
+        this.Client.logger.write().error({
+          message: err,
+          service: "ClientDispatcher.Events.VoiceServerUpdate.HandlePendingVoiceConnection"
+        })
+      });
     });
   }
 

@@ -11,7 +11,7 @@ export default class Presence {
    * are not validated. Your client should expect any combination of fields and types within this event.
    */
 
-  public User?: User;
+  public User: User | {id: string};
   public Roles?: string[];
   public GuildId?: string;
   public Status?: string;
@@ -20,12 +20,25 @@ export default class Presence {
   public Game?: Activity;
 
   constructor(Client: DiscordClient, PresenceObject: IDiscordPresenceUpdate) {
+    this.User = { id: PresenceObject.user.id }
     if (PresenceObject.guild_id) {
       // good we got a starting point
       Client.Guilds.Fetch(PresenceObject.guild_id).then((AffectedGuild: Guild) => {
-        AffectedGuild.Members.Fetch(PresenceObject.user.id).then((AffectedMember: GuildMember) => {
-          this.User = AffectedMember.User;
-        });
+        if(AffectedGuild){
+          AffectedGuild.Members.Fetch(PresenceObject.user.id).then((AffectedMember: GuildMember) => {
+            this.User = AffectedMember.User;
+          }).catch((err: Error) => {
+            Client.logger.write().error({
+              message: err,
+              service: "User.Presence"
+            })
+          });
+        }
+      }).catch((err: Error) => {
+        Client.logger.write().error({
+          message: err,
+          service: "User.Presence"
+        })
       });
     }
     this.Roles = PresenceObject.roles;

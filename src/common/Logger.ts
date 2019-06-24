@@ -12,9 +12,12 @@ export default class Logger {
 
     const myFormat = printf((options: any) => {
       const maxServiceLength: number = 65;
-      let service = options.service ? options.service : 'discordts';
-      for (let k = 0; k < maxServiceLength - options.service.length; k++) {
-        service += ' ';
+      let service = "";
+      if(options.service){
+        service = options.service ? options.service : 'discordts';
+        for (let k = 0; k < maxServiceLength - options.service.length; k++) {
+          service += ' ';
+        }
       }
 
       let extraspace = '';
@@ -54,6 +57,7 @@ export default class Logger {
     });
 
     this.logger = winston.createLogger({
+      exitOnError: false,
       format: winston.format.combine(timestamp({ format: 'DD/MM/YYYY HH:mm:ss' }), myFormat),
       level: 'debug',
       transports: [

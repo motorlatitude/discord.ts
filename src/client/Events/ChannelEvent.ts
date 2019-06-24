@@ -32,7 +32,7 @@ export default class ChannelEvent extends ClientDispatcherEvent {
 
     if (this.Message.type === CHANNEL_TYPES.GUILD_TEXT && this.Message.guild_id) {
       this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        const NewTextChannel: TextChannel = new TextChannel(this.Client, this.Message);
+        const NewTextChannel: TextChannel = new TextChannel(this.Client, this.Message, AffectedGuild);
 
         this.EventObject = NewTextChannel;
 
@@ -41,7 +41,7 @@ export default class ChannelEvent extends ClientDispatcherEvent {
       });
     } else if (this.Message.type === CHANNEL_TYPES.GUILD_VOICE && this.Message.guild_id) {
       this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        const NewVoiceChannel: VoiceChannel = new VoiceChannel(this.Client, this.Message);
+        const NewVoiceChannel: VoiceChannel = new VoiceChannel(this.Client, this.Message, AffectedGuild);
 
         this.EventObject = NewVoiceChannel;
 
@@ -57,7 +57,7 @@ export default class ChannelEvent extends ClientDispatcherEvent {
       this.Handle();
     } else if (this.Message.type === CHANNEL_TYPES.GUILD_CATEGORY && this.Message.guild_id) {
       this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        const NewChannelCategory: CategoryChannel = new CategoryChannel(this.Client, this.Message);
+        const NewChannelCategory: CategoryChannel = new CategoryChannel(this.Client, this.Message, AffectedGuild);
 
         this.EventObject = NewChannelCategory;
 
@@ -78,34 +78,25 @@ export default class ChannelEvent extends ClientDispatcherEvent {
   public HandleUpdate(): void {
     this.EventName = 'CHANNEL_UPDATE';
 
-    let NewChannel: TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel | undefined;
-    if (this.Message.type === CHANNEL_TYPES.GUILD_TEXT) {
-      NewChannel = new TextChannel(this.Client, this.Message);
-    } else if (this.Message.type === CHANNEL_TYPES.GUILD_VOICE) {
-      NewChannel = new VoiceChannel(this.Client, this.Message);
-    } else if (this.Message.type === CHANNEL_TYPES.DM || this.Message.type === CHANNEL_TYPES.GROUP_DM) {
-      NewChannel = new DirectMessageChannel(this.Client, this.Message);
-    } else if (this.Message.type === CHANNEL_TYPES.GUILD_CATEGORY) {
-      NewChannel = new CategoryChannel(this.Client, this.Message);
-    }
-    if (NewChannel) {
-      this.EventObject = NewChannel;
-      if (this.Message.guild_id) {
-        this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-          if (NewChannel) {
-            AffectedGuild.Channels.ReplaceChannel(this.Message.id, NewChannel);
-            this.Handle();
-          }
-        });
-      } else if (this.Message.type === CHANNEL_TYPES.DM || this.Message.type === CHANNEL_TYPES.GROUP_DM) {
-        this.Client.Channels.ReplaceChannel(this.Message.id, NewChannel);
-        this.Handle();
-      }
-    } else {
-      this.Client.logger.write().warn({
-        message: 'Unhandled Channel Type: ' + this.Message.type,
-        service: 'ClientDispatcher.Events.ChannelEvent.HandleUpdate',
+    if (this.Message.guild_id) {
+      this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
+        let NewChannel;
+        if (this.Message.type === CHANNEL_TYPES.GUILD_TEXT) {
+          NewChannel = new TextChannel(this.Client, this.Message, AffectedGuild);
+        } else if (this.Message.type === CHANNEL_TYPES.GUILD_VOICE) {
+          NewChannel = new VoiceChannel(this.Client, this.Message, AffectedGuild);
+        } else if (this.Message.type === CHANNEL_TYPES.GUILD_CATEGORY) {
+          NewChannel = new CategoryChannel(this.Client, this.Message, AffectedGuild);
+        }
+        if (NewChannel) {
+          AffectedGuild.Channels.ReplaceChannel(this.Message.id, NewChannel);
+          this.Handle();
+        }
       });
+    } else if (this.Message.type === CHANNEL_TYPES.DM || this.Message.type === CHANNEL_TYPES.GROUP_DM) {
+      const NewChannel = new DirectMessageChannel(this.Client, this.Message);
+      this.Client.Channels.ReplaceChannel(this.Message.id, NewChannel);
+      this.Handle();
     }
   }
 

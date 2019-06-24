@@ -7,7 +7,9 @@ export default class ChannelsMethods {
     this.Requester = r;
   }
 
-  public CreateMessage(Content: string, ChannelId: string, Options: any) {
-    return true;
+  public CreateMessage(Content: string, ChannelId: string, Options?: any) {
+    this.Requester.SendRequest("POST", "/channels/"+ChannelId+"/messages", {
+      content: Content
+    })
   }
 }

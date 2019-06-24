@@ -2,9 +2,6 @@ import { IDiscordGuildMember, IDiscordUser } from '../../common/types';
 import User from '../User/User';
 
 export default class GuildMember {
-  private static ResolveUser(UserObject: IDiscordUser): User {
-    return new User(UserObject);
-  }
 
   public User: User;
   public Roles: string[];
@@ -16,7 +13,7 @@ export default class GuildMember {
   public Nick: string | undefined;
 
   constructor(GuildMemberObject: IDiscordGuildMember) {
-    this.User = GuildMember.ResolveUser(GuildMemberObject.user);
+    this.User = new User(GuildMemberObject.user);
     this.Roles = GuildMemberObject.roles;
     this.JoinedAt = GuildMemberObject.joined_at;
     this.Deaf = GuildMemberObject.deaf;

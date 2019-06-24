@@ -6,11 +6,12 @@ import DiscordClient from '../DiscordClient';
 import Guild from '../resources/Guild/Guild';
 import VoiceConnectFlow from './VoiceConnectFlow';
 import VoiceUDPClient from './VoiceUDPClient';
+import { EventEmitter } from 'events';
 
 /**
  * Handles Connection With the Discord Voice WebSocket Server
  */
-export default class VoiceConnection {
+export default class VoiceConnection extends EventEmitter{
   public readonly Token: string;
   public readonly Endpoint: string;
   public readonly SessionId: string;
@@ -18,12 +19,16 @@ export default class VoiceConnection {
 
   public UDPClient: VoiceUDPClient;
 
-  private readonly Client: DiscordClient;
+  public VoiceReady?: boolean;
 
-  private SSRC?: number;
-  private IPAddress?: string;
-  private Port?: number;
-  private Modes?: string[];
+  public Sequence: number = 0;
+  public SSRC?: number;
+  public Timestamp: number = 0;
+  public IPAddress?: string;
+  public Port?: number;
+  public Modes?: string[];
+
+  private readonly Client: DiscordClient;
 
   private LocalPort?: number;
   private LocalIPAddress?: string;
@@ -41,18 +46,19 @@ export default class VoiceConnection {
    * @constructor
    */
   constructor(client: DiscordClient, guild: Guild, token: string, endpoint: string, sessionId: string) {
+    super();
     this.Client = client;
     this.Client.logger.write().debug({
       message: 'Creating a new VoiceConnection',
       service: 'DiscordClient.Guild.VoiceConnection',
     });
     this.Token = token;
-    this.Endpoint = 'wss://' + endpoint + '?v=3'; // Set to version 3 (Recommended) https://discordapp.com/developers/docs/topics/voice-connections#voice-gateway-versioning-gateway-versions
+    this.Endpoint = 'wss://' + endpoint.split(":")[0] + '?v=3'; // Set to version 3 (Recommended) https://discordapp.com/developers/docs/topics/voice-connections#voice-gateway-versioning-gateway-versions
     this.SessionId = sessionId;
     this.Guild = guild;
 
     this.VoiceConnector = new VoiceConnectFlow(this.Client, this);
-    this.UDPClient = new VoiceUDPClient(this.Client);
+    this.UDPClient = new VoiceUDPClient(this.Client, this);
   }
 
   /**
@@ -60,7 +66,7 @@ export default class VoiceConnection {
    */
   public Connect(): void {
     this.Client.logger.write().debug({
-      message: 'Connecting a VoiceConnection',
+      message: 'Connecting a VoiceConnection; '+this.Endpoint,
       service: 'DiscordClient.Guild.VoiceConnection.Connect',
     });
 
@@ -95,6 +101,14 @@ export default class VoiceConnection {
         service: 'DiscordClient.Guild.VoiceConnection.send',
       });
     }
+  }
+
+  public SetSpeaking(Speaking: boolean): void {
+    this.Send(VOICE_ENDPOINT.SPEAKING, {
+      delay: 0,
+      speaking: Speaking,
+      ssrc: this.SSRC,
+    });
   }
 
   /**
@@ -200,6 +214,14 @@ export default class VoiceConnection {
       }
       case VOICE_ENDPOINT.HELLO: {
         this.VoiceConnector.Hello(data.d);
+        break;
+      }
+      case VOICE_ENDPOINT.SESSION_DESCRIPTION: {
+        this.VoiceConnector.SessionDescription(data.d);
+        break;
+      }
+      case VOICE_ENDPOINT.HEARTBEAT_ACK: {
+        // heartbeat has been ack
         break;
       }
       default: {

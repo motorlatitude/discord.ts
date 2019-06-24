@@ -1,23 +1,27 @@
 import * as Datagram from 'dgram';
 import { EventEmitter } from 'events';
+import * as nacl from 'tweetnacl';
 import DiscordClient from '../DiscordClient';
-
+import VoiceConnection from './VoiceConnection';
 /**
  * Handles connection to discord voice UDP server
  */
 export default class VoiceUDPClient extends EventEmitter {
   public SecretKey?: number[];
 
-  private UDPConnection: any;
+  public ReadyState: boolean;
 
-  private ReadyState: boolean;
+  private UDPConnection: any;
   private IPDiscoveryDone: boolean;
 
   private Client: DiscordClient;
 
-  constructor(client: DiscordClient) {
+  private VoiceConnection: VoiceConnection;
+
+  constructor(client: DiscordClient, vc: VoiceConnection) {
     super();
     this.Client = client;
+    this.VoiceConnection = vc;
 
     this.ReadyState = false;
     this.IPDiscoveryDone = false;
@@ -43,6 +47,34 @@ export default class VoiceUDPClient extends EventEmitter {
     const InitPackage = Buffer.alloc(70);
     InitPackage.writeUIntBE(ssrc, 0, 4);
     this.Send(InitPackage, 0, InitPackage.length);
+  }
+
+  public SendAudioPacket(Data: any): void {
+    if (this.VoiceConnection.SSRC) {
+      const mac = this.SecretKey ? 16 : 0;
+      const PackageLength = Data.length + 12 + mac;
+
+      let AudioBuffer = Data;
+      const EncryptedBuffer = Buffer.alloc(PackageLength, 0);
+
+      EncryptedBuffer[0] = 0x80;
+      EncryptedBuffer[1] = 0x78;
+
+      EncryptedBuffer.writeUIntBE(this.VoiceConnection.Sequence, 2, 2);
+      EncryptedBuffer.writeUIntBE(this.VoiceConnection.Timestamp, 4, 4);
+      EncryptedBuffer.writeUIntBE(this.VoiceConnection.SSRC, 8, 4);
+
+      if (this.SecretKey) {
+        const nonce = new Buffer(24).fill(0);
+        EncryptedBuffer.copy(nonce, 0, 0, 12);
+        AudioBuffer = nacl.secretbox(new Uint8Array(Data), new Uint8Array(nonce), new Uint8Array(this.SecretKey));
+      }
+
+      for (let i = 0; i < AudioBuffer.length; i++) {
+        EncryptedBuffer[i + 12] = AudioBuffer[i];
+      }
+      this.Send(EncryptedBuffer, 0, EncryptedBuffer.length);
+    }
   }
 
   private Send(Message: Buffer, Offset: number, Length: number): void {

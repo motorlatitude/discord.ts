@@ -100,6 +100,9 @@ export default class VoiceConnectFlow {
   public SessionDescription(Message: IDiscordSessionDescriptionVoiceEndpointPackage): void {
     if (Message.mode === 'xsalsa20_poly1305') {
       this.VoiceConnection.UDPClient.SecretKey = Message.secret_key;
+      // we're ready to send voice data now
+      this.VoiceConnection.VoiceReady = true;
+      this.VoiceConnection.emit("VOICE_READY");
     } else {
       this.Client.logger.write().warn({
         message: 'Unsupported Voice Mode',

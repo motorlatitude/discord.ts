@@ -19,6 +19,7 @@ import TypingStartEvent from './Events/TypingStartEvent';
 import UserUpdateEvent from './Events/UserUpdateEvent';
 import VoiceStateEvent from './Events/VoiceStateEvent';
 import WebhooksUpdateEvent from './Events/WebhooksUpdateEvent';
+import VoiceServerUpdateEvent from './Events/VoiceServerUpdateEvent';
 
 export default class ClientDispatcher {
   private readonly App: DiscordClient;
@@ -186,6 +187,11 @@ export default class ClientDispatcher {
       case GATEWAY_EVENTS.VOICE_STATE_UPDATE: {
         const voiceStateUpdateEvent = new VoiceStateEvent(this.App, message.d);
         voiceStateUpdateEvent.Handle();
+        break;
+      }
+      case GATEWAY_EVENTS.VOICE_SERVER_UPDATE: {
+        const voiceServerUpdate = new VoiceServerUpdateEvent(this.App, message.d);
+        voiceServerUpdate.Handle();
         break;
       }
       case GATEWAY_EVENTS.WEBHOOKS_UPDATE: {

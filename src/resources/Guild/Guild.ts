@@ -17,6 +17,7 @@ import PresenceStore from '../../stores/PresenceStore';
 import RoleStore from '../../stores/RoleStore';
 import VoiceStateStore from '../../stores/VoiceStateStore';
 import VoiceConnection from '../../voice/VoiceConnection';
+import VoiceManager from '../../voice/VoiceManager';
 import CategoryChannel from '../Channel/CategoryChannel';
 import TextChannel from '../Channel/TextChannel';
 import VoiceChannel from '../Channel/VoiceChannel';
@@ -100,17 +101,14 @@ export default class Guild {
     this.Description = GuildObject.description;
     this.VanityURLCode = GuildObject.vanity_url_code;
     this.MaxPresences = GuildObject.max_presences;
-    this.Presences = new PresenceStore(this.Client);
-    if (GuildObject.presences) {
-      this.ResolvePresences(GuildObject.presences);
-    }
     this.Channels = new ChannelStore(this.Client);
     if (GuildObject.channels) {
       this.ResolveChannels(GuildObject.channels);
     }
+    this.Presences = new PresenceStore(this.Client);
     this.Members = new GuildMemberStore(this.Client);
     if (GuildObject.members) {
-      this.ResolveMembers(GuildObject.members);
+      this.ResolveMembersAndPresences(GuildObject.members, GuildObject.presences);
     }
     this.VoiceStates = new VoiceStateStore(this.Client);
     if (GuildObject.voice_states) {
@@ -133,39 +131,43 @@ export default class Guild {
     this.Splash = GuildObject.splash;
   }
 
-  public CreateVoiceConnection(Token: string, Endpoint: string): VoiceConnection | false {
-    if (this.Client.User) {
-      const RelevantVoiceState: VoiceState = this.VoiceStates.Get(this.Client.User.id);
-      if (RelevantVoiceState.SessionId) {
-        const NewVoiceConnection: VoiceConnection = new VoiceConnection(
-          this.Client,
-          this,
-          Token,
-          Endpoint,
-          RelevantVoiceState.SessionId,
-        );
-        NewVoiceConnection.Connect();
-        return NewVoiceConnection;
+  public CreateVoiceConnection(Token: string, Endpoint: string): Promise<VoiceManager> {
+    return new Promise((resolve, reject) => {
+      if (this.Client.User) {
+        const RelevantVoiceState: VoiceState = this.VoiceStates.Get(this.Client.User.id);
+        if (RelevantVoiceState && RelevantVoiceState.SessionId) {
+          const NewVoiceConnection: VoiceConnection = new VoiceConnection(
+            this.Client,
+            this,
+            Token,
+            Endpoint,
+            RelevantVoiceState.SessionId,
+          );
+          NewVoiceConnection.on("VOICE_READY", () => {
+            resolve(new VoiceManager(this.Client, NewVoiceConnection));
+          });
+          NewVoiceConnection.Connect();
+        } else {
+          reject(new Error("No Relevant Voice State Found"))
+        }
       } else {
-        return false;
+        reject(new Error("Client has no User"))
       }
-    } else {
-      return false;
-    }
+    });
   }
 
   private ResolveVoiceStates(VoiceStates: IDiscordVoiceState[]): void {
     for (const voiceState of VoiceStates) {
-      const NewVoiceState: VoiceState = new VoiceState(this.Client, voiceState);
-      NewVoiceState.GuildId = this.id;
-      NewVoiceState.Guild = this;
+      const NewVoiceState: VoiceState = new VoiceState(this.Client, voiceState, this);
       this.VoiceStates.AddVoiceState(NewVoiceState);
     }
   }
 
   private ResolvePresences(presences: IDiscordPresenceUpdate[]): void {
     for (const presence of presences) {
-      this.Presences.AddPresence(new Presence(this.Client, presence));
+      presence.guild_id = this.id;
+      const NewPresence = new Presence(this.Client, presence);
+      this.Presences.AddPresence(NewPresence);
     }
   }
 
@@ -181,20 +183,24 @@ export default class Guild {
     }
   }
 
-  private ResolveMembers(members: IDiscordGuildMember[]): void {
+  private ResolveMembersAndPresences(members: IDiscordGuildMember[], presences?: IDiscordPresenceUpdate[]): void {
     for (const member of members) {
       this.Members.AddGuildMember(new GuildMember(member));
+    }
+    // presences need to be resolved after members
+    if (presences) {
+      this.ResolvePresences(presences);
     }
   }
 
   private ResolveChannels(channels: IDiscordChannel[]): void {
     for (const channel of channels) {
       if (channel.type === CHANNEL_TYPES.GUILD_TEXT) {
-        this.Channels.AddTextChannel(new TextChannel(this.Client, channel));
+        this.Channels.AddTextChannel(new TextChannel(this.Client, channel, this));
       } else if (channel.type === CHANNEL_TYPES.GUILD_VOICE) {
-        this.Channels.AddVoiceChannel(new VoiceChannel(this.Client, channel));
+        this.Channels.AddVoiceChannel(new VoiceChannel(this.Client, channel, this));
       } else if (channel.type === CHANNEL_TYPES.GUILD_CATEGORY) {
-        this.Channels.AddChannelCategory(new CategoryChannel(this.Client, channel));
+        this.Channels.AddChannelCategory(new CategoryChannel(this.Client, channel, this));
       }
     }
   }

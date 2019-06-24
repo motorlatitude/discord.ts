@@ -117,6 +117,16 @@ export default class ClientConnection {
     this.send(3, DataMessage);
   }
 
+  public JoinVoiceChannel(GuildId: string, VoiceChannelId: string, mute: boolean = false, deaf = false): void {
+    const VoiceJoinPackage = {
+      channel_id: VoiceChannelId,
+      guild_id: GuildId,
+      self_deaf: deaf,
+      self_mute: mute
+    }
+    this.send(GATEWAY.VOICE_STATE_UPDATE, VoiceJoinPackage);
+  }
+
   /**
    * Handles GatewayWebsocket `error` event
    */

@@ -26,6 +26,7 @@ import ChannelStore from './stores/ChannelStore';
 import GuildStore from './stores/GuildStore';
 import VoiceStateStore from './stores/VoiceStateStore';
 import VoiceConnection from './voice/VoiceConnection';
+import VoiceManager from './voice/VoiceManager';
 
 /**
  * ## DiscordClient
@@ -475,7 +476,7 @@ export declare interface DiscordClient {
    * Sent when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
    * @event VOICE_SERVER_UPDATE
    */
-  on(event: 'VOICE_SERVER_UPDATE', listener: (VoiceConnection: VoiceConnection) => void): this;
+  on(event: 'VOICE_SERVER_UPDATE', listener: (VoiceConnection: VoiceManager) => void): this;
 
   /**
    * ### WEBHOOKS_UPDATE Event
@@ -556,7 +557,7 @@ export declare interface DiscordClient {
     Guild?: Guild,
   ): boolean;
   emit(event: 'VOICE_STATE_UPDATE', EventType: 'JOINED' | 'UPDATED' | 'LEFT', VoiceState: VoiceState): boolean;
-  emit(event: 'VOICE_SERVER_UPDATE', VoiceConnection: VoiceConnection): boolean;
+  emit(event: 'VOICE_SERVER_UPDATE', VoiceConnection: VoiceManager): boolean;
   emit(event: 'WEBHOOKS_UPDATE', Channel: TextChannel, Guild: Guild): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT'): boolean;

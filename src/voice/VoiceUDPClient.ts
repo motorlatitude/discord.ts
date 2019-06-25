@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import * as nacl from 'tweetnacl';
 import DiscordClient from '../DiscordClient';
 import VoiceConnection from './VoiceConnection';
+
 /**
  * Handles connection to discord voice UDP server
  */

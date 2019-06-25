@@ -335,6 +335,12 @@ export interface IDiscordUnavailableGuildObject {
   unavailable?: boolean;
 }
 
+export interface IDiscordResumedPackage {
+  _trace: string[];
+}
+
+export type GatewayCloseCode = 4000 | 4001 | 4002 | 4003 | 4004 | 4005 | 4007 | 4008 | 4009 | 4010 | 4011;
+
 // Discord Voice Endpoint Interfaces
 
 export interface IDefaultDiscordVoiceEndpointPackage {
@@ -358,6 +364,8 @@ export interface IDiscordSessionDescriptionVoiceEndpointPackage {
   mode: string;
   secret_key: number[];
 }
+
+export type VoiceCloseCode = 4001 | 4003 | 4004 | 4005 | 4006 | 4009 | 4011 | 4012 | 4014 | 4015 | 4016;
 
 // Discord Gateway Event Interfaces
 

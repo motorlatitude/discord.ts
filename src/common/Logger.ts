@@ -12,8 +12,8 @@ export default class Logger {
 
     const myFormat = printf((options: any) => {
       const maxServiceLength: number = 65;
-      let service = "";
-      if(options.service){
+      let service = '';
+      if (options.service) {
         service = options.service ? options.service : 'discordts';
         for (let k = 0; k < maxServiceLength - options.service.length; k++) {
           service += ' ';

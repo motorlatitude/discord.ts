@@ -1,17 +1,18 @@
+import { EventEmitter } from 'events';
 import * as WebSocket from 'ws';
 import * as zlib from 'zlib';
 import VOICE_ENDPOINT from '../common/constants/voiceendpoint';
-import { IDefaultDiscordVoiceEndpointPackage } from '../common/types';
+import VOICE_ERROR_CODES from '../common/constants/voiceerrorcodes';
+import { IDefaultDiscordVoiceEndpointPackage, VoiceCloseCode } from '../common/types';
 import DiscordClient from '../DiscordClient';
 import Guild from '../resources/Guild/Guild';
 import VoiceConnectFlow from './VoiceConnectFlow';
 import VoiceUDPClient from './VoiceUDPClient';
-import { EventEmitter } from 'events';
 
 /**
  * Handles Connection With the Discord Voice WebSocket Server
  */
-export default class VoiceConnection extends EventEmitter{
+export default class VoiceConnection extends EventEmitter {
   public readonly Token: string;
   public readonly Endpoint: string;
   public readonly SessionId: string;
@@ -28,6 +29,8 @@ export default class VoiceConnection extends EventEmitter{
   public Port?: number;
   public Modes?: string[];
 
+  protected Resuming: boolean;
+
   private readonly Client: DiscordClient;
 
   private LocalPort?: number;
@@ -35,6 +38,8 @@ export default class VoiceConnection extends EventEmitter{
 
   private VoiceConnector: VoiceConnectFlow;
   private VoiceWebsocket?: WebSocket;
+
+  private ExpectedClosure: boolean;
 
   /**
    * Initialise a new voice connection
@@ -53,12 +58,15 @@ export default class VoiceConnection extends EventEmitter{
       service: 'DiscordClient.Guild.VoiceConnection',
     });
     this.Token = token;
-    this.Endpoint = 'wss://' + endpoint.split(":")[0] + '?v=3'; // Set to version 3 (Recommended) https://discordapp.com/developers/docs/topics/voice-connections#voice-gateway-versioning-gateway-versions
+    this.Endpoint = 'wss://' + endpoint.split(':')[0] + '?v=3'; // Set to version 3 (Recommended) https://discordapp.com/developers/docs/topics/voice-connections#voice-gateway-versioning-gateway-versions
     this.SessionId = sessionId;
     this.Guild = guild;
 
     this.VoiceConnector = new VoiceConnectFlow(this.Client, this);
     this.UDPClient = new VoiceUDPClient(this.Client, this);
+
+    this.Resuming = false;
+    this.ExpectedClosure = false;
   }
 
   /**
@@ -66,7 +74,7 @@ export default class VoiceConnection extends EventEmitter{
    */
   public Connect(): void {
     this.Client.logger.write().debug({
-      message: 'Connecting a VoiceConnection; '+this.Endpoint,
+      message: 'Connecting a VoiceConnection; ' + this.Endpoint,
       service: 'DiscordClient.Guild.VoiceConnection.Connect',
     });
 
@@ -77,6 +85,19 @@ export default class VoiceConnection extends EventEmitter{
     this.VoiceWebsocket.once('close', this.VoiceWebsocketClose.bind(this));
     this.VoiceWebsocket.once('error', this.VoiceWebsocketError.bind(this));
     this.VoiceWebsocket.on('message', this.VoiceWebsocketMessage.bind(this));
+  }
+
+  /**
+   * Gracefully Disconnect
+   */
+  public Disconnect(): void {
+    if (this.VoiceWebsocket) {
+      this.ExpectedClosure = true;
+      clearInterval(this.VoiceConnector.VoiceHeartbeat);
+      if (this.VoiceWebsocket.readyState !== WebSocket.CLOSED && this.VoiceWebsocket.readyState !== WebSocket.CLOSING) {
+        this.VoiceWebsocket.close();
+      }
+    }
   }
 
   /**
@@ -103,6 +124,10 @@ export default class VoiceConnection extends EventEmitter{
     }
   }
 
+  /**
+   * Set Speaking Mode
+   * @param Speaking - Are we speaking; true or false, must be true BEFORE sending voice data
+   */
   public SetSpeaking(Speaking: boolean): void {
     this.Send(VOICE_ENDPOINT.SPEAKING, {
       delay: 0,
@@ -164,11 +189,51 @@ export default class VoiceConnection extends EventEmitter{
   /**
    * Handles Voice Endpoint Closure
    */
-  private VoiceWebsocketClose(): void {
-    this.Client.logger.write().warn({
-      message: 'Connection to the Voice Endpoint was Closed',
-      service: 'DiscordClient.Guild.VoiceConnection.VoiceWebsocketClose',
-    });
+  private VoiceWebsocketClose(code?: VoiceCloseCode): void {
+    if (
+      code === 4001 ||
+      code === 4003 ||
+      code === 4004 ||
+      code === 4005 ||
+      code === 4006 ||
+      code === 4009 ||
+      code === 4011 ||
+      code === 4012 ||
+      code === 4016
+    ) {
+      // We screwed something up, expect closure
+      this.ExpectedClosure = true;
+      this.Disconnect();
+      this.Client.logger.write().warn({
+        message:
+          'Connection to the Voice Endpoint was Closed With Code: ' +
+          code +
+          '; ' +
+          (VOICE_ERROR_CODES[code] ? VOICE_ERROR_CODES[code] : ''),
+        service: 'DiscordClient.Guild.VoiceConnection.VoiceWebsocketClose',
+      });
+    } else if (code === 4014 || code === 4015 || !this.ExpectedClosure) {
+      // Didn't expect to close, try resuming connection
+      this.Resuming = true;
+      this.Client.logger.write().info({
+        message:
+          'Connection to the Voice Endpoint was Closed With Code: ' +
+          code +
+          '; ' +
+          (code && VOICE_ERROR_CODES[code] ? VOICE_ERROR_CODES[code] : '') +
+          ' - Trying to resume the connection',
+        service: 'DiscordClient.Guild.VoiceConnection.VoiceWebsocketClose',
+      });
+      // Wait a couple of seconds
+      setTimeout(() => {
+        this.Connect();
+      }, 2000);
+    } else {
+      this.Client.logger.write().info({
+        message: 'Connection to the Voice Endpoint was Closed With Code: ' + code,
+        service: 'DiscordClient.Guild.VoiceConnection.VoiceWebsocketClose',
+      });
+    }
   }
 
   /**
@@ -180,8 +245,17 @@ export default class VoiceConnection extends EventEmitter{
       service: 'DiscordClient.Guild.VoiceConnection.VoiceWebsocketOpen',
     });
 
-    // Start Connection Flow
-    this.VoiceConnector.Start();
+    if (this.Resuming) {
+      // Send Resume Package
+      this.Send(VOICE_ENDPOINT.RESUME, {
+        server_id: this.Guild.id,
+        session_id: this.SessionId,
+        token: this.Token,
+      });
+    } else {
+      // Start Full Connection Flow
+      this.VoiceConnector.Start();
+    }
   }
 
   /**
@@ -221,7 +295,23 @@ export default class VoiceConnection extends EventEmitter{
         break;
       }
       case VOICE_ENDPOINT.HEARTBEAT_ACK: {
-        // heartbeat has been ack
+        this.VoiceConnector.HeartbeatAcknowledgement(data.d);
+        break;
+      }
+      case VOICE_ENDPOINT.SPEAKING: {
+        // Someone is speaking
+        break;
+      }
+      case VOICE_ENDPOINT.RESUMED: {
+        // Connection Successfully Resumed
+        this.Client.logger.write().info({
+          message: 'Closed voice connection has been resumed',
+          service: 'DiscordClient.Guild.VoiceConnection.VoiceWebsocketMessage',
+        });
+        break;
+      }
+      case VOICE_ENDPOINT.CLIENT_DISCONNECT: {
+        // A Client Has Disconnected From The Voice Channel
         break;
       }
       default: {

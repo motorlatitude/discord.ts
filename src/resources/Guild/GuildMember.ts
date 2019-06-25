@@ -1,8 +1,7 @@
-import { IDiscordGuildMember, IDiscordUser } from '../../common/types';
+import { IDiscordGuildMember } from '../../common/types';
 import User from '../User/User';
 
 export default class GuildMember {
-
   public User: User;
   public Roles: string[];
   public JoinedAt: number;

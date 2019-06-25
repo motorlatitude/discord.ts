@@ -25,7 +25,6 @@ import DiscordManager from './rest/DiscordManager';
 import ChannelStore from './stores/ChannelStore';
 import GuildStore from './stores/GuildStore';
 import VoiceStateStore from './stores/VoiceStateStore';
-import VoiceConnection from './voice/VoiceConnection';
 import VoiceManager from './voice/VoiceManager';
 
 /**
@@ -101,7 +100,7 @@ export class DiscordClient extends events.EventEmitter {
   /**
    * Retrieve Gateway URL and Connect To Discords Gateway Server
    */
-  public connect(): void {
+  public Connect(): void {
     this.rest
       .Methods()
       .GatewayMethods()
@@ -112,8 +111,8 @@ export class DiscordClient extends events.EventEmitter {
 
         this.gateway = gatewayUrl;
 
-        this.logger.write().debug({
-          message: 'Gateway Server: ' + gatewayUrl + ' (' + ping + 'ms)',
+        this.logger.write().info({
+          message: 'Successfully Found Gateway Server: ' + gatewayUrl + ' (' + ping + 'ms)',
           service: 'DiscordClient.connect',
         });
         this.emit('GATEWAY_FOUND', gatewayUrl);
@@ -130,12 +129,21 @@ export class DiscordClient extends events.EventEmitter {
   }
 
   /**
+   * Close the connection
+   */
+  public Disconnect(): void {
+    if (this.Connection) {
+      this.Connection.Disconnect();
+    }
+  }
+
+  /**
    * Establish a connection to discords gateway server
    * @param url - gateway server url
    */
   private EstablishGatewayConnection(url: string): void {
-    this.Connection = new ClientConnection(this, this.logger);
-    this.Connection.connect(url);
+    this.Connection = new ClientConnection(this);
+    this.Connection.Connect(url);
   }
 }
 
@@ -152,6 +160,14 @@ export declare interface DiscordClient {
    * @event READY
    */
   on(event: 'READY', listener: (User: User) => void): this;
+
+  /**
+   * ### RESUMED Event
+   *
+   * Event is emitted if the connection was lost and successfully resumed, it denotes the end of missed payloads
+   * @event RESUMED
+   */
+  on(event: 'RESUMED', listener: () => void): this;
 
   /**
    * ### CHANNEL_CREATE Event
@@ -500,6 +516,7 @@ export declare interface DiscordClient {
    * Event is emitted if the client was disconnected from the Discord Websocket Server
    * @event DISCONNECT
    */
+  // tslint:disable-next-line:unified-signatures
   on(event: 'DISCONNECT', listener: () => void): this;
 
   emit(event: 'READY' | 'USER_UPDATE', User: User): boolean;
@@ -560,7 +577,7 @@ export declare interface DiscordClient {
   emit(event: 'VOICE_SERVER_UPDATE', VoiceConnection: VoiceManager): boolean;
   emit(event: 'WEBHOOKS_UPDATE', Channel: TextChannel, Guild: Guild): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
-  emit(event: 'DISCONNECT'): boolean;
+  emit(event: 'DISCONNECT' | 'RESUMED'): boolean;
   // emit(event: string | symbol, ...args: any[]): boolean;
 }
 

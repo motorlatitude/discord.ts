@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import DiscordClient from '../DiscordClient';
 import AudioPlayer from './AudioPlayer/AudioPlayer';
 import VoiceConnection from './VoiceConnection';
@@ -6,8 +7,9 @@ import VoiceConnection from './VoiceConnection';
  * Interfaces between Developer and Voice Connection
  */
 export default class VoiceManager {
+  public readonly VoiceConnection: VoiceConnection;
+
   private readonly Client: DiscordClient;
-  private readonly VoiceConnection: VoiceConnection;
 
   constructor(client: DiscordClient, vc: VoiceConnection) {
     this.Client = client;
@@ -18,7 +20,8 @@ export default class VoiceManager {
     return new AudioPlayer(this.Client, this.VoiceConnection, Stream);
   }
 
-  public PlayFile(FilePath: string): void {
-    // TODO
+  public PlayFile(FilePath: string): AudioPlayer {
+    const readStream = fs.createReadStream(FilePath);
+    return this.PlayStream(readStream);
   }
 }

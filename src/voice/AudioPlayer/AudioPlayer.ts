@@ -9,8 +9,12 @@ import VoiceConnection from '../VoiceConnection';
  * Handles playing audio
  */
 export default class AudioPlayer extends EventEmitter {
-  public Volume: number = 0.5;
+  public Volume: number = 1;
   public Playing: boolean = false;
+
+  private readonly SamplingRate: number = 48000;
+  private readonly PacketizationSize: number = 20; // ms
+  private readonly FrameSize: number = (this.SamplingRate / 100) * (this.PacketizationSize / 10); // ?
 
   private readonly Client: DiscordClient;
 
@@ -36,14 +40,13 @@ export default class AudioPlayer extends EventEmitter {
     this.TemporaryAudioBuffer = Buffer.alloc(0);
     this.AudioChunks = [];
     this.EncodedAudioChunks = [];
-    if(NodeOpus){
+    if (NodeOpus) {
       this.Encoder = new NodeOpus.OpusEncoder(48000, 2);
-    }
-    else{
+    } else {
       this.Client.logger.write().error({
-        message: new Error("node-opus is not installed or properly configured"),
-        service: "VoiceManager.AudioPlayer"
-      })
+        message: new Error('node-opus is not installed or properly configured'),
+        service: 'VoiceManager.AudioPlayer',
+      });
     }
 
     this.ConvertStreamToS16LE();
@@ -66,29 +69,29 @@ export default class AudioPlayer extends EventEmitter {
   private ConvertStreamToS16LE(): void {
     const cmd = FluentFFMPEG(this.AudioStream)
       .audioChannels(2)
-      .audioBitrate(48)
+      .audioBitrate(128)
       .format('s16le')
       .on('error', (err: Error) => {
         // event
         this.Client.logger.write().error({
-          message:err,
-          service: "VoiceManager.AudioPlayer.ConvertStreamToS16LE.fluent-ffmpeg"
-        })
+          message: err,
+          service: 'VoiceManager.AudioPlayer.ConvertStreamToS16LE.fluent-ffmpeg',
+        });
       })
       .on('progress', (ProgressObject: any) => {
         // event
         this.Client.logger.write().debug({
-          message: "Progress: "+ProgressObject.percent + " : "+ProgressObject.timemark,
-          service: "VoiceManager.AudioPlayer.ConvertStreamToS16LE.fluent-ffmpeg"
-        })
+          message: 'Progress: ' + ProgressObject.percent + ' : ' + ProgressObject.timemark,
+          service: 'VoiceManager.AudioPlayer.ConvertStreamToS16LE.fluent-ffmpeg',
+        });
       })
       .on('end', () => {
         // event
         this.ConvertingDone = true;
         this.Client.logger.write().debug({
-          message: "Audio Stream Input has completely been converted",
-          service: "VoiceManager.AudioPlayer.ConvertStreamToS16LE.fluent-ffmpeg"
-        })
+          message: 'Audio Stream Input has completely been converted',
+          service: 'VoiceManager.AudioPlayer.ConvertStreamToS16LE.fluent-ffmpeg',
+        });
       });
 
     const AudioOutStream = cmd.pipe();
@@ -97,7 +100,7 @@ export default class AudioPlayer extends EventEmitter {
       this.TemporaryAudioBuffer = Buffer.concat([this.TemporaryAudioBuffer, chunk]);
 
       // split data into chunks
-      const ChunkSize = 1920*2;
+      const ChunkSize = 1920 * 2;
       const totalLength = this.TemporaryAudioBuffer.length;
       const remainder = totalLength % ChunkSize;
       const cutoff = totalLength - remainder;
@@ -107,7 +110,7 @@ export default class AudioPlayer extends EventEmitter {
       this.TemporaryAudioBuffer = this.TemporaryAudioBuffer.slice(cutoff, totalLength);
 
       // send to encode
-      if(IsFirstPacket){
+      if (IsFirstPacket) {
         this.EncodeAudioData();
         IsFirstPacket = false;
       }
@@ -133,39 +136,42 @@ export default class AudioPlayer extends EventEmitter {
         OutBuffer.writeInt16LE(UINT, i);
         i += 2;
       }
-      const output = this.Encoder.encode(OutBuffer, 960)
+      const output = this.Encoder.encode(OutBuffer, this.FrameSize);
       this.EncodedAudioChunks.push(output);
       this.EncodeAudioData();
-    }
-    else if(!this.ConvertingDone){
+    } else if (!this.ConvertingDone) {
       setTimeout(() => {
         this.EncodeAudioData();
-      }, 20);
+      }, 10);
     }
   }
 
   private SendAudioChunk(StartTime: number, Count: number): void {
-    const SamplingInstance = 960;
-    if(this.Playing){
+    // 48000 Hz sampling rate
+    const NumberOfFrames = 1000 / this.PacketizationSize;
+    const TimestampIncrement = 48000 / NumberOfFrames;
+    if (this.Playing) {
       const Packet = this.EncodedAudioChunks.shift();
       if (Packet) {
-        this.VoiceConnection.Sequence = this.VoiceConnection.Sequence + 1 < 65535 ? this.VoiceConnection.Sequence + 1 : 0;
+        this.VoiceConnection.Sequence =
+          this.VoiceConnection.Sequence + 1 < 65535 ? this.VoiceConnection.Sequence + 1 : 0;
         this.VoiceConnection.Timestamp =
-          this.VoiceConnection.Timestamp + SamplingInstance < 4294967295
-            ? this.VoiceConnection.Timestamp + SamplingInstance
+          this.VoiceConnection.Timestamp + TimestampIncrement < 4294967295
+            ? this.VoiceConnection.Timestamp + TimestampIncrement
             : 0;
 
         this.VoiceConnection.UDPClient.SendAudioPacket(Packet);
 
-        const NextTime = StartTime + (Count + 1) * 20
+        const NextTime = StartTime + (Count + 1) * this.PacketizationSize;
         setTimeout(() => {
-          this.SendAudioChunk(StartTime, Count + 1)
-        }, 20 + (NextTime - new Date().getTime()));
-      }
-      else{
+          this.SendAudioChunk(StartTime, Count + 1);
+        }, this.PacketizationSize + (NextTime - new Date().getTime()));
+      } else if (!this.ConvertingDone) {
         setTimeout(() => {
-          this.SendAudioChunk(StartTime, Count)
-        }, 200);
+          this.SendAudioChunk(StartTime, Count);
+        }, 20);
+      } else {
+        this.emit('DONE');
       }
     }
   }

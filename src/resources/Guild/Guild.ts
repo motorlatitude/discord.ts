@@ -143,15 +143,15 @@ export default class Guild {
             Endpoint,
             RelevantVoiceState.SessionId,
           );
-          NewVoiceConnection.on("VOICE_READY", () => {
+          NewVoiceConnection.on('VOICE_READY', () => {
             resolve(new VoiceManager(this.Client, NewVoiceConnection));
           });
           NewVoiceConnection.Connect();
         } else {
-          reject(new Error("No Relevant Voice State Found"))
+          reject(new Error('No Relevant Voice State Found'));
         }
       } else {
-        reject(new Error("Client has no User"))
+        reject(new Error('Client has no User'));
       }
     });
   }

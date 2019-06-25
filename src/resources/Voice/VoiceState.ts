@@ -37,51 +37,56 @@ export default class VoiceState {
     this.Suppress = VoiceStateObject.suppress;
 
     this.ChannelId = VoiceStateObject.channel_id;
-    if(guild){
+    if (guild) {
       this.GuildId = guild.id;
       this.Guild = guild;
       this.GuildMember = this.Guild.Members.Get(this.UserId);
       if (this.ChannelId) {
-        this.Guild.Channels.FetchVoiceChannel(this.ChannelId).then((AffectedChannel: VoiceChannel) => {
-          this.VoiceChannel = AffectedChannel;
-        }).catch((err: Error) => {
-          Client.logger.write().error({
-            message: err,
-            service: "Guild.VoiceState"
+        this.Guild.Channels.FetchVoiceChannel(this.ChannelId)
+          .then((AffectedChannel: VoiceChannel) => {
+            this.VoiceChannel = AffectedChannel;
           })
-        })
+          .catch((err: Error) => {
+            Client.logger.write().error({
+              message: err,
+              service: 'Guild.VoiceState',
+            });
+          });
       } else {
         // Left A Guild Voice Channel
       }
-    }
-    else{
+    } else {
       this.GuildId = VoiceStateObject.guild_id;
       if (this.GuildId) {
         Client.Guilds.Fetch(this.GuildId).then((AffectedGuild: Guild) => {
           this.Guild = AffectedGuild;
           this.GuildMember = this.Guild.Members.Get(this.UserId);
           if (this.ChannelId) {
-            this.Guild.Channels.FetchVoiceChannel(this.ChannelId).then((AffectedChannel: VoiceChannel) => {
-              this.VoiceChannel = AffectedChannel;
-            }).catch((err: Error) => {
-              Client.logger.write().error({
-                message: err,
-                service: "Guild.VoiceState"
+            this.Guild.Channels.FetchVoiceChannel(this.ChannelId)
+              .then((AffectedChannel: VoiceChannel) => {
+                this.VoiceChannel = AffectedChannel;
               })
-            });
+              .catch((err: Error) => {
+                Client.logger.write().error({
+                  message: err,
+                  service: 'Guild.VoiceState',
+                });
+              });
           } else {
             // Left A Guild Voice Channel
           }
         });
       } else if (this.ChannelId) {
-        Client.Channels.FetchVoiceChannel(this.ChannelId).then((AffectChannel: VoiceChannel) => {
-          this.VoiceChannel = AffectChannel;
-        }).catch((err: Error) => {
-          Client.logger.write().error({
-            message: err,
-            service: "Guild.VoiceState"
+        Client.Channels.FetchVoiceChannel(this.ChannelId)
+          .then((AffectChannel: VoiceChannel) => {
+            this.VoiceChannel = AffectChannel;
           })
-        });
+          .catch((err: Error) => {
+            Client.logger.write().error({
+              message: err,
+              service: 'Guild.VoiceState',
+            });
+          });
       } else {
         // Left A Private Voice Channel
       }

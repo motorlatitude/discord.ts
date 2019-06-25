@@ -8,7 +8,6 @@ export default class Channel {
   protected readonly Client: DiscordClient;
 
   constructor(Client: DiscordClient, ChannelObject: IDiscordChannel) {
-
     this.Client = Client;
 
     this.id = ChannelObject.id;

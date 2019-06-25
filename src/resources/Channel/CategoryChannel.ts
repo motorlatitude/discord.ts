@@ -4,7 +4,6 @@ import Guild from '../Guild/Guild';
 import Channel from './Channel';
 
 export default class CategoryChannel extends Channel {
-
   public Guild: Guild;
 
   public Name: string;

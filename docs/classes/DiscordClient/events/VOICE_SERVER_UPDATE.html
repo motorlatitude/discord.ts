@@ -1,0 +1,40 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> VOICE_SERVER_UPDATE
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">VOICE_SERVER_UPDATE</h1>
+<p class="class-blurb">
+    Event is emitted when joining or switching voice channels.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;VOICE_SERVER_UPDATE&quot;">event: "VOICE_SERVER_UPDATE"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>VoiceHandler: <i>VoiceHandler</i></code>
+    <p>
+        The new VoiceHandler tied to that voice channel
+    </p>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted when a guild's voice server is updated. It is sent when initially connecting to a voice channel and
+    also when the current voice instance fails over to a new server.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

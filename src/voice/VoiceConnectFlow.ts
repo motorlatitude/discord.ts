@@ -11,12 +11,21 @@ export default class VoiceConnectFlow {
   public VoiceHeartbeat?: number;
   public VoiceHeartbeatInterval?: number;
 
+  private VoicePings: number[];
+  private TotalVoicePings: number;
+
+  private LastSentHeartbeat?: number;
+  private ReceivedAcknowledgement?: boolean;
+
   private VoiceConnection: VoiceConnection;
   private Client: DiscordClient;
 
   constructor(client: DiscordClient, voiceConnection: VoiceConnection) {
     this.VoiceConnection = voiceConnection;
     this.Client = client;
+
+    this.VoicePings = [];
+    this.TotalVoicePings = 0;
   }
 
   /**
@@ -102,12 +111,37 @@ export default class VoiceConnectFlow {
       this.VoiceConnection.UDPClient.SecretKey = Message.secret_key;
       // we're ready to send voice data now
       this.VoiceConnection.VoiceReady = true;
-      this.VoiceConnection.emit("VOICE_READY");
+      this.VoiceConnection.emit('VOICE_READY');
     } else {
       this.Client.logger.write().warn({
         message: 'Unsupported Voice Mode',
         service: 'VoiceConnection.VoiceConnectFlow.SessionDescription',
       });
+    }
+  }
+
+  /**
+   * Handles HEARTBEAT_ACK - OpCode 6
+   * @param Message - Timestamp Nonce
+   */
+  public HeartbeatAcknowledgement(Message: number): void {
+    if (this.LastSentHeartbeat) {
+      if (this.LastSentHeartbeat === Message) {
+        const VoicePing = new Date().getTime() - this.LastSentHeartbeat;
+        this.VoicePings.push(VoicePing);
+        this.TotalVoicePings += VoicePing;
+        const AverageVoicePing = Math.round((this.TotalVoicePings / this.VoicePings.length) * 100) / 100;
+        this.Client.logger.write().debug({
+          message: 'Acknowledged Voice Heartbeat (' + VoicePing + 'ms - average: ' + AverageVoicePing + 'ms)',
+          service: 'VoiceConnection.VoiceConnectFlow.HeartbeatAcknowledgement',
+        });
+        this.ReceivedAcknowledgement = true;
+      } else {
+        this.Client.logger.write().warn({
+          message: 'Heartbeat Acknowledge package nonce mismatch',
+          service: 'VoiceConnection.VoiceConnectFlow.HeartbeatAcknowledgement',
+        });
+      }
     }
   }
 
@@ -120,7 +154,20 @@ export default class VoiceConnectFlow {
     // Start Heartbeat
     // @ts-ignore
     this.VoiceHeartbeat = setInterval(() => {
-      this.VoiceConnection.Send(VOICE_ENDPOINT.HEARTBEAT, new Date().getTime());
+      this.Heartbeat();
     }, this.VoiceHeartbeatInterval);
+  }
+
+  private Heartbeat(): void {
+    if (this.ReceivedAcknowledgement || this.ReceivedAcknowledgement === undefined) {
+      this.LastSentHeartbeat = new Date().getTime();
+      this.ReceivedAcknowledgement = false;
+      this.VoiceConnection.Send(VOICE_ENDPOINT.HEARTBEAT, this.LastSentHeartbeat);
+    } else {
+      this.Client.logger.write().warn({
+        message: 'Voice endpoint took too long to respond to heartbeat',
+        service: 'VoiceConnection.VoiceConnectFlow.Heartbeat',
+      });
+    }
   }
 }

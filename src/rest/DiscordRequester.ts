@@ -29,6 +29,7 @@ export default class DiscordRequester {
           },
           json: true,
           method,
+          time: true,
           url: self.host + endpoint,
         },
         (err, httpResponse, body) => {
@@ -63,7 +64,4 @@ export default class DiscordRequester {
     });
   }
 
-  public SendUploadRequest(method: string, endpoint: string, data: any, file: any, filename: string) {
-    return true;
-  }
 }

@@ -1,8 +1,8 @@
 import * as WebSocket from 'ws';
 import * as zlib from 'zlib';
 import GATEWAY from '../common/constants/gateway';
-import Logger from '../common/Logger';
-import { IDefaultDiscordGatewayPackage, IDiscordHelloPackage } from '../common/types';
+import GATEWAY_ERRORS from '../common/constants/gatewayerrorcodes';
+import { GatewayCloseCode, IDefaultDiscordGatewayPackage, IDiscordHelloPackage } from '../common/types';
 import DiscordClient from '../DiscordClient';
 import ClientConnectFlow from './ClientConnectFlow';
 import ClientDispatcher from './ClientDispatcher';
@@ -27,25 +27,26 @@ export default class ClientConnection {
 
   private GatewayWebsocket: WebSocket | undefined;
 
-  private App: DiscordClient;
-  private logger: Logger;
+  private Client: DiscordClient;
 
   private dispatcher: ClientDispatcher;
   private connector: ClientConnectFlow;
 
   private GatewayURL?: string;
 
+  private ExpectedClosure: boolean;
+
   /**
    * Create a new connection with discords gateway server
-   * @param app - pass parent class as parameter to modify accessible vars and pass events through
-   * @param log
+   * @param client - pass parent class as parameter to modify accessible vars and pass events through
    */
-  constructor(app: DiscordClient, log: Logger) {
-    this.App = app;
-    this.logger = log;
+  constructor(client: DiscordClient) {
+    this.Client = client;
 
-    this.dispatcher = new ClientDispatcher(app, this, log);
-    this.connector = new ClientConnectFlow(this, log, app.token);
+    this.ExpectedClosure = false;
+
+    this.dispatcher = new ClientDispatcher(client, this);
+    this.connector = new ClientConnectFlow(client, this, client.token);
   }
 
   /**
@@ -53,21 +54,43 @@ export default class ClientConnection {
    * @param LocalGatewayURL - Discord Gateway Url Retrieved From Discord Gateway Endpoint
    * @returns GatewayWebsocket - Websocket connection
    */
-  public connect(LocalGatewayURL?: string): WebSocket {
-    this.logger.write().debug({
+  public Connect(LocalGatewayURL?: string): void {
+    this.Client.logger.write().debug({
       message: 'Creating New Gateway Connection',
-      service: 'ClientConnection.connect',
+      service: 'ClientConnection.Connect',
     });
-    this.GatewayURL = LocalGatewayURL + '/?v=6';
-    this.GatewayWebsocket = new WebSocket(this.GatewayURL); // Specify Version
+    if (LocalGatewayURL) {
+      this.GatewayURL = LocalGatewayURL + '/?v=6'; // Specify Version
+    }
+    if (this.GatewayURL) {
+      this.GatewayWebsocket = new WebSocket(this.GatewayURL);
+      // Handle websocket events
+      this.GatewayWebsocket.once('open', this.GatewayOpen.bind(this));
+      this.GatewayWebsocket.once('close', this.GatewayClose.bind(this));
+      this.GatewayWebsocket.once('error', this.GatewayError.bind(this));
+      this.GatewayWebsocket.on('message', this.GatewayMessage.bind(this));
+    } else {
+      this.Client.logger.write().error({
+        message: "Couldn't find a valid gateway url",
+        service: 'ClientConnection.Connect',
+      });
+    }
+  }
 
-    // Handle websocket events
-    this.GatewayWebsocket.once('open', this.GatewayOpen.bind(this));
-    this.GatewayWebsocket.once('close', this.GatewayClose.bind(this));
-    this.GatewayWebsocket.once('error', this.GatewayError.bind(this));
-    this.GatewayWebsocket.on('message', this.GatewayMessage.bind(this));
-
-    return this.GatewayWebsocket;
+  /**
+   * Disconnect from the discord gateway
+   */
+  public Disconnect(): void {
+    if (this.GatewayWebsocket) {
+      this.ExpectedClosure = true;
+      clearInterval(this.GatewayHeartbeat);
+      this.GatewayWebsocket.close();
+    } else {
+      this.Client.logger.write().error({
+        message: new Error("Can't close a connection that isn't available"),
+        service: 'ClientConnection.Disconnect',
+      });
+    }
   }
 
   /**
@@ -83,12 +106,12 @@ export default class ClientConnection {
 
     if (this.GatewayWebsocket && this.GatewayWebsocket.readyState === WebSocket.OPEN) {
       this.GatewayWebsocket.send(JSON.stringify(GatewayPackage));
-      this.logger.write().debug({
+      this.Client.logger.write().debug({
         message: 'Successfully Sent A Message To Discord Gateway Server With OpCode: ' + op,
         service: 'ClientConnection.send',
       });
     } else {
-      this.logger.write().warn({
+      this.Client.logger.write().warn({
         details: GatewayPackage,
         message: "Couldn't Send A Message To Discord Gateway Server: Socket Not Open",
         service: 'ClientConnection.send',
@@ -122,16 +145,26 @@ export default class ClientConnection {
       channel_id: VoiceChannelId,
       guild_id: GuildId,
       self_deaf: deaf,
-      self_mute: mute
-    }
+      self_mute: mute,
+    };
     this.send(GATEWAY.VOICE_STATE_UPDATE, VoiceJoinPackage);
+  }
+
+  public LeaveVoiceChannel(GuildId: string): void {
+    const VoiceLeavePackage = {
+      channel_id: null,
+      guild_id: GuildId,
+      self_deaf: false,
+      self_mute: false,
+    };
+    this.send(GATEWAY.VOICE_STATE_UPDATE, VoiceLeavePackage);
   }
 
   /**
    * Handles GatewayWebsocket `error` event
    */
   private GatewayError(error: Error): void {
-    this.logger.write().error({
+    this.Client.logger.write().error({
       message: error,
       service: 'ClientConnection.GatewayWebsocket.GatewayError',
     });
@@ -140,29 +173,43 @@ export default class ClientConnection {
   /**
    * Handles GatewayWebsocket `close` event
    */
-  private GatewayClose(): void {
-    this.logger.write().warn({
-      message: 'Connection to Gateway Server was Closed',
-      service: 'ClientConnection.GatewayWebsocket.GatewayClose',
-    });
-    this.logger.write().info({
-      message: 'Attempting to Reestablish Connection to Gateway Server',
-      service: 'ClientConnection.GatewayWebsocket.GatewayClose',
-    });
+  private GatewayClose(code?: GatewayCloseCode): void {
+    if (code !== 4011 && !this.ExpectedClosure) {
+      this.Client.logger.write().warn({
+        message:
+          'Connection to Gateway Server was Closed With Code: ' +
+          code +
+          '; ' +
+          (code ? (GATEWAY_ERRORS[code] ? GATEWAY_ERRORS[code] : 'Unknown') : 'Unknown'),
+        service: 'ClientConnection.GatewayWebsocket.GatewayClose',
+      });
 
-    // Attempt to resume the connection after 41 seconds
-    clearInterval(this.GatewayHeartbeat);
-    setTimeout(() => {
-      this.resuming = true;
-      this.connect();
-    }, 5000);
+      this.Client.logger.write().info({
+        message: 'Attempting to Reestablish Connection to Gateway Server',
+        service: 'ClientConnection.GatewayWebsocket.GatewayClose',
+      });
+
+      // Attempt to resume the connection after 5 seconds
+      clearInterval(this.GatewayHeartbeat);
+      setTimeout(() => {
+        this.resuming = true;
+        this.Connect();
+      }, 5000);
+    } else if (this.ExpectedClosure) {
+      this.Client.logger.write().info({
+        message: 'Gateway Connection Successfully Closed',
+        service: 'ClientConnection.GatewayWebsocket.GatewayClose',
+      });
+    } else {
+      // Sharding required
+    }
   }
 
   /**
    * Handles GatewayWebsocket `open` event
    */
   private GatewayOpen(): void {
-    this.logger.write().info({
+    this.Client.logger.write().info({
       message: 'Successfully Connected to Gateway Server',
       service: 'ClientConnection.GatewayWebsocket.GatewayOpen',
     });
@@ -206,7 +253,7 @@ export default class ClientConnection {
           clearInterval(this.GatewayHeartbeat);
           setTimeout(() => {
             this.resuming = true;
-            this.connect();
+            this.Connect();
           }, 5000);
         } else if (this.resuming) {
           // failed to resume, go through standard flow
@@ -219,7 +266,7 @@ export default class ClientConnection {
           }, 4000);
         } else {
           // Couldn't Initialise Session After Receiving OpCode 2 Identify
-          this.logger.write().error({
+          this.Client.logger.write().error({
             message: new Error(
               'Invalid Session Error: There was an error with the identify payload or the gateway has invalidated an active session',
             ),
@@ -241,7 +288,7 @@ export default class ClientConnection {
         break;
       }
       default: {
-        this.logger.write().warn({
+        this.Client.logger.write().warn({
           message: 'Unhandled Gateway OpCode was received: ' + data.op,
           service: 'ClientConnection.GatewayWebsocket.GatewayMessage.UNHANDLED_OPCODE',
         });

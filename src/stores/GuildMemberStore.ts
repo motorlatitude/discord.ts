@@ -14,7 +14,7 @@ export default class GuildMemberStore extends Store {
   public AddGuildMember(member: GuildMember): void {
     // WARN - temporary check, follow github issue #997
     // https://github.com/discordapp/discord-api-docs/issues/997
-    if(!this.Get(member.User.id)){
+    if (!this.Get(member.User.id)) {
       this.Add(member.User.id, member).catch((err: Error) => {
         this.Client.logger.write().error({
           message: err,

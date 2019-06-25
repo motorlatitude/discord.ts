@@ -65,7 +65,7 @@ export default class VoiceUDPClient extends EventEmitter {
       EncryptedBuffer.writeUIntBE(this.VoiceConnection.SSRC, 8, 4);
 
       if (this.SecretKey) {
-        const nonce = new Buffer(24).fill(0);
+        const nonce = Buffer.alloc(24, 0);
         EncryptedBuffer.copy(nonce, 0, 0, 12);
         AudioBuffer = nacl.secretbox(new Uint8Array(Data), new Uint8Array(nonce), new Uint8Array(this.SecretKey));
       }
@@ -120,7 +120,7 @@ export default class VoiceUDPClient extends EventEmitter {
     }
   }
 
-  private DatagramSocketMessage(Message: Buffer, RemoteAddressInformation: any): void {
+  private DatagramSocketMessage(Message: Buffer): void {
     if (this.IPDiscoveryDone) {
       // Handle packets maybe?
     } else {

@@ -1,11 +1,10 @@
 import { IDiscordChannel } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import MessageStore from '../../stores/MessageStore';
-import Channel from './Channel';
 import Guild from '../Guild/Guild';
+import Channel from './Channel';
 
 export default class TextChannel extends Channel {
-
   public Guild: Guild;
 
   public GuildId: string;
@@ -43,6 +42,9 @@ export default class TextChannel extends Channel {
   }
 
   public SendMessage(Content: string): void {
-    this.Client.rest.Methods().ChannelMethods().CreateMessage(Content, this.id)
+    this.Client.rest
+      .Methods()
+      .ChannelMethods()
+      .CreateMessage(Content, this.id);
   }
 }

@@ -24,6 +24,11 @@ html {
     padding: 0 20px;
 }
 
+.header .title img{
+    height: 40px;
+    margin-top: 10px;
+}
+
 .site-wrapper {
     display: flex;
     flex-direction: row;
@@ -39,6 +44,20 @@ html {
     min-width: 275px;
     border-right: 2px solid #eee;
     height: 100%;
+    position: relative;
+    top: 0;
+    overflow-x: hidden;
+}
+
+.sidebar .background-logo {
+    position: absolute;
+    bottom: 20px;
+    left: -40px;
+    opacity: 0.2;
+}
+
+.sidebar .background-logo img{
+    height: 250px;
 }
 
 .sidebar .sidebar-title {
@@ -113,6 +132,8 @@ html {
     margin: -30px;
     padding: 30px;
     background: #f8f8f8;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 .content .topic-table {
@@ -162,7 +183,7 @@ html {
 }
 
 .content .topic-table tr td:last-child ul li .title span{
-    color:  #1373d1;
+    color:  #4c6ef5;
 }
 
 .content .topic-table tr td:last-child ul li .title:hover{
@@ -210,6 +231,11 @@ html {
 
 .content h3 {
     line-height: 30px;
+    font-size: 20px;
+}
+
+.content p {
+    font-size: 16px;
 }
 
 .content p.class-blurb {
@@ -228,7 +254,7 @@ html {
 .content a,
 .content .link{
     text-decoration: none;
-    color: #1373d1;
+    color: #4c6ef5;
     cursor: pointer;
 }
 
@@ -262,10 +288,8 @@ html {
 
 .content p code {
     padding: 2px 8px;
-    background: rgba(227, 239, 255, 0.51);
-    border-radius: 2px;
     font-family: 'PT Mono', monospace;
-    border: 0.5px solid #c6d0df;
+    font-size: 18px;
 }
 
 .content .parameters-block {
@@ -281,7 +305,7 @@ html {
 }
 
 .content .parameters-block code i{
-    color: #1373d1;
+    color: #4c6ef5;
     font-weight: normal;
 }
 
@@ -295,11 +319,11 @@ html {
 }
 
 .content .quote {
-    margin: 0;
     padding: 0;
     background: #eee;
     border-radius: 3px;
     overflow: hidden;
+    margin: 30px 0;
 }
 
 .content .quote .quote-title{
@@ -316,7 +340,7 @@ html {
 
 .content .notification {
     padding: 10px 20px;
-    margin: 0;
+    margin: 30px 0;
     width: calc(100% - 44px);
     height: auto;
     border-radius: 4px;
@@ -386,5 +410,5 @@ html {
 
 .content .page-content ul li.active{
     font-weight: 500;
-    color: #1373d1;
+    color: #4c6ef5;
 }

@@ -14,7 +14,7 @@ export default class DiscordMethods {
     return new GatewayMethods(this.Requester);
   }
 
-  public channels(): ChannelsMethods {
+  public ChannelMethods(): ChannelsMethods {
     return new ChannelsMethods(this.Requester);
   }
 }

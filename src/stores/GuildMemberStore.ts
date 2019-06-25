@@ -1,4 +1,3 @@
-import { IGuildMemberList } from '../common/types';
 import DiscordClient from '../DiscordClient';
 import GuildMember from '../resources/Guild/GuildMember';
 import Store from './Store';
@@ -13,12 +12,16 @@ export default class GuildMemberStore extends Store {
    * @param member - A Guild Member
    */
   public AddGuildMember(member: GuildMember): void {
-    this.Add(member.User.id, member).catch((err: Error) => {
-      this.Client.logger.write().error({
-        message: err,
-        service: 'DiscordClient.GuildMemberStore.AddGuildMember.Store',
+    // WARN - temporary check, follow github issue #997
+    // https://github.com/discordapp/discord-api-docs/issues/997
+    if (!this.Get(member.User.id)) {
+      this.Add(member.User.id, member).catch((err: Error) => {
+        this.Client.logger.write().error({
+          message: err,
+          service: 'DiscordClient.GuildMemberStore.AddGuildMember.Store',
+        });
       });
-    });
+    }
   }
 
   /**
@@ -64,12 +67,6 @@ export default class GuildMemberStore extends Store {
   public Fetch(UserId: string): Promise<GuildMember> {
     return new Promise(resolve => {
       resolve(this.Get(UserId));
-    });
-  }
-
-  public FetchAll(): Promise<IGuildMemberList> {
-    return new Promise(resolve => {
-      resolve(this.GetAll());
     });
   }
 }

@@ -1,0 +1,56 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> DISCONNECT
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">DISCONNECT</h1>
+<p class="class-blurb">
+    Event is emitted once the connection has closed.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;DISCONNECT&quot;">event: "DISCONNECT"</code></pre>
+<h2>Parameters</h2>
+<p>
+    This event does not return any values
+</p>
+<h2>Discussion</h2>
+<p>
+    This event is emitted after the connection to the Gateway has been closed. This occurs when the connection to the
+    gateway server has been terminated.
+</p>
+<div class="notification warn">
+    <div class="notification-title">Note</div>
+    <div class="notification-body">
+        The <code>DISCONNECT</code> event is <b>NOT</b> final. Further events may trigger as part of the library
+        attempting to reconnect, unless the disconnect was triggered through the <code>.Disconnect()</code> instance
+        method.
+    </div>
+</div>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                User-Specific Properties
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/User"></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                    <li data-load="classes/DiscordClient/topics/disconnect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -12,17 +12,35 @@
 <pre><code class="language-typescript">class DiscordClient extends events.EventEmitter</code></pre>
 <h2>Overview</h2>
 <p>
-    Every application wanting to utilise discords API gateway will require to use a <code>DiscordClient</code> instance
+    Every application wanting to utilise Discord's API gateway, will require to use a <code>DiscordClient</code> instance
     to keep track of Channels, Guilds, Users and more. The <code>DiscordClient</code> instances will issue events as they
     come in from the gateway after manipulating its internal components.
     <br/><br/>
-    The <code>DiscordClient</code> instance can also be used to access discords REST API irrespective of using the gateway
-    connection.
+    The <code>DiscordClient</code> instance can also be used to access discords REST API separately, without, using the
+    gateway connection and can be accessed through the <code>DiscordAPIManager</code> property.
+</p>
+<h3>Gateway WebSocket Connection</h3>
+<p>
+    The <code>DiscordClient</code> instance is written around event-driven architecture and extends the pre-existing <code>EventEmitter</code>
+    class that is part of the <a href="https://nodejs.org/api/events.html#events_class_eventemitter"><code>events</code>
+    node module</a> and will hence inherit all relevant properties and methods, depending on your node version. The
+    instance method of particular use here is the
+    <span class="link" data-link="classes/DiscordClient/topics/events"><code>on(event: listener)</code></span> method and
+    should be used to listen for relevant events that this library will emit.
+    <br/><br/>
+    DiscordTS will take over the role of caching and parsing incoming events and updating relevant internal components,
+    keeping its state up-to-date. Projects should first see if cached values are available before sending API requests
+    through the <code>DiscordAPIManager</code> so to avoid excessive or unnecessary API calls. Any API calls made will
+    update internal components and are hence also cached.
+</p>
+<h3>HTTPS/REST API</h3>
+<p>
+    Lorem Ipsum
 </p>
 <br/><br/>
 <div class="block">
     <h2 class="reduced">Topics</h2>
-    <table class="topic-table">
+    <table class="topic-table" data-load-topics="ConnectingToDiscord; CreatingAClient; HandlingConnection; HandlingEvents; UserSpecficProperties">
         <tr>
             <td>
                 Creating a Client
@@ -42,6 +60,17 @@
                     <li data-load="classes/DiscordClient/topics/User"></li>
                     <li data-load="classes/DiscordClient/topics/Channels"></li>
                     <li data-load="classes/DiscordClient/topics/Guilds"></li>
+                    <li data-load="classes/DiscordClient/topics/VoiceStates"></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Accessing REST Methods
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/DiscordAPIManager"></li>
                 </ul>
             </td>
         </tr>
@@ -63,6 +92,8 @@
             <ul>
                 <li data-load="classes/DiscordClient/topics/events"></li>
                 <li data-load="classes/DiscordClient/events/READY"></li>
+                <li data-load="classes/DiscordClient/events/RESUMED"></li>
+                <li data-load="classes/DiscordClient/events/DISCONNECT"></li>
                 <li data-load="classes/DiscordClient/events/CHANNEL_CREATE"></li>
                 <li data-load="classes/DiscordClient/events/CHANNEL_UPDATE"></li>
                 <li data-load="classes/DiscordClient/events/CHANNEL_DELETE"></li>
@@ -81,6 +112,19 @@
                 <li data-load="classes/DiscordClient/events/GUILD_ROLE_CREATE"></li>
                 <li data-load="classes/DiscordClient/events/GUILD_ROLE_UPDATE"></li>
                 <li data-load="classes/DiscordClient/events/GUILD_ROLE_DELETE"></li>
+                <li data-load="classes/DiscordClient/events/MESSAGE_CREATE"></li>
+                <li data-load="classes/DiscordClient/events/MESSAGE_UPDATE"></li>
+                <li data-load="classes/DiscordClient/events/MESSAGE_DELETE"></li>
+                <li data-load="classes/DiscordClient/events/MESSAGE_DELETE_BULK"></li>
+                <li data-load="classes/DiscordClient/events/MESSAGE_REACTION_ADD"></li>
+                <li data-load="classes/DiscordClient/events/MESSAGE_REACTION_REMOVE"></li>
+                <li data-load="classes/DiscordClient/events/MESSAGE_REACTION_REMOVE_ALL"></li>
+                <li data-load="classes/DiscordClient/events/PRESENCE_UPDATE"></li>
+                <li data-load="classes/DiscordClient/events/TYPING_START"></li>
+                <li data-load="classes/DiscordClient/events/USER_UPDATE"></li>
+                <li data-load="classes/DiscordClient/events/VOICE_SERVER_UPDATE"></li>
+                <li data-load="classes/DiscordClient/events/VOICE_STATE_UPDATE"></li>
+                <li data-load="classes/DiscordClient/events/WEBHOOKS_UPDATE"></li>
             </ul>
         </td>
     </tr>
@@ -91,6 +135,7 @@
             <td>
                 <ul>
                     <li data-load="classes/DiscordClient/topics/connect"></li>
+                    <li data-load="classes/DiscordClient/topics/disconnect"></li>
                 </ul>
             </td>
         </tr>

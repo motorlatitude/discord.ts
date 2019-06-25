@@ -1,0 +1,52 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> TYPING_START
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">TYPING_START</h1>
+<p class="class-blurb">
+    Event is emitted when a user starts typing in a channel.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;TYPING_START&quot;">event: "TYPING_START"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>Channel: <i>TextChannel</i> | <i>DirectMessageChannel</i></code>
+    <p>
+        The relevant channel instance for where the user has started typing
+    </p>
+    <code>User: <i>User</i></code>
+    <p>
+        A User instance describing the user who has started typing
+    </p>
+    <code>Timestamp: <i>number</i></code>
+    <p>
+        UNIX timestamp (in seconds) of when the user started typing
+    </p>
+    <code>Guild?: <i>Guild</i></code>
+    <p>
+        A Guild instance where the channel resides
+    </p>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted when a user starts typing in a channel in which the bot user is a member of. This could be a
+    TextChannel or DirectMessage instance.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

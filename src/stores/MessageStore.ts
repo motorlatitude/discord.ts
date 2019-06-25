@@ -48,6 +48,15 @@ export default class MessageStore extends Store {
   }
 
   /**
+   * Async get message
+   * @param MessageId - id of message
+   * @constructor
+   */
+  public Get(MessageId: string): Message {
+    return super.Get(MessageId);
+  }
+
+  /**
    * Fetch message from message id
    * @param MessageId - the id of the message
    */

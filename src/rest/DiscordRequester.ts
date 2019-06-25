@@ -1,13 +1,6 @@
-// Node Modules
 import * as req from 'request';
-
-// NPM Modules
-
-// Others
 import { IDiscordHTTPResponse } from '../common/types';
 import API_CONSTANTS from './../common/constants/api';
-
-// Types
 
 export default class DiscordRequester {
   public token: string;
@@ -26,9 +19,14 @@ export default class DiscordRequester {
           body: data,
           headers: {
             Authorization: 'Bot ' + self.token,
+            'User-Agent':
+              'DiscordBot (https://github.com/motorlatitude/discord.ts, ' +
+              require('./../../package.json').version +
+              ')',
           },
           json: true,
           method,
+          time: true,
           url: self.host + endpoint,
         },
         (err, httpResponse, body) => {
@@ -61,9 +59,5 @@ export default class DiscordRequester {
         },
       );
     });
-  }
-
-  public SendUploadRequest(method: string, endpoint: string, data: any, file: any, filename: string) {
-    return true;
   }
 }

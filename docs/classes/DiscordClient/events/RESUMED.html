@@ -1,0 +1,56 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> RESUMED
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">RESUMED</h1>
+<p class="class-blurb">
+    Event is emitted once the connection is resumed.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;RESUMED&quot;">event: "RESUMED"</code></pre>
+<h2>Parameters</h2>
+<p>
+    This event does not return any values
+</p>
+<h2>Discussion</h2>
+<p>
+    This event is emitted after the connection to the Gateway was lost and resumed. This event denotes the end of incoming
+    missed payloads.
+    <br/><br/>
+    Your project should be aware of the possibility of incoming payloads after a <code>DISCONNECT</code> event. These
+    payloads will follow the same format as any normal event and will be replayed in order. The <code>RESUMED</code>
+    event will be emitted once all payloads have been received and the connection is open again.
+    <br/><br/>
+    The library will automatically try to reconnect and resume the connection in most cases, in cases where this is not
+    possible or the resume request is refused by discord, the library will automatically attempt to go through the full
+    connection flow and create a new connection after waiting for 5 seconds.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                User-Specific Properties
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/User"></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                    <li data-load="classes/DiscordClient/topics/disconnect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

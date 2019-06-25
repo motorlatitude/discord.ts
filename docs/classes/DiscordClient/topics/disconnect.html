@@ -1,0 +1,37 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Disconnect
+</div>
+
+<div class="doc-type">Instance Method</div>
+<h1 class="reduced">function Disconnect()</h1>
+<p class="class-blurb">
+    Close the active gateway connection.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="function <span>Disconnect</span>(): void">function Disconnect(): void</code></pre>
+<h2>Discussion</h2>
+<p>
+    This method will go and close the active gateway connection. User-specified variables will still contain information,
+    this may however be outdated after disconnect.
+    <br/><br/>
+    This method will trigger the ClientConnection instance to disconnect and the DiscordClient instance will emit a
+    <code>DISCONNECT</code> event once the connection has successfully been closed.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Handling Events
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/events"></li>
+                    <li data-load="classes/DiscordClient/events/DISCONNECT"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

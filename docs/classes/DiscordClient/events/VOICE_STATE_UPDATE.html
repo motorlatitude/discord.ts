@@ -1,0 +1,46 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> VOICE_STATE_UPDATE
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">VOICE_STATE_UPDATE</h1>
+<p class="class-blurb">
+    Event is emitted when someones voice state updates.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;VOICE_STATE_UPDATE&quot;">event: "VOICE_STATE_UPDATE"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>EventType: <i>"JOINED"</i> | <i>"UPDATED"</i> | <i>"LEFT"</i></code>
+    <p>
+        The event type
+    </p>
+    <code>VoiceState: <i>VoiceState</i></code>
+    <p>
+        The new VoiceState instance.
+    </p>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted when a user joins / leaves / moves voice channels. The <code>EventType</code> will tell you if
+    a user has joined or left a channel. The <code>"UPDATED"</code> <code>EventType</code> is set if the user is already
+    in a voice channel and has either moved, set them self to deaf, set them self to mute, been server deafened, been
+    server muted or whether the current bot user has muted (suppressed) them.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

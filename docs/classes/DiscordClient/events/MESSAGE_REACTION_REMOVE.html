@@ -1,0 +1,65 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> DiscordClient <i class="fas fa-chevron-right"></i> Events <i class="fas fa-chevron-right"></i> MESSAGE_REACTION_REMOVE
+</div>
+
+<div class="doc-type">Event</div>
+<h1 class="reduced">MESSAGE_REACTION_REMOVE</h1>
+<p class="class-blurb">
+    Event is emitted when a reaction is removed from a message.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="<span>event</span>: &quot;MESSAGE_REACTION_REMOVE&quot;">event: "MESSAGE_REACTION_REMOVE"</code></pre>
+<h2>Parameters</h2>
+<div class="parameters-block">
+    <code>Channel: <i>TextChannel</i> | <i>DirectMessageChannel</i></code>
+    <p>
+        The channel instance describing the channel in which the message was created
+    </p>
+    <code>MessageId: <i>string</i></code>
+    <p>
+        The message id of the relevant message.
+    </p>
+    <code>Emoji: <i>ReactionEmoji</i></code>
+    <p>
+        The removed emoji used to react to the message.
+    </p>
+    <code>Guild?: <i>Guild</i></code>
+    <p>
+        The Guild instance in which the TextChannel instance resides
+    </p>
+</div>
+<h2>Discussion</h2>
+<p>
+    This event is emitted when someone removes their reaction to a message in a channel that the bot user is a member of.
+    <br/><br/>
+    The <code>Guild</code> parameter will only be populated if the message was sent within a guild. Otherwise the
+    message originates as a direct message, and the <code>Channel</code> parameter will hold a
+    DirectMessageChannel instances and the <code>Guild</code> parameter will be <code>undefined</code>.
+</p>
+<div class="notification info">
+    <div class="notification-title">Information</div>
+    <div class="notification-body">
+        The returned emoji is not a standard Emoji instance. It is instead a ReactionEmoji instance and will contain only
+        the required Name and optional id properties.
+    </div>
+</div>
+<p>
+    The full message instance should be requested from the <code>Channel</code> parameter.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Connecting to Discord
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/DiscordClient/topics/connect"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

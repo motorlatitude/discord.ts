@@ -171,7 +171,7 @@ export interface IDiscordMessageActivity {
 export interface IDiscordReaction {
   count: number;
   me: boolean;
-  emoji: IDiscordEmoji; // TODO partial?
+  emoji: IDiscordPartialEmoji;
 }
 
 export interface IDiscordEmbed {
@@ -244,6 +244,78 @@ export interface IDiscordAttachment {
   width?: number; // if image
 }
 
+export interface IDiscordPartialEmoji {
+  id?: string;
+  name: string;
+}
+
+export interface IDiscordActivity {
+  name: string;
+  type: number;
+  url?: string;
+  timestamps?: IDiscordActivityTimestamp;
+  application_id?: string;
+  details?: string;
+  state?: string;
+  party?: IDiscordParty;
+  assets?: IDiscordAssets;
+  secrets?: IDiscordSecrets;
+  instance?: boolean;
+  flags?: number;
+}
+
+export interface IDiscordSecrets {
+  join?: string;
+  spectate?: string;
+  match?: string;
+}
+
+export interface IDiscordAssets {
+  large_image?: string;
+  large_text?: string;
+  small_image?: string;
+  small_text?: string;
+}
+
+export interface IDiscordParty {
+  id?: string;
+  size: [number, number];
+}
+
+export interface IDiscordActivityTimestamp {
+  start?: number;
+  end?: number;
+}
+
+export interface IDiscordClientStatus {
+  desktop?: string;
+  mobile?: string;
+  web?: string;
+}
+
+export interface IDiscordPresenceUpdate {
+  user: IDiscordUser;
+  roles: string[];
+  game?: IDiscordActivity;
+  guild_id: string;
+  status: string;
+  activities: IDiscordActivity[];
+  client_status: IDiscordClientStatus;
+}
+
+export interface IDiscordVoiceState {
+  guild_id?: string;
+  channel_id?: string;
+  user_id: string;
+  member?: IDiscordGuildMember;
+  session_id: string;
+  deaf: boolean;
+  mute: boolean;
+  self_deaf: boolean;
+  self_mute: boolean;
+  suppress: boolean;
+}
+
 // Discord Gateway Interfaces
 
 export interface IDefaultDiscordGatewayPackage {
@@ -262,6 +334,38 @@ export interface IDiscordUnavailableGuildObject {
   id: string;
   unavailable?: boolean;
 }
+
+export interface IDiscordResumedPackage {
+  _trace: string[];
+}
+
+export type GatewayCloseCode = 4000 | 4001 | 4002 | 4003 | 4004 | 4005 | 4007 | 4008 | 4009 | 4010 | 4011;
+
+// Discord Voice Endpoint Interfaces
+
+export interface IDefaultDiscordVoiceEndpointPackage {
+  op: number;
+  d: any;
+}
+
+export interface IDiscordReadyVoiceEndpointPackage {
+  ssrc: number;
+  ip: string;
+  port: number;
+  modes: string[];
+  heartbeat_interval: number; // erroneous field and should be ignored
+}
+
+export interface IDiscordHelloVoiceEndpointPackage {
+  heartbeat_interval: number;
+}
+
+export interface IDiscordSessionDescriptionVoiceEndpointPackage {
+  mode: string;
+  secret_key: number[];
+}
+
+export type VoiceCloseCode = 4001 | 4003 | 4004 | 4005 | 4006 | 4009 | 4011 | 4012 | 4014 | 4015 | 4016;
 
 // Discord Gateway Event Interfaces
 
@@ -351,6 +455,32 @@ export interface IDiscordMessageDeleteGatewayEvent {
   ids?: string[];
   channel_id: string;
   guild_id?: string;
+}
+
+export interface IDiscordMessageReactionGatewayEvent {
+  user_id?: string;
+  channel_id: string;
+  message_id: string;
+  guild_id?: string;
+  emoji: IDiscordPartialEmoji;
+}
+
+export interface IDiscordTypingStartGatewayEvent {
+  channel_id: string;
+  guild_id?: string;
+  user_id: string;
+  timestamp: number;
+}
+
+export interface IDiscordVoiceServerGatewayEvent {
+  token: string;
+  guild_id: string;
+  endpoint: string;
+}
+
+export interface IDiscordWebhooksUpdateGatewayEvent {
+  guild_id: string;
+  channel_id: string;
 }
 
 // discordts Event objects

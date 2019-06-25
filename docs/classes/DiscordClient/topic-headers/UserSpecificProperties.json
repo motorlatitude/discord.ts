@@ -1,0 +1,8 @@
+{
+  "title": "User-Specific Properties",
+  "values": [
+    "classes/DiscordClient/topics/User",
+    "classes/DiscordClient/topics/Channels",
+    "classes/DiscordClient/topics/Guilds"
+  ]
+}

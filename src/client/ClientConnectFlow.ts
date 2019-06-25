@@ -32,8 +32,7 @@ export default class ClientConnectFlow {
     this.Connection.GatewayHeartbeatInterval = HelloPackage.heartbeat_interval;
     // @ts-ignore
     this.Connection.GatewayHeartbeat = setInterval(() => {
-      this.GatewayHeartbeatSendTimestamp = new Date().getTime();
-      this.Connection.send(GATEWAY.HEARTBEAT, this.Connection.GatewaySequence);
+      this.SendHeartbeat();
     }, HelloPackage.heartbeat_interval);
 
     this.Client.logger.write().debug({
@@ -41,6 +40,11 @@ export default class ClientConnectFlow {
       service: 'ClientConnection.ClientConnectFlow.Start',
     });
     this.SendIdentifyPayload();
+  }
+
+  public SendHeartbeat(): void {
+    this.GatewayHeartbeatSendTimestamp = new Date().getTime();
+    this.Connection.send(GATEWAY.HEARTBEAT, this.Connection.GatewaySequence);
   }
 
   /**
@@ -83,7 +87,7 @@ export default class ClientConnectFlow {
    * Sends Identify package to Discord Gateway Websocket server
    */
   private SendIdentifyPayload(): void {
-    const useCompression = ClientConnection.CanUseCompression();
+    const useCompression = this.Connection.CanUseCompression();
     this.Client.logger.write().debug({
       message: 'Can Use Compression: ' + useCompression,
       service: 'ClientConnection.ClientConnectFlow.SendIdentifyPayload',

@@ -231,6 +231,11 @@ html {
 
 .content h3 {
     line-height: 30px;
+    font-size: 20px;
+}
+
+.content p {
+    font-size: 16px;
 }
 
 .content p.class-blurb {
@@ -283,10 +288,8 @@ html {
 
 .content p code {
     padding: 2px 8px;
-    background: rgba(227, 239, 255, 0.51);
-    border-radius: 2px;
     font-family: 'PT Mono', monospace;
-    border: 0.5px solid #c6d0df;
+    font-size: 18px;
 }
 
 .content .parameters-block {

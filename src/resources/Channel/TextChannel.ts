@@ -42,8 +42,7 @@ export default class TextChannel extends Channel {
   }
 
   public SendMessage(Content: string): void {
-    this.Client.rest
-      .Methods()
+    this.Client.DiscordAPIManager.Methods()
       .ChannelMethods()
       .CreateMessage(Content, this.id);
   }

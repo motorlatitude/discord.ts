@@ -65,9 +65,9 @@ export class DiscordClient extends events.EventEmitter {
   public VoiceStates: VoiceStateStore;
 
   /**
-   * @param rest - Access To Discord APIs REST methods
+   * @param DiscordAPIManager - Access To Discord APIs REST methods
    */
-  public rest: DiscordManager;
+  public DiscordAPIManager: DiscordManager;
 
   /**
    * @param connect - Our Connection with the Discord Gateway Websocket Server
@@ -90,19 +90,23 @@ export class DiscordClient extends events.EventEmitter {
 
     this.logger = new Logger();
 
+    this.logger.write().info({
+      message: 'Using DiscordTS (version: ' + require('./../package.json').version + ')',
+      service: 'DiscordClient',
+    });
+
     this.Channels = new ChannelStore(this);
     this.Guilds = new GuildStore(this);
     this.VoiceStates = new VoiceStateStore(this);
 
-    this.rest = new DiscordManager(this.token);
+    this.DiscordAPIManager = new DiscordManager(this.token);
   }
 
   /**
    * Retrieve Gateway URL and Connect To Discords Gateway Server
    */
   public Connect(): void {
-    this.rest
-      .Methods()
+    this.DiscordAPIManager.Methods()
       .GatewayMethods()
       .GatewayForBot()
       .then((response: IGatewayResponse) => {

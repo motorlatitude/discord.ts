@@ -11,10 +11,6 @@ import ClientDispatcher from './ClientDispatcher';
  * Handles Connection With The Discord Gateway Server
  */
 export default class ClientConnection {
-  public static CanUseCompression(): boolean {
-    return !!zlib.inflateSync;
-  }
-
   public GatewayHeartbeat: number | undefined;
   public GatewaySequence: number = 0;
   public GatewayPings: number[] = [];
@@ -60,7 +56,10 @@ export default class ClientConnection {
       service: 'ClientConnection.Connect',
     });
     if (LocalGatewayURL) {
-      this.GatewayURL = LocalGatewayURL + '/?v=6'; // Specify Version
+      // LocalGatewayURL is not required when reconnecting, we use cached version
+      // Additional Gateway URL Parameters as defined https://discordapp.com/developers/docs/topics/gateway#connecting-gateway-url-params
+      this.GatewayURL =
+        LocalGatewayURL + '/?v=6&encoding=json' + (this.CanUseCompression() ? 'compress=zlib-stream' : '');
     }
     if (this.GatewayURL) {
       this.GatewayWebsocket = new WebSocket(this.GatewayURL);
@@ -160,6 +159,10 @@ export default class ClientConnection {
     this.send(GATEWAY.VOICE_STATE_UPDATE, VoiceLeavePackage);
   }
 
+  public CanUseCompression(): boolean {
+    return !!zlib.inflateSync;
+  }
+
   /**
    * Handles GatewayWebsocket `error` event
    */
@@ -239,6 +242,8 @@ export default class ClientConnection {
         break;
       }
       case GATEWAY.HEARTBEAT: {
+        // In the event that the server sends a heartbeat request, send heartbeat
+        this.connector.SendHeartbeat();
         break;
       }
       case GATEWAY.RECONNECT: {

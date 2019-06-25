@@ -39,7 +39,7 @@ export default class VoiceServerUpdateEvent extends ClientDispatcherEvent {
         .catch((err: Error) => {
           this.Client.logger.write().warn({
             message: err,
-            service: 'ClientDispatcher.Events.VoiceServerUpdate.Handle'
+            service: 'ClientDispatcher.Events.VoiceServerUpdate.Handle',
           });
           // Failed to establish new voice connection, either we don't have a user or session_id has not be received yet
           AffectedGuild.PendingVoiceConnection = true;

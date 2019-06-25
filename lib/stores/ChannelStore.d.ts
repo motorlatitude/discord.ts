@@ -64,6 +64,11 @@ export default class ChannelStore extends Store {
      */
     FetchTextChannel(ChannelId: string): Promise<TextChannel>;
     /**
+     * Fetch a Voice Channel
+     * @param ChannelId - channel id of the text channel
+     */
+    FetchVoiceChannel(ChannelId: string): Promise<VoiceChannel>;
+    /**
      * Fetch a Direct Message Channel
      * @param ChannelId - channel id of the direct message channel
      */

@@ -2,7 +2,6 @@
 import * as events from 'events';
 import ClientConnection from './client/ClientConnection';
 import Logger from './common/Logger';
-import DiscordManager from './rest/DiscordManager';
 import { IChannelDeleteEventObject, IChannelPinsUpdateEventObject, IDiscordClientOptions, IGuildDeleteEventObject } from './common/types';
 import CategoryChannel from './resources/Channel/CategoryChannel';
 import DirectMessageChannel from './resources/Channel/DirectMessageChannel';
@@ -13,9 +12,15 @@ import Guild from './resources/Guild/Guild';
 import GuildMember from './resources/Guild/GuildMember';
 import Role from './resources/Guild/Role';
 import Message from './resources/Message/Message';
+import ReactionEmoji from './resources/Message/ReactionEmoji';
+import Presence from './resources/User/Presence';
 import User from './resources/User/User';
+import VoiceState from './resources/Voice/VoiceState';
+import DiscordManager from './rest/DiscordManager';
 import ChannelStore from './stores/ChannelStore';
 import GuildStore from './stores/GuildStore';
+import VoiceStateStore from './stores/VoiceStateStore';
+import VoiceManager from './voice/VoiceManager';
 /**
  * ## DiscordClient
  *
@@ -44,9 +49,13 @@ export declare class DiscordClient extends events.EventEmitter {
      */
     User?: User;
     /**
-     * @param rest - Access To Discord APIs REST methods
+     * @param VoiceStates - The current users voice states for direct messaging channels
      */
-    rest: DiscordManager;
+    VoiceStates: VoiceStateStore;
+    /**
+     * @param DiscordAPIManager - Access To Discord APIs REST methods
+     */
+    DiscordAPIManager: DiscordManager;
     /**
      * @param connect - Our Connection with the Discord Gateway Websocket Server
      */
@@ -63,7 +72,11 @@ export declare class DiscordClient extends events.EventEmitter {
     /**
      * Retrieve Gateway URL and Connect To Discords Gateway Server
      */
-    connect(): void;
+    Connect(): void;
+    /**
+     * Close the connection
+     */
+    Disconnect(): void;
     /**
      * Establish a connection to discords gateway server
      * @param url - gateway server url
@@ -79,6 +92,13 @@ export declare interface DiscordClient {
      * @event READY
      */
     on(event: 'READY', listener: (User: User) => void): this;
+    /**
+     * ### RESUMED Event
+     *
+     * Event is emitted if the connection was lost and successfully resumed, it denotes the end of missed payloads
+     * @event RESUMED
+     */
+    on(event: 'RESUMED', listener: () => void): this;
     /**
      * ### CHANNEL_CREATE Event
      *
@@ -239,6 +259,69 @@ export declare interface DiscordClient {
      */
     on(event: 'MESSAGE_DELETE_BULK', listener: (MessageObjects: Message[], ChannelObject: TextChannel | DirectMessageChannel, GuildObject?: Guild) => void): this;
     /**
+     * ### MESSAGE_REACTION_ADD Event
+     *
+     * Event is emitted if a message has a reaction added
+     * @event MESSAGE_REACTION_ADD
+     */
+    on(event: 'MESSAGE_REACTION_ADD', listener: (Channel: TextChannel | DirectMessageChannel, MessageId: string, Emoji: ReactionEmoji, User: User, Guild?: Guild) => void): this;
+    /**
+     * ### MESSAGE_REACTION_REMOVE Event
+     *
+     * Event is emitted if a message has a reaction added
+     * @event MESSAGE_REACTION_REMOVE
+     */
+    on(event: 'MESSAGE_REACTION_REMOVE', listener: (Channel: TextChannel | DirectMessageChannel, MessageId: string, Emoji: ReactionEmoji, User: User, Guild?: Guild) => void): this;
+    /**
+     * ### MESSAGE_REACTION_REMOVE_ALL Event
+     *
+     * Event is emitted if a message has a reaction added
+     * @event MESSAGE_REACTION_REMOVE_ALL
+     */
+    on(event: 'MESSAGE_REACTION_REMOVE_ALL', listener: (Channel: TextChannel | DirectMessageChannel, MessageId: string, Guild?: Guild) => void): this;
+    /**
+     * ### PRESENCE_UPDATE
+     *
+     * Event is emitted when a user's presence or info, such as name or avatar, is updated.
+     * @event PRESENCE_UPDATE
+     */
+    on(event: 'PRESENCE_UPDATE', listener: (NewPresence: Presence, OldPresence?: Presence) => void): this;
+    /**
+     * ### TYPING_START
+     *
+     * Sent when a user starts typing in a channel
+     * @event TYPING_START
+     */
+    on(event: 'TYPING_START', listener: (Channel: TextChannel | DirectMessageChannel, User: User, Timestamp: number, Guild?: Guild) => void): this;
+    /**
+     * ### USER_UPDATE Event
+     *
+     * Event is emitted if properties of the current user change
+     * @event USER_UPDATE
+     */
+    on(event: 'USER_UPDATE', listener: (User: User) => void): this;
+    /**
+     * ### VOICE_STATE_UPDATE
+     *
+     * Event is emitted when someone joins/leaves/moves voice channels
+     * @event VOICE_STATE_UPDATE
+     */
+    on(event: 'VOICE_STATE_UPDATE', listener: (EventType: 'JOINED' | 'UPDATED' | 'LEFT', VoiceState: VoiceState) => void): this;
+    /**
+     * ### VOICE_SERVER_UPDATE
+     *
+     * Sent when a guild's voice server is updated. This is sent when initially connecting to voice, and when the current voice instance fails over to a new server.
+     * @event VOICE_SERVER_UPDATE
+     */
+    on(event: 'VOICE_SERVER_UPDATE', listener: (VoiceConnection: VoiceManager) => void): this;
+    /**
+     * ### WEBHOOKS_UPDATE Event
+     *
+     * Event is emitted when a guild channel's webhook is created, updated, or deleted.
+     * @event WEBHOOKS_UPDATE
+     */
+    on(event: 'WEBHOOKS_UPDATE', listener: (Channel: TextChannel, Guild: Guild) => void): this;
+    /**
      * ### GATEWAY_FOUND Event
      *
      * Event is emitted if the client has successfully determined the Discord Websocket URL
@@ -252,7 +335,7 @@ export declare interface DiscordClient {
      * @event DISCONNECT
      */
     on(event: 'DISCONNECT', listener: () => void): this;
-    emit(event: 'READY', User: User): boolean;
+    emit(event: 'READY' | 'USER_UPDATE', User: User): boolean;
     emit(event: 'CHANNEL_CREATE' | 'CHANNEL_UPDATE', Channel: TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel): boolean;
     emit(event: 'CHANNEL_DELETE', Channel: IChannelDeleteEventObject): boolean;
     emit(event: 'CHANNEL_PINS_UPDATE', ChannelPin: IChannelPinsUpdateEventObject): boolean;
@@ -265,7 +348,14 @@ export declare interface DiscordClient {
     emit(event: 'GUILD_ROLE_CREATE' | 'GUILD_ROLE_UPDATE' | 'GUILD_ROLE_DELETE', Guild: Guild, Role: Role): boolean;
     emit(event: 'MESSAGE_CREATE' | 'MESSAGE_UPDATE' | 'MESSAGE_DELETE', MessageObject: Message, ChannelObject: TextChannel | DirectMessageChannel, Author: User, GuildObject?: Guild, GuildMemberObject?: GuildMember): boolean;
     emit(event: 'MESSAGE_DELETE_BULK', MessageObjects: Message[], ChannelObject: TextChannel | DirectMessageChannel, GuildObject?: Guild): boolean;
+    emit(event: 'MESSAGE_REACTION_ADD' | 'MESSAGE_REACTION_REMOVE', Channel: TextChannel | DirectMessageChannel, MessageId: string, Emoji: ReactionEmoji, User: User, Guild?: Guild): boolean;
+    emit(event: 'MESSAGE_REACTION_REMOVE_ALL', Channel: TextChannel | DirectMessageChannel, MessageId: string, Guild?: Guild): boolean;
+    emit(event: 'PRESENCE_UPDATE', NewPresence: Presence, OldPresence?: Presence): boolean;
+    emit(event: 'TYPING_START', Channel: TextChannel | DirectMessageChannel, User: User, Timestamp: number, Guild?: Guild): boolean;
+    emit(event: 'VOICE_STATE_UPDATE', EventType: 'JOINED' | 'UPDATED' | 'LEFT', VoiceState: VoiceState): boolean;
+    emit(event: 'VOICE_SERVER_UPDATE', VoiceConnection: VoiceManager): boolean;
+    emit(event: 'WEBHOOKS_UPDATE', Channel: TextChannel, Guild: Guild): boolean;
     emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
-    emit(event: 'DISCONNECT'): boolean;
+    emit(event: 'DISCONNECT' | 'RESUMED'): boolean;
 }
 export default DiscordClient;

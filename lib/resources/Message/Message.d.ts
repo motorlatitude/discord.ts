@@ -1,4 +1,6 @@
 import { IDiscordMessage } from '../../common/types';
+import DiscordClient from '../../DiscordClient';
+import ReactionStore from '../../stores/ReactionStore';
 import DirectMessageChannel from '../Channel/DirectMessageChannel';
 import TextChannel from '../Channel/TextChannel';
 import Guild from '../Guild/Guild';
@@ -22,12 +24,12 @@ export default class Message {
     Member?: GuildMember;
     Channel?: TextChannel | DirectMessageChannel;
     EditedTimestamp?: number;
-    Reactions?: any[];
+    Reactions: ReactionStore;
     Nonce?: string;
     WebhookId?: string;
     Activity?: any;
     Application?: any;
-    constructor(MessageObject: IDiscordMessage);
+    constructor(client: DiscordClient, MessageObject: IDiscordMessage);
     /**
      * EITHER SetDirectMessage or SetGuildMessage SHOULD BE CALLED ON MESSAGE CREATION
      * Sets this message as a Direct Message
@@ -47,4 +49,9 @@ export default class Message {
      * Resolve Message class to IDiscordMessage
      */
     Resolve(): IDiscordMessage;
+    /**
+     * Resolves IDiscordReaction[] to Reaction[] and insert into ReactionStore
+     * @param ReactionObjects - array of IDiscordReactions
+     */
+    private ResolveReactions;
 }

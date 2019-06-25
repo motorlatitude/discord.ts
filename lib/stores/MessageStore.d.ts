@@ -20,6 +20,12 @@ export default class MessageStore extends Store {
      */
     DeleteMessage(MessageId: string): void;
     /**
+     * Async get message
+     * @param MessageId - id of message
+     * @constructor
+     */
+    Get(MessageId: string): Message;
+    /**
      * Fetch message from message id
      * @param MessageId - the id of the message
      */

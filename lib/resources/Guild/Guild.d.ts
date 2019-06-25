@@ -1,9 +1,13 @@
-import { IDiscordGuild } from '../../common/types';
+import { IDiscordGuild, IDiscordVoiceServerGatewayEvent } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import ChannelStore from '../../stores/ChannelStore';
 import EmojiStore from '../../stores/EmojiStore';
 import GuildMemberStore from '../../stores/GuildMemberStore';
+import PresenceStore from '../../stores/PresenceStore';
 import RoleStore from '../../stores/RoleStore';
+import VoiceStateStore from '../../stores/VoiceStateStore';
+import VoiceConnection from '../../voice/VoiceConnection';
+import VoiceManager from '../../voice/VoiceManager';
 export default class Guild {
     id: string;
     Name: string;
@@ -19,15 +23,18 @@ export default class Guild {
     MFALevel: number;
     MaxMembers: number;
     PremiumTier: number;
+    VoiceConnection?: VoiceConnection;
+    PendingVoiceConnection?: boolean;
+    PendingVoiceServerDetails?: IDiscordVoiceServerGatewayEvent;
     PremiumSubscriptionCount: number | undefined;
     Banner: string | undefined;
     Description: string | undefined;
     VanityURLCode: string | undefined;
     MaxPresences: number | undefined;
-    Presences: any[] | undefined;
+    Presences: PresenceStore;
     Channels: ChannelStore;
     Members: GuildMemberStore;
-    VoiceStates: any[] | undefined;
+    VoiceStates: VoiceStateStore;
     MemberCount: number | undefined;
     Unavailable: boolean | undefined;
     Large: boolean | undefined;
@@ -43,10 +50,13 @@ export default class Guild {
     Owner: boolean | undefined;
     Icon: string | undefined;
     Splash: string | undefined;
-    private Client;
+    private readonly Client;
     constructor(client: DiscordClient, GuildObject: IDiscordGuild);
+    CreateVoiceConnection(Token: string, Endpoint: string): Promise<VoiceManager>;
+    private ResolveVoiceStates;
+    private ResolvePresences;
     private ResolveRoles;
     private ResolveEmojis;
-    private ResolveMembers;
+    private ResolveMembersAndPresences;
     private ResolveChannels;
 }

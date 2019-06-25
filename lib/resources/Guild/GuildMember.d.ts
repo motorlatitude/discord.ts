@@ -1,7 +1,6 @@
 import { IDiscordGuildMember } from '../../common/types';
 import User from '../User/User';
 export default class GuildMember {
-    private static ResolveUser;
     User: User;
     Roles: string[];
     JoinedAt: number;

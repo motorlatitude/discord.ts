@@ -5,5 +5,5 @@ export default class DiscordMethods {
     Requester: DiscordRequester;
     constructor(r: DiscordRequester);
     GatewayMethods(): GatewayMethods;
-    channels(): ChannelsMethods;
+    ChannelMethods(): ChannelsMethods;
 }

@@ -1,4 +1,3 @@
-import { IGuildMemberList } from '../common/types';
 import DiscordClient from '../DiscordClient';
 import GuildMember from '../resources/Guild/GuildMember';
 import Store from './Store';
@@ -27,5 +26,4 @@ export default class GuildMemberStore extends Store {
      */
     RemoveGuildMember(UserId: string): void;
     Fetch(UserId: string): Promise<GuildMember>;
-    FetchAll(): Promise<IGuildMemberList>;
 }

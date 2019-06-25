@@ -1,12 +1,10 @@
-import Logger from '../common/Logger';
 import { IDefaultDiscordGatewayPackage } from '../common/types';
 import DiscordClient from '../DiscordClient';
 import ClientConnection from './ClientConnection';
 export default class ClientDispatcher {
-    private readonly App;
+    private readonly Client;
     private connection;
-    private logger;
-    constructor(app: DiscordClient, connection: ClientConnection, log: Logger);
+    constructor(client: DiscordClient, connection: ClientConnection);
     /**
      * Parse Discord Dispatch message, these are GatewayWebsocket messages with opcode 0
      * @param message - message object

@@ -1,13 +1,9 @@
-import * as WebSocket from 'ws';
-import Logger from '../common/Logger';
 import DiscordClient from '../DiscordClient';
 /**
  * Handles Connection With The Discord Gateway Server
  */
 export default class ClientConnection {
-    static CanUseCompression(): boolean;
     GatewayHeartbeat: number | undefined;
-    GatewayWebsocket: WebSocket | undefined;
     GatewaySequence: number;
     GatewayPings: number[];
     GatewayPing: number;
@@ -15,23 +11,27 @@ export default class ClientConnection {
     GatewayHeartbeatInterval: number;
     GatewayProtocolVersion: number;
     resuming: boolean;
-    private App;
-    private logger;
+    private GatewayWebsocket;
+    private Client;
     private dispatcher;
     private connector;
     private GatewayURL?;
+    private ExpectedClosure;
     /**
      * Create a new connection with discords gateway server
-     * @param app - pass parent class as parameter to modify accessible vars and pass events through
-     * @param log
+     * @param client - pass parent class as parameter to modify accessible vars and pass events through
      */
-    constructor(app: DiscordClient, log: Logger);
+    constructor(client: DiscordClient);
     /**
      * Connect to discord gateway
      * @param LocalGatewayURL - Discord Gateway Url Retrieved From Discord Gateway Endpoint
      * @returns GatewayWebsocket - Websocket connection
      */
-    connect(LocalGatewayURL?: string): WebSocket;
+    Connect(LocalGatewayURL?: string): void;
+    /**
+     * Disconnect from the discord gateway
+     */
+    Disconnect(): void;
     /**
      * Send Message To Gateway Websocket Server
      * @param op - OpCode for message
@@ -39,6 +39,9 @@ export default class ClientConnection {
      */
     send(op: number, data: any): void;
     SetStatus(status?: string, type?: number, state?: string): void;
+    JoinVoiceChannel(GuildId: string, VoiceChannelId: string, mute?: boolean, deaf?: boolean): void;
+    LeaveVoiceChannel(GuildId: string): void;
+    CanUseCompression(): boolean;
     /**
      * Handles GatewayWebsocket `error` event
      */

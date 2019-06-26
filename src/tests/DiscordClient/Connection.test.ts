@@ -1,0 +1,80 @@
+import ClientConnection from '../../client/ClientConnection';
+import DiscordClient from '../../DiscordClient';
+import GatewayMethods from '../../rest/Methods/GatewayMethods';
+
+jest.mock('../../rest/Methods/GatewayMethods');
+jest.mock('../../client/ClientConnection');
+
+/**
+ * Tests Connect and Disconnect Paths
+ */
+describe("DiscordClient Connection Tests", () => {
+
+  let instance: DiscordClient;
+
+  beforeEach( () => {
+    instance = new DiscordClient({token: "DISCORD_TOKEN"});
+  });
+
+  afterEach(() => {
+    // after
+    jest.resetAllMocks();
+    jest.clearAllMocks()
+  });
+
+  it('Connect Should Call Methods in DiscordManager And Get GATEWAY_URL', async (done) => {
+
+    instance.on("GATEWAY_FOUND",() => {
+      expect(instance.gateway).toEqual("GATEWAY_URL");
+      done();
+    });
+    instance.Connect();
+
+  });
+
+  it('Connect Should Call READY event', async (done) => {
+
+    instance.on("READY",() => {
+      expect(instance.gateway).toEqual("GATEWAY_URL");
+      done();
+    });
+    instance.Connect();
+
+  });
+
+  it('Connect Should Disconnect if REST fails', async (done) => {
+    const OldMethod = GatewayMethods.prototype.GatewayForBot;
+    GatewayMethods.prototype.GatewayForBot = jest.fn().mockImplementationOnce(() => Promise.reject("Reason"));
+
+    instance.on("DISCONNECT", () => {
+      GatewayMethods.prototype.GatewayForBot = OldMethod;
+      done();
+    });
+
+    instance.Connect();
+
+  });
+
+  it('Disconnect Should Call DISCONNECT event', async (done) => {
+
+    instance.on("READY", () => {
+      instance.Disconnect();
+    });
+    instance.on("DISCONNECT",() => {
+      done();
+    });
+    instance.Connect();
+
+  });
+
+  it('Should not attempt disconnection if no connection is available',  () => {
+
+    ClientConnection.prototype.Disconnect = jest.fn();
+
+    instance.Disconnect();
+
+    expect(ClientConnection.prototype.Disconnect).not.toBeCalled();
+
+  })
+
+});

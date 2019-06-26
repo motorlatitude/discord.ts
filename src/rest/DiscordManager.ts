@@ -1,9 +1,3 @@
-// Node Modules
-import * as events from 'events';
-
-// NPM Modules
-
-// Others
 import DiscordMethods from './DiscordMethods';
 import DiscordRequester from './DiscordRequester';
 

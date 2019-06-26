@@ -1,15 +1,17 @@
-import Logger from '../common/Logger';
-import DiscordManager from '../rest/DiscordManager';
-import ChannelStore from '../stores/ChannelStore';
-import GuildStore from '../stores/GuildStore';
-import VoiceStateStore from '../stores/VoiceStateStore';
-import DiscordClient from './../DiscordClient';
+import Logger from '../../common/Logger';
+import DiscordClient from '../../DiscordClient'
+import DiscordManager from '../../rest/DiscordManager';
+import ChannelStore from '../../stores/ChannelStore';
+import GuildStore from '../../stores/GuildStore';
+import VoiceStateStore from '../../stores/VoiceStateStore';
 
-
-describe('Users', () => {
+/**
+ * Tests Initialisation
+ */
+describe('DiscordClient Constructor', () => {
   let instance: DiscordClient;
-
   beforeEach(() => {
+    // before
     instance = new DiscordClient({token: "DISCORD_TOKEN"})
   });
 
@@ -42,5 +44,5 @@ describe('Users', () => {
     expect(instance).toBeInstanceOf(DiscordClient);
     expect(instance.DiscordAPIManager).toBeInstanceOf(DiscordManager);
   });
-  
+
 });

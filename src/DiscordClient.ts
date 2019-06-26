@@ -582,7 +582,7 @@ export declare interface DiscordClient {
   emit(event: 'WEBHOOKS_UPDATE', Channel: TextChannel, Guild: Guild): boolean;
   emit(event: 'GATEWAY_FOUND', GatewayUrl: string): boolean;
   emit(event: 'DISCONNECT' | 'RESUMED'): boolean;
-  // emit(event: string | symbol, ...args: any[]): boolean;
+  emit(event: string | symbol, ...args: any[]): boolean;
 }
 
 export default DiscordClient;

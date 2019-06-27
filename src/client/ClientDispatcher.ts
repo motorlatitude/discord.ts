@@ -35,7 +35,7 @@ export default class ClientDispatcher {
    * @param message - message object
    */
   public Parse(message: IDefaultDiscordGatewayPackage): void {
-    this.connection.GatewaySequence = message.s || 0;
+    this.connection.GatewaySequence = message.s as number;
     this.Client.logger.write().info({
       message: 'Received ' + message.t + ' Event',
       service: 'ClientConnection.ClientDispatcher.Parse',
@@ -48,6 +48,7 @@ export default class ClientDispatcher {
         break;
       }
       case GATEWAY_EVENTS.RESUMED: {
+        this.connection.resuming = false;
         const resumedEvent = new ResumedEvent(this.Client, message.d);
         resumedEvent.Handle();
         break;

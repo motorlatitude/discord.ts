@@ -1,5 +1,5 @@
 import Logger from '../../common/Logger';
-import DiscordClient from '../../DiscordClient'
+import DiscordClient from '../../DiscordClient';
 import DiscordManager from '../../rest/DiscordManager';
 import ChannelStore from '../../stores/ChannelStore';
 import GuildStore from '../../stores/GuildStore';
@@ -12,14 +12,14 @@ describe('DiscordClient Constructor', () => {
   let instance: DiscordClient;
   beforeEach(() => {
     // before
-    instance = new DiscordClient({token: "DISCORD_TOKEN"})
+    instance = new DiscordClient({ token: 'DISCORD_TOKEN' });
   });
 
   it('should set token property', () => {
     expect(instance).toBeInstanceOf(DiscordClient);
-    expect(instance.token).toBe("DISCORD_TOKEN");
+    expect(instance.token).toBe('DISCORD_TOKEN');
   });
-  
+
   it('should create a new logger instance', () => {
     expect(instance).toBeInstanceOf(DiscordClient);
     expect(instance.logger).toBeInstanceOf(Logger);
@@ -44,5 +44,4 @@ describe('DiscordClient Constructor', () => {
     expect(instance).toBeInstanceOf(DiscordClient);
     expect(instance.DiscordAPIManager).toBeInstanceOf(DiscordManager);
   });
-
 });

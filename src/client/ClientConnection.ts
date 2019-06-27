@@ -59,9 +59,13 @@ export default class ClientConnection {
       // LocalGatewayURL is not required when reconnecting, we use cached version
       // Additional Gateway URL Parameters as defined https://discordapp.com/developers/docs/topics/gateway#connecting-gateway-url-params
       this.GatewayURL =
-        LocalGatewayURL + '/?v=6&encoding=json' + (this.CanUseCompression() ? 'compress=zlib-stream' : '');
+        LocalGatewayURL + '/?v=6&encoding=json' + (this.CanUseCompression() ? '&compress=zlib-stream' : '');
     }
     if (this.GatewayURL) {
+      this.Client.logger.write().debug({
+        message: this.GatewayURL,
+        service: 'ClientConnection.Connect',
+      });
       this.GatewayWebsocket = new WebSocket(this.GatewayURL);
       // Handle websocket events
       this.GatewayWebsocket.once('open', this.GatewayOpen.bind(this));

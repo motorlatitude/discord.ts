@@ -22,9 +22,9 @@ export default class VoiceConnection extends EventEmitter {
 
   public VoiceReady?: boolean;
 
-  public Sequence: number = Math.round(Math.random()*10);
+  public Sequence: number = Math.round(Math.random() * 10);
   public SSRC?: number;
-  public Timestamp: number = Math.round(Math.random()*1000);
+  public Timestamp: number = Math.round(Math.random() * 1000);
   public IPAddress?: string;
   public Port?: number;
   public Modes?: string[];

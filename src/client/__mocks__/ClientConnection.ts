@@ -4,7 +4,6 @@ import DiscordClient from '../../DiscordClient';
  * Handles Connection With The Discord Gateway Server
  */
 export default class ClientConnection {
-
   private Client: DiscordClient;
 
   constructor(client: DiscordClient) {
@@ -12,11 +11,10 @@ export default class ClientConnection {
   }
 
   public Connect(LocalGatewayURL?: string): void {
-    this.Client.emit("READY");
+    this.Client.emit('READY');
   }
 
   public Disconnect(): void {
-    this.Client.emit("DISCONNECT");
+    this.Client.emit('DISCONNECT');
   }
-
 }

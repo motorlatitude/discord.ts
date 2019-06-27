@@ -1,8 +1,7 @@
 import { Server } from 'ws';
-import WebSocket = require('ws');
 import * as zlib from 'zlib';
-import ClientConnection from '../client/ClientConnection';
-import DiscordClient from '../DiscordClient';
+import ClientConnection from '../../client/ClientConnection';
+import DiscordClient from '../../DiscordClient';
 
 /**
  * Tests Initialisation
@@ -39,45 +38,14 @@ describe('ClientConnection', () => {
 describe('ClientConnection WebSocket', () => {
   let LocalWebSocket: Server;
   let instance: ClientConnection;
-  let ActiveWebsocketConnection: WebSocket;
 
-  beforeEach(async (done) => {
+  beforeEach(() => {
     // create a WS instance, listening on port 80 on localhost
     LocalWebSocket = new Server({
       port: 4005,
     });
     const client = new DiscordClient({ token: 'DISCORD_TOKEN' });
     instance = new ClientConnection(client);
-      LocalWebSocket.on('connection', ws => {
-        ws.on('message', message => {
-          let data;
-          if (typeof message === 'string') {
-            data = JSON.parse(message);
-          } else {
-            // @ts-ignore
-            const extractedData: string = zlib.inflateSync(message).toString();
-            data = JSON.parse(extractedData);
-          }
-          if (data.op === 2) {
-            // instance is ready to receive
-            ActiveWebsocketConnection = ws;
-            done();
-          }
-        });
-
-        ws.send(
-          zlib.deflateSync(
-            JSON.stringify({
-              d: {
-                _trace: ['string'],
-                heartbeat_interval: 45000,
-              },
-              op: 10,
-            }),
-          ),
-        );
-      });
-      instance.Connect('ws://localhost:4005');
   });
 
   afterEach(() => {
@@ -602,8 +570,7 @@ describe('ClientConnection WebSocket', () => {
     instance.Connect('ws://localhost:4005');
   },10000);
 
-  it('Should Handle INVALID_SESSION by reconnecting full flow', async done => {
-    let SentInvalidSession = false;
+  it('Should Stop if INVALID_SESSION is not resumable, assume authentication issue', async done => {
     LocalWebSocket.on('connection', ws => {
       ws.on('message', message => {
         let data;
@@ -616,19 +583,13 @@ describe('ClientConnection WebSocket', () => {
         }
         if (data.op === 2) {
           // instance is ready to receive
-          if(!SentInvalidSession){
-            ws.send(
-              JSON.stringify({
-                d: false,
-                op: 9,
-              }),
-            ); // send invalid session opcode 9 with d true, session is not resumable, should do full connect
-            SentInvalidSession = true;
-          }
-          else{
-            done();
-
-          }
+          ws.send(
+            JSON.stringify({
+              d: false,
+              op: 9,
+            }),
+          ); // send invalid session opcode 9 with d true, session is not resumable, should do full connect
+          done();
         }
       });
       ws.send(
@@ -644,7 +605,7 @@ describe('ClientConnection WebSocket', () => {
       );
     });
     instance.Connect('ws://localhost:4005');
-  },10000);
+  },15000);
 
   it('Should Handle Unhandled OpCodes gracefully', async done => {
     let SentInvalidOpCode = false;

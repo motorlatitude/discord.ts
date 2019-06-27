@@ -34,6 +34,7 @@
     "mock-socket": "^8.0.5",
     "prettier": "^1.18.2",
     "rewire": "^4.0.1",
+    "rewiremock": "^3.13.7",
     "sinon": "^7.3.2",
     "ts-jest": "^24.0.2",
     "ts-mock-imports": "^1.2.6",

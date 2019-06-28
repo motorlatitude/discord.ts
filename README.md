@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/motorlatitude/discord.ts/master/docs/assets/images/logo_extended.png" alt="Discord.ts" height="180">
+<img src="https://raw.githubusercontent.com/motorlatitude/discord.ts/master/docs/assets/images/logo_extended.png" alt="Discord.ts" height="130">
 
 # 
 

@@ -130,8 +130,10 @@ export default class ChannelEvent extends ClientDispatcherEvent {
    * @override
    */
   public EmitEvent(): void {
-    if ((this.EventName === 'CHANNEL_UPDATE' || this.EventName === 'CHANNEL_CREATE') && this.EventObject) {
-      this.Client.emit(this.EventName, this.EventObject);
+    if (this.EventName === 'CHANNEL_UPDATE' || this.EventName === 'CHANNEL_CREATE') {
+      if (this.EventObject) {
+        this.Client.emit(this.EventName, this.EventObject);
+      }
     } else if (this.EventName === 'CHANNEL_DELETE' && this.EventDeleteObject) {
       this.Client.emit(this.EventName, this.EventDeleteObject);
     }

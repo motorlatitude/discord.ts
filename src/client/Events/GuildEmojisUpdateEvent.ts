@@ -17,20 +17,27 @@ export default class GuildEmojisUpdateEvent extends ClientDispatcherEvent {
     this.Message = msg;
   }
 
-  public Handle(): void {
-    this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-      const emojis: Emoji[] = [];
-      for (const emoji of this.Message.emojis) {
-        const e = new Emoji(emoji);
-        emojis.push(e);
-        AffectedGuild.Emojis.ReplaceEmoji(emoji.id, e);
-      }
+  public Handle(): Promise<{Guild: Guild, Emojis: Emoji[]}> {
+    return new Promise((resolve, reject) => {
+      this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
+        const emojis: Emoji[] = [];
+        for (const emoji of this.Message.emojis) {
+          const e = new Emoji(emoji);
+          emojis.push(e);
+          AffectedGuild.Emojis.ReplaceEmoji(emoji.id, e);
+        }
 
-      this.EventGuildObject = AffectedGuild;
-      this.EventEmojisObject = emojis;
-    });
-
-    super.Handle();
+        this.EventGuildObject = AffectedGuild;
+        this.EventEmojisObject = emojis;
+        super.Handle();
+        resolve({
+          Emojis: emojis,
+          Guild: AffectedGuild
+        })
+      }).catch((err: Error) => {
+        reject(err);
+      });
+    })
   }
 
   public EmitEvent(): void {

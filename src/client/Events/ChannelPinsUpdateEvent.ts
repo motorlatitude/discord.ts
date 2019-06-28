@@ -17,56 +17,51 @@ export default class ChannelPinsUpdateEvent extends ClientDispatcherEvent {
     this.Message = message;
   }
 
-  public Handle(): void {
-    if (this.Message.guild_id) {
-      this.Client.Guilds.Fetch(this.Message.guild_id)
-        .then((AffectedGuild: Guild) => {
-          AffectedGuild.Channels.FetchAllTypes(this.Message.channel_id)
-            .then((AffectedChannel: IChannel) => {
-              if (AffectedChannel instanceof TextChannel) {
-                this.EventObject = {
-                  Channel: AffectedChannel,
-                  Guild: AffectedGuild,
-                  LastPinTimestamp: this.Message.last_pin_timestamp,
-                };
-                super.Handle();
-              } else {
-                this.Client.logger.write().error({
-                  message: new Error('This channel cannot have a pinned message'),
-                  service: 'ClientDispatcher.Events.ChannelPinsUpdateEvent.Handle',
-                });
-              }
-            })
-            .catch((err: Error) => {
-              this.Client.logger.write().error({
-                message: err,
-                service: 'ClientDispatcher.Events.ChannelPinsUpdateEvent.Handle',
-              });
-            });
-        })
-        .catch((err: Error) => {
-          this.Client.logger.write().error({
-            message: err,
-            service: 'ClientDispatcher.Events.ChannelPinsUpdateEvent.Handle',
-          });
+  public Handle(): Promise<IChannelPinsUpdateEventObject> {
+    return new Promise((resolve, reject) => {
+      if (this.Message.guild_id) {
+        let AffectedGuild: Guild;
+        this.Client.Guilds.Fetch(this.Message.guild_id).then((FoundGuild: Guild) => {
+
+          AffectedGuild = FoundGuild;
+          return AffectedGuild.Channels.FetchAllTypes(this.Message.channel_id);
+
+        }).then((AffectedChannel: IChannel) => {
+          if (AffectedChannel instanceof TextChannel) {
+            this.EventObject = {
+              Channel: AffectedChannel,
+              Guild: AffectedGuild,
+              LastPinTimestamp: this.Message.last_pin_timestamp,
+            };
+
+            super.Handle();
+
+            resolve(this.EventObject);
+
+          } else {
+            const ErrorResponse = new Error('This channel cannot have a pinned message');
+            reject(ErrorResponse);
+          }
+        }).catch((err: Error) => {
+          reject(err);
         });
-    } else {
-      // DM
-      this.Client.Channels.FetchAllTypes(this.Message.channel_id).then((AffectedChannel: IChannel) => {
-        if (AffectedChannel instanceof TextChannel || AffectedChannel instanceof DirectMessageChannel) {
-          this.EventObject = {
-            Channel: AffectedChannel,
-            LastPinTimestamp: this.Message.last_pin_timestamp,
-          };
-          super.Handle();
-        } else {
-          this.Client.logger.write().error({
-            message: new Error('This channel cannot have a pinned message'),
-            service: 'ClientDispatcher.Events.ChannelPinsUpdateEvent.Handle',
-          });
-        }
-      });
-    }
+      } else {
+        // DM
+        this.Client.Channels.FetchAllTypes(this.Message.channel_id).then((AffectedChannel: IChannel) => {
+          if (AffectedChannel instanceof TextChannel || AffectedChannel instanceof DirectMessageChannel) {
+            this.EventObject = {
+              Channel: AffectedChannel,
+              LastPinTimestamp: this.Message.last_pin_timestamp,
+            };
+            super.Handle();
+            resolve(this.EventObject);
+          } else {
+            const ErrorResponse = new Error('This channel cannot have a pinned message');
+            reject(ErrorResponse);
+          }
+        });
+      }
+    });
   }
 
   public EmitEvent(): void {

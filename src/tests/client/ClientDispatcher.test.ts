@@ -9,16 +9,16 @@ import GuildIntegrationEvent from '../../client/Events/GuildIntegrationEvent';
 import GuildMemberEvent from '../../client/Events/GuildMemberEvent';
 import GuildRoleEvent from '../../client/Events/GuildRoleEvent';
 import MessageEvent from '../../client/Events/MessageEvent';
-import ReadyEvent from '../../client/Events/ReadyEvent';
-import ResumedEvent from '../../client/Events/ResumedEvent';
-import DiscordClient from '../../DiscordClient';
 import MessageReactionEvent from '../../client/Events/MessageReactionEvent';
 import PresenceUpdateEvent from '../../client/Events/PresenceUpdateEvent';
+import ReadyEvent from '../../client/Events/ReadyEvent';
+import ResumedEvent from '../../client/Events/ResumedEvent';
 import TypingStartEvent from '../../client/Events/TypingStartEvent';
 import UserUpdateEvent from '../../client/Events/UserUpdateEvent';
-import VoiceStateEvent from '../../client/Events/VoiceStateEvent';
 import VoiceServerUpdateEvent from '../../client/Events/VoiceServerUpdateEvent';
+import VoiceStateEvent from '../../client/Events/VoiceStateEvent';
 import WebhooksUpdateEvent from '../../client/Events/WebhooksUpdateEvent';
+import DiscordClient from '../../DiscordClient';
 
 describe('ClientDispatcher', () => {
 
@@ -336,7 +336,7 @@ describe('ClientDispatcher', () => {
   });
 
   it('GUILD_MEMBERS_CHUNK: Should create new GuildMemberEvent class and call Handle', () => {
-    const spy = jest.spyOn(GuildMemberEvent.prototype, "HandleMemberChunk");
+    const spy = jest.spyOn(GuildMemberEvent.prototype, "HandleMembersChunk");
     instance.Parse({
       d: {
         guild_id: "GUILD_ID",

@@ -27,91 +27,107 @@ export default class ChannelEvent extends ClientDispatcherEvent {
   /**
    * Handle CHANNEL_CREATE event
    */
-  public HandleCreate(): void {
-    this.EventName = 'CHANNEL_CREATE';
+  public HandleCreate(): Promise<TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel> {
+    return new Promise((resolve, reject) => {
+      this.EventName = 'CHANNEL_CREATE';
 
-    if (this.Message.type === CHANNEL_TYPES.GUILD_TEXT && this.Message.guild_id) {
-      this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        const NewTextChannel: TextChannel = new TextChannel(this.Client, this.Message, AffectedGuild);
+      if (this.Message.type === CHANNEL_TYPES.GUILD_TEXT && this.Message.guild_id) {
+        this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
+          const NewTextChannel: TextChannel = new TextChannel(this.Client, this.Message, AffectedGuild);
 
-        this.EventObject = NewTextChannel;
+          this.EventObject = NewTextChannel;
 
-        AffectedGuild.Channels.AddTextChannel(NewTextChannel);
+          AffectedGuild.Channels.AddTextChannel(NewTextChannel);
+          this.Handle();
+          resolve(this.EventObject);
+        });
+      } else if (this.Message.type === CHANNEL_TYPES.GUILD_VOICE && this.Message.guild_id) {
+        this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
+          const NewVoiceChannel: VoiceChannel = new VoiceChannel(this.Client, this.Message, AffectedGuild);
+
+          this.EventObject = NewVoiceChannel;
+
+          AffectedGuild.Channels.AddVoiceChannel(NewVoiceChannel);
+          this.Handle();
+          resolve(this.EventObject);
+        });
+      } else if (this.Message.type === CHANNEL_TYPES.DM || this.Message.type === CHANNEL_TYPES.GROUP_DM) {
+        const NewDMChannel: DirectMessageChannel = new DirectMessageChannel(this.Client, this.Message);
+
+        this.EventObject = NewDMChannel;
+
+        this.Client.Channels.AddDMChannel(NewDMChannel);
         this.Handle();
-      });
-    } else if (this.Message.type === CHANNEL_TYPES.GUILD_VOICE && this.Message.guild_id) {
-      this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        const NewVoiceChannel: VoiceChannel = new VoiceChannel(this.Client, this.Message, AffectedGuild);
+        resolve(this.EventObject);
+      } else if (this.Message.type === CHANNEL_TYPES.GUILD_CATEGORY && this.Message.guild_id) {
+        this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
+          const NewChannelCategory: CategoryChannel = new CategoryChannel(this.Client, this.Message, AffectedGuild);
 
-        this.EventObject = NewVoiceChannel;
+          this.EventObject = NewChannelCategory;
 
-        AffectedGuild.Channels.AddVoiceChannel(NewVoiceChannel);
-        this.Handle();
-      });
-    } else if (this.Message.type === CHANNEL_TYPES.DM || this.Message.type === CHANNEL_TYPES.GROUP_DM) {
-      const NewDMChannel: DirectMessageChannel = new DirectMessageChannel(this.Client, this.Message);
-
-      this.EventObject = NewDMChannel;
-
-      this.Client.Channels.AddDMChannel(NewDMChannel);
-      this.Handle();
-    } else if (this.Message.type === CHANNEL_TYPES.GUILD_CATEGORY && this.Message.guild_id) {
-      this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        const NewChannelCategory: CategoryChannel = new CategoryChannel(this.Client, this.Message, AffectedGuild);
-
-        this.EventObject = NewChannelCategory;
-
-        AffectedGuild.Channels.AddChannelCategory(NewChannelCategory);
-        this.Handle();
-      });
-    } else {
-      this.Client.logger.write().warn({
-        message: 'Unhandled Channel Type: ' + this.Message.type,
-        service: 'ClientDispatcher.Events.ChannelEvent.HandleCreate',
-      });
-    }
+          AffectedGuild.Channels.AddChannelCategory(NewChannelCategory);
+          this.Handle();
+          resolve(this.EventObject);
+        });
+      } else {
+        const ErrorResponse = 'Unhandled Channel Type: ' + this.Message.type;
+        reject(ErrorResponse);
+      }
+    });
   }
 
   /**
    * Handle CHANNEL_UPDATE event
    */
-  public HandleUpdate(): void {
-    this.EventName = 'CHANNEL_UPDATE';
+  public HandleUpdate(): Promise<TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel> {
+    return new Promise((resolve, reject) => {
+      this.EventName = 'CHANNEL_UPDATE';
 
-    if (this.Message.guild_id) {
-      this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        let NewChannel;
-        if (this.Message.type === CHANNEL_TYPES.GUILD_TEXT) {
-          NewChannel = new TextChannel(this.Client, this.Message, AffectedGuild);
-        } else if (this.Message.type === CHANNEL_TYPES.GUILD_VOICE) {
-          NewChannel = new VoiceChannel(this.Client, this.Message, AffectedGuild);
-        } else if (this.Message.type === CHANNEL_TYPES.GUILD_CATEGORY) {
-          NewChannel = new CategoryChannel(this.Client, this.Message, AffectedGuild);
-        }
-        if (NewChannel) {
-          AffectedGuild.Channels.ReplaceChannel(this.Message.id, NewChannel);
-          this.Handle();
-        }
-      });
-    } else if (this.Message.type === CHANNEL_TYPES.DM || this.Message.type === CHANNEL_TYPES.GROUP_DM) {
-      const NewChannel = new DirectMessageChannel(this.Client, this.Message);
-      this.Client.Channels.ReplaceChannel(this.Message.id, NewChannel);
-      this.Handle();
-    }
+      if (this.Message.guild_id) {
+        this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
+          let NewChannel;
+          if (this.Message.type === CHANNEL_TYPES.GUILD_TEXT) {
+            NewChannel = new TextChannel(this.Client, this.Message, AffectedGuild);
+          } else if (this.Message.type === CHANNEL_TYPES.GUILD_VOICE) {
+            NewChannel = new VoiceChannel(this.Client, this.Message, AffectedGuild);
+          } else if (this.Message.type === CHANNEL_TYPES.GUILD_CATEGORY) {
+            NewChannel = new CategoryChannel(this.Client, this.Message, AffectedGuild);
+          }
+          if (NewChannel) {
+            this.EventObject = NewChannel;
+            AffectedGuild.Channels.ReplaceChannel(this.Message.id, NewChannel);
+            this.Handle();
+            resolve(this.EventObject);
+          }
+        });
+      } else if (this.Message.type === CHANNEL_TYPES.DM || this.Message.type === CHANNEL_TYPES.GROUP_DM) {
+        const NewChannel = new DirectMessageChannel(this.Client, this.Message);
+        this.EventObject = NewChannel;
+        this.Client.Channels.ReplaceChannel(this.Message.id, NewChannel);
+        this.Handle();
+        resolve(this.EventObject);
+      }
+      else{
+        reject(new Error("Unhandled Guild Channel Combination"))
+      }
+    });
   }
 
   /**
    * Handle CHANNEL_DELETE
    */
-  public HandleDelete(): void {
-    this.EventName = 'CHANNEL_DELETE';
-    this.EventDeleteObject = {
-      Id: this.Message.id,
-      Type: this.Message.type,
-    };
+  public HandleDelete(): Promise<IChannelDeleteEventObject> {
+    return new Promise((resolve) => {
+      this.EventName = 'CHANNEL_DELETE';
+      this.EventDeleteObject = {
+        Id: this.Message.id,
+        Type: this.Message.type,
+      };
 
-    this.Client.Channels.RemoveChannel(this.Message.id);
-    this.Handle();
+      this.Client.Channels.RemoveChannel(this.Message.id);
+      this.Handle();
+      resolve(this.EventDeleteObject);
+    })
   }
 
   /**

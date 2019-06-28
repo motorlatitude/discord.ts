@@ -30,48 +30,43 @@ export default class ChannelEvent extends ClientDispatcherEvent {
   public HandleCreate(): Promise<TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel> {
     return new Promise((resolve, reject) => {
       this.EventName = 'CHANNEL_CREATE';
-
-      if (this.Message.type === CHANNEL_TYPES.GUILD_TEXT && this.Message.guild_id) {
+      if(this.Message.guild_id){
         this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-          const NewTextChannel: TextChannel = new TextChannel(this.Client, this.Message, AffectedGuild);
-
-          this.EventObject = NewTextChannel;
-
-          AffectedGuild.Channels.AddTextChannel(NewTextChannel);
+          if (this.Message.type === CHANNEL_TYPES.GUILD_TEXT) {
+            const NewTextChannel: TextChannel = new TextChannel(this.Client, this.Message, AffectedGuild);
+            this.EventObject = NewTextChannel;
+            AffectedGuild.Channels.AddTextChannel(NewTextChannel);
+          } else if (this.Message.type === CHANNEL_TYPES.GUILD_VOICE) {
+            const NewVoiceChannel: VoiceChannel = new VoiceChannel(this.Client, this.Message, AffectedGuild);
+            this.EventObject = NewVoiceChannel;
+            AffectedGuild.Channels.AddVoiceChannel(NewVoiceChannel);
+          } else if (this.Message.type === CHANNEL_TYPES.GUILD_CATEGORY) {
+            const NewChannelCategory: CategoryChannel = new CategoryChannel(this.Client, this.Message, AffectedGuild);
+            this.EventObject = NewChannelCategory;
+            AffectedGuild.Channels.AddChannelCategory(NewChannelCategory);
+          }
+          if(this.EventObject){
+            this.Handle();
+            resolve(this.EventObject);
+          }
+          else{
+            reject(new Error("Unhandled Channel Type: "+this.Message.type))
+          }
+        }).catch((err: Error) => {
+          reject(err);
+        });
+      }
+      else{
+        if (this.Message.type === CHANNEL_TYPES.DM || this.Message.type === CHANNEL_TYPES.GROUP_DM) {
+          const NewDMChannel: DirectMessageChannel = new DirectMessageChannel(this.Client, this.Message);
+          this.EventObject = NewDMChannel;
+          this.Client.Channels.AddDMChannel(NewDMChannel);
           this.Handle();
           resolve(this.EventObject);
-        });
-      } else if (this.Message.type === CHANNEL_TYPES.GUILD_VOICE && this.Message.guild_id) {
-        this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-          const NewVoiceChannel: VoiceChannel = new VoiceChannel(this.Client, this.Message, AffectedGuild);
-
-          this.EventObject = NewVoiceChannel;
-
-          AffectedGuild.Channels.AddVoiceChannel(NewVoiceChannel);
-          this.Handle();
-          resolve(this.EventObject);
-        });
-      } else if (this.Message.type === CHANNEL_TYPES.DM || this.Message.type === CHANNEL_TYPES.GROUP_DM) {
-        const NewDMChannel: DirectMessageChannel = new DirectMessageChannel(this.Client, this.Message);
-
-        this.EventObject = NewDMChannel;
-
-        this.Client.Channels.AddDMChannel(NewDMChannel);
-        this.Handle();
-        resolve(this.EventObject);
-      } else if (this.Message.type === CHANNEL_TYPES.GUILD_CATEGORY && this.Message.guild_id) {
-        this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-          const NewChannelCategory: CategoryChannel = new CategoryChannel(this.Client, this.Message, AffectedGuild);
-
-          this.EventObject = NewChannelCategory;
-
-          AffectedGuild.Channels.AddChannelCategory(NewChannelCategory);
-          this.Handle();
-          resolve(this.EventObject);
-        });
-      } else {
-        const ErrorResponse = 'Unhandled Channel Type: ' + this.Message.type;
-        reject(ErrorResponse);
+        }
+        else{
+          reject(new Error("Unhandled Channel Type: "+this.Message.type))
+        }
       }
     });
   }
@@ -135,10 +130,8 @@ export default class ChannelEvent extends ClientDispatcherEvent {
    * @override
    */
   public EmitEvent(): void {
-    if (this.EventName === 'CHANNEL_UPDATE' || this.EventName === 'CHANNEL_CREATE') {
-      if (this.EventObject) {
-        this.Client.emit(this.EventName, this.EventObject);
-      }
+    if ((this.EventName === 'CHANNEL_UPDATE' || this.EventName === 'CHANNEL_CREATE') && this.EventObject) {
+      this.Client.emit(this.EventName, this.EventObject);
     } else if (this.EventName === 'CHANNEL_DELETE' && this.EventDeleteObject) {
       this.Client.emit(this.EventName, this.EventDeleteObject);
     }

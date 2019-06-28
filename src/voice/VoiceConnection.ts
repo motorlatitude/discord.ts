@@ -190,17 +190,8 @@ export default class VoiceConnection extends EventEmitter {
    * Handles Voice Endpoint Closure
    */
   private VoiceWebsocketClose(code?: VoiceCloseCode): void {
-    if (
-      code === 4001 ||
-      code === 4003 ||
-      code === 4004 ||
-      code === 4005 ||
-      code === 4006 ||
-      code === 4009 ||
-      code === 4011 ||
-      code === 4012 ||
-      code === 4016
-    ) {
+    const StopVoiceCodes = [4001, 4003, 4004, 4005, 4006, 4009, 4011, 4012, 4016]; // These codes are reasons to stop voice and not retry
+    if (code && StopVoiceCodes.indexOf(code) > -1) {
       // We screwed something up, expect closure
       this.ExpectedClosure = true;
       this.Disconnect();

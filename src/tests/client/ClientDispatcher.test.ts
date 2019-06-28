@@ -89,7 +89,7 @@ describe('ClientDispatcher', () => {
     const spy = jest.spyOn(ChannelEvent.prototype, "HandleCreate");
     instance.Parse({
       d: {
-        id: "CHANNEL_ID",
+        id: "INVALID_CHANNEL_ID",
         type: 0
       },
       op: 0,
@@ -117,7 +117,7 @@ describe('ClientDispatcher', () => {
     const spy = jest.spyOn(ChannelEvent.prototype, "HandleDelete");
     instance.Parse({
       d: {
-        id: "CHANNEL_ID",
+        id: "INVALID_CHANNEL_ID",
         type: 0
       },
       op: 0,

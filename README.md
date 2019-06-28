@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/motorlatitude/discord.ts/master/docs/assets/images/logo_extended.png" alt="Discord.ts" height="240">
+<img src="https://raw.githubusercontent.com/motorlatitude/discord.ts/master/docs/assets/images/logo_extended.png" alt="Discord.ts" height="180">
 
 # 
 
@@ -7,4 +7,5 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/78f01fd4e76e99119cee/test_coverage)](https://codeclimate.com/github/motorlatitude/discord.ts/test_coverage) &nbsp; &nbsp;
 [![Maintainability](https://api.codeclimate.com/v1/badges/78f01fd4e76e99119cee/maintainability)](https://codeclimate.com/github/motorlatitude/discord.ts/maintainability) &nbsp; &nbsp;
 
-Discord API framework written in typescript
+ 
+Discord.ts is a npm module to-be and is a library to handle communication with Discord's API.

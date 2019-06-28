@@ -110,6 +110,34 @@ describe('ChannelEvent CHANNEL_CREATE handling', () => {
     });
     instance.HandleCreate();
   });
+
+  it('Should reject if invalid GUILD_ID', async (done) => {
+    const spyHandle = jest.spyOn(ClientDispatcherEvent.prototype, "Handle");
+
+    const instance = new ChannelEvent(ClientInstance, {
+      guild_id: "INVALID_GUILD_ID",
+      id: "CHANNEL_ID",
+      type: 1
+    });
+
+    await expect(instance.HandleCreate()).rejects.toBeInstanceOf(Error);
+    expect(spyHandle).not.toBeCalled();
+    done();
+  });
+
+  it('Should reject if invalid CHANNEL_TYPE', async (done) => {
+    const spyHandle = jest.spyOn(ClientDispatcherEvent.prototype, "Handle");
+
+    const instance = new ChannelEvent(ClientInstance, {
+      guild_id: "GUILD_ID",
+      id: "CHANNEL_ID",
+      type: 20
+    });
+
+    await expect(instance.HandleCreate()).rejects.toBeInstanceOf(Error);
+    expect(spyHandle).not.toBeCalled();
+    done();
+  });
 });
 
 

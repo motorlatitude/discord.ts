@@ -19,8 +19,8 @@ describe('DiscordClient Connection Tests', () => {
   });
 
   it('Connect Should Call Methods in DiscordManager And Get GATEWAY_URL', async done => {
-    const SpyGatewayForBot = jest.spyOn(GatewayMethods.prototype, "GatewayForBot").mockImplementationOnce(() => {
-      return Promise.resolve({url: "GATEWAY_URL", ping: 0})
+    const SpyGatewayForBot = jest.spyOn(GatewayMethods.prototype, 'GatewayForBot').mockImplementationOnce(() => {
+      return Promise.resolve({ url: 'GATEWAY_URL', ping: 0 });
     });
 
     instance.on('GATEWAY_FOUND', () => {
@@ -32,11 +32,11 @@ describe('DiscordClient Connection Tests', () => {
   });
 
   it('Connect Should Call READY event', async done => {
-    const SpyGatewayForBot = jest.spyOn(GatewayMethods.prototype, "GatewayForBot").mockImplementationOnce(() => {
-      return Promise.resolve({url: "GATEWAY_URL", ping: 0})
+    const SpyGatewayForBot = jest.spyOn(GatewayMethods.prototype, 'GatewayForBot').mockImplementationOnce(() => {
+      return Promise.resolve({ url: 'GATEWAY_URL', ping: 0 });
     });
-    const SpyClientConnectionConnect = jest.spyOn(ClientConnection.prototype, "Connect").mockImplementationOnce(() => {
-      return instance.emit("READY");
+    const SpyClientConnectionConnect = jest.spyOn(ClientConnection.prototype, 'Connect').mockImplementationOnce(() => {
+      return instance.emit('READY');
     });
 
     instance.on('READY', () => {
@@ -49,8 +49,8 @@ describe('DiscordClient Connection Tests', () => {
   });
 
   it('Connect Should Disconnect if REST fails', async done => {
-    const SpyGatewayForBot = jest.spyOn(GatewayMethods.prototype, "GatewayForBot").mockImplementationOnce(() => {
-      return Promise.reject(new Error("Random Reason"))
+    const SpyGatewayForBot = jest.spyOn(GatewayMethods.prototype, 'GatewayForBot').mockImplementationOnce(() => {
+      return Promise.reject(new Error('Random Reason'));
     });
 
     instance.on('DISCONNECT', () => {
@@ -62,15 +62,17 @@ describe('DiscordClient Connection Tests', () => {
   });
 
   it('Disconnect Should Call DISCONNECT event', async done => {
-    const SpyGatewayForBot = jest.spyOn(GatewayMethods.prototype, "GatewayForBot").mockImplementationOnce(() => {
-      return Promise.resolve({url: "GATEWAY_URL", ping: 0})
+    const SpyGatewayForBot = jest.spyOn(GatewayMethods.prototype, 'GatewayForBot').mockImplementationOnce(() => {
+      return Promise.resolve({ url: 'GATEWAY_URL', ping: 0 });
     });
-    const SpyClientConnectionConnect = jest.spyOn(ClientConnection.prototype, "Connect").mockImplementationOnce(() => {
-      return instance.emit("READY");
+    const SpyClientConnectionConnect = jest.spyOn(ClientConnection.prototype, 'Connect').mockImplementationOnce(() => {
+      return instance.emit('READY');
     });
-    const SpyClientConnectionDisconnect = jest.spyOn(ClientConnection.prototype, "Disconnect").mockImplementationOnce(() => {
-      return instance.emit("DISCONNECT");
-    });
+    const SpyClientConnectionDisconnect = jest
+      .spyOn(ClientConnection.prototype, 'Disconnect')
+      .mockImplementationOnce(() => {
+        return instance.emit('DISCONNECT');
+      });
 
     instance.on('READY', () => {
       instance.Disconnect();

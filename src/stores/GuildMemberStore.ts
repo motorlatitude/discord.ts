@@ -66,11 +66,10 @@ export default class GuildMemberStore extends Store {
 
   public Fetch(UserId: string): Promise<GuildMember> {
     return new Promise((resolve, reject) => {
-      if(this.Get(UserId)){
+      if (this.Get(UserId)) {
         resolve(this.Get(UserId));
-      }
-      else{
-        reject(new Error("A member with that user id does not exist"))
+      } else {
+        reject(new Error('A member with that user id does not exist'));
       }
     });
   }

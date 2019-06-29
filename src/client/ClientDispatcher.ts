@@ -58,8 +58,8 @@ export default class ClientDispatcher {
         channel.HandleCreate().catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.CHANNEL_CREATE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.CHANNEL_CREATE',
+          });
         });
         break;
       }
@@ -68,8 +68,8 @@ export default class ClientDispatcher {
         channel.HandleUpdate().catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.CHANNEL_UPDATE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.CHANNEL_UPDATE',
+          });
         });
         break;
       }
@@ -78,8 +78,8 @@ export default class ClientDispatcher {
         channel.HandleDelete().catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.CHANNEL_DELETE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.CHANNEL_DELETE',
+          });
         });
         break;
       }
@@ -88,8 +88,8 @@ export default class ClientDispatcher {
         channelPins.Handle().catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.CHANNEL_PINS_UPDATE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.CHANNEL_PINS_UPDATE',
+          });
         });
         break;
       }
@@ -98,8 +98,8 @@ export default class ClientDispatcher {
         guild.HandleCreate(message.d).catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_CREATE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_CREATE',
+          });
         });
         break;
       }
@@ -108,8 +108,8 @@ export default class ClientDispatcher {
         guild.HandleUpdate(message.d).catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_UPDATE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_UPDATE',
+          });
         });
         break;
       }
@@ -118,8 +118,8 @@ export default class ClientDispatcher {
         guild.HandleDelete(message.d).catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_DELETE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_DELETE',
+          });
         });
         break;
       }
@@ -128,8 +128,8 @@ export default class ClientDispatcher {
         guildBan.HandleBanAdd().catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_BAN_ADD"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_BAN_ADD',
+          });
         });
         break;
       }
@@ -138,8 +138,8 @@ export default class ClientDispatcher {
         guildBan.HandleBanRemove().catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_BAN_REMOVE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_BAN_REMOVE',
+          });
         });
         break;
       }
@@ -148,8 +148,8 @@ export default class ClientDispatcher {
         guildEmoji.Handle().catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_EMOJIS_UPDATE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_EMOJIS_UPDATE',
+          });
         });
         break;
       }
@@ -158,8 +158,8 @@ export default class ClientDispatcher {
         guildIntegration.Handle().catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_INTEGRATIONS_UPDATE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_INTEGRATIONS_UPDATE',
+          });
         });
         break;
       }
@@ -168,8 +168,8 @@ export default class ClientDispatcher {
         guildMemberEvent.HandleMemberAdd(message.d).catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_MEMBER_ADD"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_MEMBER_ADD',
+          });
         });
         break;
       }
@@ -178,8 +178,8 @@ export default class ClientDispatcher {
         guildMemberEvent.HandleMemberRemove(message.d).catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_MEMBER_REMOVE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_MEMBER_REMOVE',
+          });
         });
         break;
       }
@@ -188,8 +188,8 @@ export default class ClientDispatcher {
         guildMemberEvent.HandleMemberUpdate(message.d).catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_MEMBER_UPDATE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_MEMBER_UPDATE',
+          });
         });
         break;
       }
@@ -198,8 +198,8 @@ export default class ClientDispatcher {
         guildMemberEvent.HandleMembersChunk(message.d).catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_MEMBERS_CHUNK"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_MEMBERS_CHUNK',
+          });
         });
         break;
       }
@@ -208,8 +208,8 @@ export default class ClientDispatcher {
         guildRoleEvent.HandleRoleCreate().catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_ROLE_CREATE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_ROLE_CREATE',
+          });
         });
         break;
       }
@@ -218,8 +218,8 @@ export default class ClientDispatcher {
         guildRoleEvent.HandleRoleUpdate().catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_ROLE_UPDATE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_ROLE_UPDATE',
+          });
         });
         break;
       }
@@ -228,8 +228,8 @@ export default class ClientDispatcher {
         guildRoleEvent.HandleRoleDelete().catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.GUILD_ROLE_DELETE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_ROLE_DELETE',
+          });
         });
         break;
       }
@@ -238,8 +238,8 @@ export default class ClientDispatcher {
         messageEvent.HandleMessageCreate(message.d).catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.MESSAGE_CREATE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.MESSAGE_CREATE',
+          });
         });
         break;
       }
@@ -248,8 +248,8 @@ export default class ClientDispatcher {
         messageEvent.HandleMessageUpdate(message.d).catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.MESSAGE_UPDATE"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.MESSAGE_UPDATE',
+          });
         });
         break;
       }
@@ -258,8 +258,8 @@ export default class ClientDispatcher {
         messageEvent.HandleMessageDelete(message.d).catch((err: Error) => {
           this.Client.logger.write().error({
             message: err,
-            service: "ClientConnection.ClientDispatcher.Parse.MESSAGE_DELETE | MESSAGE_DELETE_BULK"
-          })
+            service: 'ClientConnection.ClientDispatcher.Parse.MESSAGE_DELETE | MESSAGE_DELETE_BULK',
+          });
         });
         break;
       }

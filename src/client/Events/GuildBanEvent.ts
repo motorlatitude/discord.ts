@@ -20,46 +20,50 @@ export default class GuildBanEvent extends ClientDispatcherEvent {
   /**
    * Sent when a user is banned from a guild
    */
-  public HandleBanAdd(): Promise<{Guild: Guild, User: User}> {
+  public HandleBanAdd(): Promise<{ Guild: Guild; User: User }> {
     return new Promise((resolve, reject) => {
-      this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        this.EventName = 'GUILD_BAN_ADD';
+      this.Client.Guilds.Fetch(this.Message.guild_id)
+        .then((AffectedGuild: Guild) => {
+          this.EventName = 'GUILD_BAN_ADD';
 
-        AffectedGuild.Members.RemoveGuildMember(this.Message.user.id); // We don't store the ban, bans must be fetched separately through rest
+          AffectedGuild.Members.RemoveGuildMember(this.Message.user.id); // We don't store the ban, bans must be fetched separately through rest
 
-        this.EventGuildObject = AffectedGuild;
-        this.EventUserObject = new User(this.Message.user);
+          this.EventGuildObject = AffectedGuild;
+          this.EventUserObject = new User(this.Message.user);
 
-        this.Handle();
-        resolve({
-          Guild: this.EventGuildObject,
-          User: this.EventUserObject
+          this.Handle();
+          resolve({
+            Guild: this.EventGuildObject,
+            User: this.EventUserObject,
+          });
         })
-      }).catch((err: Error) => {
-        reject(err)
-      });
+        .catch((err: Error) => {
+          reject(err);
+        });
     });
   }
 
   /**
    * Sent when a banned user is unbanned from the guild
    */
-  public HandleBanRemove(): Promise<{Guild: Guild, User: User}> {
+  public HandleBanRemove(): Promise<{ Guild: Guild; User: User }> {
     return new Promise((resolve, reject) => {
-      this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        this.EventName = 'GUILD_BAN_REMOVE';
+      this.Client.Guilds.Fetch(this.Message.guild_id)
+        .then((AffectedGuild: Guild) => {
+          this.EventName = 'GUILD_BAN_REMOVE';
 
-        this.EventGuildObject = AffectedGuild;
-        this.EventUserObject = new User(this.Message.user);
+          this.EventGuildObject = AffectedGuild;
+          this.EventUserObject = new User(this.Message.user);
 
-        this.Handle();
-        resolve({
-          Guild: this.EventGuildObject,
-          User: this.EventUserObject
+          this.Handle();
+          resolve({
+            Guild: this.EventGuildObject,
+            User: this.EventUserObject,
+          });
         })
-      }).catch((err: Error) => {
-        reject(err);
-      })
+        .catch((err: Error) => {
+          reject(err);
+        });
     });
   }
 

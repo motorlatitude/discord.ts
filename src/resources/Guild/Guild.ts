@@ -2,15 +2,29 @@ import CHANNEL_TYPES from '../../common/constants/channeltypes';
 import {
   IDiscordBan,
   IDiscordChannel,
+  IDiscordEmbed,
   IDiscordEmoji,
   IDiscordGuild,
-  IDiscordGuildMember, IDiscordHTTPResponse,
+  IDiscordGuildMember,
+  IDiscordHTTPResponse,
+  IDiscordIntegration,
+  IDiscordInvite,
   IDiscordPresenceUpdate,
+  IDiscordPruneCount,
   IDiscordRole,
+  IDiscordVanityURL,
+  IDiscordVoiceRegion,
   IDiscordVoiceServerGatewayEvent,
   IDiscordVoiceState,
 } from '../../common/types';
-import { IEndpointChannelObject, IEndpointGuildMemberObject } from '../../common/types/GuildEndpoint.types';
+import {
+  IEndpointChannelObject,
+  IEndpointGuildEmbedObject,
+  IEndpointGuildMemberObject,
+  IEndpointGuildRole,
+  IEndpointIntegrationObject,
+  IEndpointModifyIntegrationObject,
+} from '../../common/types/GuildEndpoint.types';
 import DiscordClient from '../../DiscordClient';
 import ChannelStore from '../../stores/ChannelStore';
 import EmojiStore from '../../stores/EmojiStore';
@@ -169,11 +183,15 @@ export default class Guild {
    */
   public Modify(Parameters: any): Promise<IDiscordGuild> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().ModifyGuild(this.id, Parameters).then((Response: IDiscordHTTPResponse) => {
-        resolve(Response.body);
-      }).catch((err) => {
-        reject(err);
-      })
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .ModifyGuild(this.id, Parameters)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
     });
   }
 
@@ -182,11 +200,15 @@ export default class Guild {
    */
   public Delete(): Promise<undefined> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().DeleteGuild(this.id).then((Response: IDiscordHTTPResponse) => {
-        resolve();
-      }).catch((err) => {
-        reject(err);
-      })
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .DeleteGuild(this.id)
+        .then(() => {
+          resolve();
+        })
+        .catch(err => {
+          reject(err);
+        });
     });
   }
 
@@ -195,11 +217,15 @@ export default class Guild {
    */
   public GetChannels(): Promise<IDiscordChannel[]> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().GetGuildChannels(this.id).then((Response: IDiscordHTTPResponse) => {
-        resolve(Response.body);
-      }).catch((err) => {
-        reject(err);
-      })
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .GetGuildChannels(this.id)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
     });
   }
 
@@ -209,12 +235,16 @@ export default class Guild {
    */
   public CreateNewChannel(NewChannelObject: IEndpointChannelObject): Promise<IDiscordChannel> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().CreateGuildChannel(this.id, NewChannelObject).then((Response: IDiscordHTTPResponse) => {
-        resolve(Response.body);
-      }).catch((err) => {
-        reject(err);
-      })
-    })
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .CreateGuildChannel(this.id, NewChannelObject)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   /**
@@ -223,12 +253,16 @@ export default class Guild {
    */
   public GetMember(UserId: string): Promise<IDiscordGuildMember> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().GetGuildMember(this.id, UserId).then((Response: IDiscordHTTPResponse) => {
-        resolve(Response.body);
-      }).catch((err) => {
-        reject(err);
-      })
-    })
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .GetGuildMember(this.id, UserId)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   /**
@@ -237,12 +271,16 @@ export default class Guild {
    */
   public GetAllMembers(): Promise<IDiscordGuildMember[]> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().ListGuildMembers(this.id).then((Response: IDiscordHTTPResponse) => {
-        resolve(Response.body);
-      }).catch((err) => {
-        reject(err);
-      });
-    })
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .ListGuildMembers(this.id)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   /**
@@ -252,11 +290,15 @@ export default class Guild {
    */
   public AddMember(UserId: string, GuildMemberObject: IEndpointGuildMemberObject): Promise<IDiscordGuildMember> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().AddGuildMember(this.id, UserId, GuildMemberObject).then((Response: IDiscordHTTPResponse) => {
-        resolve(Response.body);
-      }).catch((err) => {
-        reject(err);
-      });
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .AddGuildMember(this.id, UserId, GuildMemberObject)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
     });
   }
 
@@ -264,14 +306,18 @@ export default class Guild {
    * Set the current users nickname in this guild
    * @param Nickname - the new nickname to use
    */
-  public SetNick(Nickname: string): Promise<{nick: string}> {
+  public SetNick(Nickname: string): Promise<{ nick: string }> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().ModifyCurrentUserNick(this.id, Nickname).then((Response: IDiscordHTTPResponse) => {
-        resolve(Response.body)
-      }).catch((err) => {
-        reject(err);
-      })
-    })
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .ModifyCurrentUserNick(this.id, Nickname)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   /**
@@ -280,12 +326,16 @@ export default class Guild {
    */
   public RemoveMember(UserId: string): Promise<undefined> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().RemoveGuildMember(this.id, UserId).then((Response: IDiscordHTTPResponse) => {
-        resolve();
-      }).catch((err) => {
-        reject(err);
-      })
-    })
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .RemoveGuildMember(this.id, UserId)
+        .then(() => {
+          resolve();
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   /**
@@ -293,12 +343,16 @@ export default class Guild {
    */
   public GetBans(): Promise<IDiscordBan[]> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().GetGuildBans(this.id).then((Response: IDiscordHTTPResponse) => {
-        resolve(Response.body);
-      }).catch((err) => {
-        reject(err);
-      })
-    })
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .GetGuildBans(this.id)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   /**
@@ -307,11 +361,15 @@ export default class Guild {
    */
   public GetBanForUser(UserId: string): Promise<IDiscordBan> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().GetGuildBan(this.id, UserId).then((Response: IDiscordHTTPResponse) => {
-        resolve(Response.body);
-      }).catch((err => {
-        reject(err);
-      }));
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .GetGuildBan(this.id, UserId)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
     });
   }
 
@@ -321,12 +379,16 @@ export default class Guild {
    */
   public UnbanUser(UserId: string): Promise<undefined> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().RemoveGuildBan(this.id, UserId).then((Response: IDiscordHTTPResponse) => {
-        resolve();
-      }).catch((err) => {
-        reject(err);
-      })
-    })
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .RemoveGuildBan(this.id, UserId)
+        .then(() => {
+          resolve();
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   /**
@@ -334,12 +396,250 @@ export default class Guild {
    */
   public GetRoles(): Promise<IDiscordRole[]> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods().GuildMethods().GetGuildRoles(this.id).then((Response: IDiscordHTTPResponse) => {
-        resolve(Response.body);
-      }).catch((err) => {
-        reject(err);
-      })
-    })
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .GetGuildRoles(this.id)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * Creates a new role in this guild
+   * @param NewGuildRole - role object containing the new role's properties
+   */
+  public CreateRole(NewGuildRole: IEndpointGuildRole): Promise<IDiscordRole> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .CreateGuildRole(this.id, NewGuildRole)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * Gets number of people that would be pruned
+   * @param Days - number of days to count prune for
+   */
+  public GetPruneCount(Days: number = 1): Promise<IDiscordPruneCount> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .GetGuildPruneCount(this.id, Days)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * Start guild prune
+   * @param Days - number of days to count prune for
+   * @param ComputePruneCount - compute the number of people pruned, recommended false for large guilds
+   */
+  public Prune(Days: number, ComputePruneCount: boolean = false): Promise<IDiscordPruneCount> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .BeginGuildPrune(this.id, Days, ComputePruneCount)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * List available voice regions for this server
+   */
+  public GetVoiceRegions(): Promise<IDiscordVoiceRegion[]> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .GetGuildVoiceRegions(this.id)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * List available invites for this guild
+   */
+  public GetInvites(): Promise<IDiscordInvite[]> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .GetGuildInvites(this.id)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * List a guilds integrations
+   */
+  public GetIntegrations(): Promise<IDiscordIntegration[]> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .GetGuildIntegrations(this.id)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * Attach an integration object from the current user to the guild
+   * @param NewIntegrationObject - required object containing type and integration id
+   */
+  public CreateIntegration(NewIntegrationObject: IEndpointIntegrationObject): Promise<undefined> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .CreateGuildIntegration(this.id, NewIntegrationObject)
+        .then(() => {
+          resolve();
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * Modify an existing integration in the guild
+   * @param IntegrationId - the id of the integration to modify
+   * @param IntegrationModifyObject - modify parameters, object containing expire_behaviour
+   */
+  public ModifyIntegration(
+    IntegrationId: string,
+    IntegrationModifyObject: IEndpointModifyIntegrationObject,
+  ): Promise<undefined> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .ModifyGuildIntegration(this.id, IntegrationId, IntegrationModifyObject)
+        .then(() => {
+          resolve();
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * Delete an attached integration
+   * @param IntegrationId - the id of the integration to delete
+   */
+  public DeleteIntegration(IntegrationId: string): Promise<undefined> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .DeleteGuildIntegration(this.id, IntegrationId)
+        .then(() => {
+          resolve();
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * Sync an attached integration
+   * @param IntegrationId - the id of integration to sync
+   */
+  public SyncIntegration(IntegrationId: string): Promise<undefined> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .SyncGuildIntegration(this.id, IntegrationId)
+        .then(() => {
+          resolve();
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * Get this guilds embed
+   */
+  public GetEmbed(): Promise<IDiscordEmbed> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .GetGuildEmbed(this.id)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * Modify the guild embed
+   * @param NewGuildEmbed - the altered properties of the embed
+   */
+  public ModifyEmbed(NewGuildEmbed: IEndpointGuildEmbedObject): Promise<IDiscordEmbed> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .ModifyGuildEmbed(this.id, NewGuildEmbed)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * Get the vanity url for this guild
+   */
+  public VanityURL(): Promise<IDiscordVanityURL> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods()
+        .GuildMethods()
+        .GetGuildVanityURL(this.id)
+        .then((Response: IDiscordHTTPResponse) => {
+          resolve(Response.body);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   private ResolveVoiceStates(VoiceStates: IDiscordVoiceState[]): void {

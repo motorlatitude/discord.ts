@@ -17,13 +17,15 @@ export default class GuildIntegrationEvent extends ClientDispatcherEvent {
 
   public Handle(): Promise<Guild> {
     return new Promise((resolve, reject) => {
-      this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        this.EventObject = AffectedGuild;
-        super.Handle();
-        resolve(this.EventObject);
-      }).catch((err: Error) => {
-        reject(err);
-      })
+      this.Client.Guilds.Fetch(this.Message.guild_id)
+        .then((AffectedGuild: Guild) => {
+          this.EventObject = AffectedGuild;
+          super.Handle();
+          resolve(this.EventObject);
+        })
+        .catch((err: Error) => {
+          reject(err);
+        });
     });
   }
 

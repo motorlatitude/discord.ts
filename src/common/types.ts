@@ -317,8 +317,68 @@ export interface IDiscordVoiceState {
 }
 
 export interface IDiscordBan {
-  reason?: string,
-  user: IDiscordUser
+  reason?: string;
+  user: IDiscordUser;
+}
+
+export interface IDiscordPruneCount {
+  pruned: number;
+}
+
+export interface IDiscordVoiceRegion {
+  id: string;
+  name: string;
+  vip: boolean;
+  optimal: boolean;
+  deprecated: boolean;
+  custom: boolean;
+}
+
+export interface IDiscordInvite {
+  code: string;
+  guild: {
+    id: string;
+    name: string;
+    splash: string;
+    icon: string;
+  };
+  channel: {
+    id: string;
+    name: string;
+    type: number;
+  };
+  target_user: IDiscordUser;
+  target_user_type?: number;
+  approximate_presence_count?: number;
+  approximate_member_count?: number;
+  inviter: IDiscordUser;
+  uses: number;
+  max_uses: number;
+  max_age: number;
+  temporary: boolean;
+  created_at: number;
+  revoked: boolean;
+}
+
+export interface IDiscordIntegration {
+  id: string;
+  name: string;
+  type: string;
+  enabled: boolean;
+  syncing: boolean;
+  role_id: string;
+  expire_behaviour: number;
+  expire_grace_period: number;
+  user: IDiscordUser;
+  account: {
+    id: string;
+    name: string;
+  };
+  synced_at: number;
+}
+
+export interface IDiscordVanityURL {
+  code: string;
 }
 
 // Discord Gateway Interfaces

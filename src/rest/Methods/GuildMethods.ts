@@ -1,5 +1,6 @@
 import {
-  IEndpointChannelObject, IEndpointGuildEmbedObject,
+  IEndpointChannelObject,
+  IEndpointGuildEmbedObject,
   IEndpointGuildMemberObject,
   IEndpointGuildObject,
   IEndpointGuildRole,
@@ -30,7 +31,7 @@ export default class GatewayMethods {
    * @param GuildId - The id of the guild to fetch from the API
    */
   public GetGuild(GuildId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId);
   }
 
   /**
@@ -39,7 +40,7 @@ export default class GatewayMethods {
    * @param Parameters - parameters to modify
    */
   public ModifyGuild(GuildId: string, Parameters: any): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/'+GuildId, Parameters);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/' + GuildId, Parameters);
   }
 
   /**
@@ -47,7 +48,7 @@ export default class GatewayMethods {
    * @param GuildId - The Id of the guild to be deleted
    */
   public DeleteGuild(GuildId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.DELETE, '/guilds/'+GuildId);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.DELETE, '/guilds/' + GuildId);
   }
 
   /**
@@ -55,7 +56,7 @@ export default class GatewayMethods {
    * @param GuildId - The id of the guild of which to fetch the channels
    */
   public GetGuildChannels(GuildId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/channels');
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId + '/channels');
   }
 
   /**
@@ -64,7 +65,7 @@ export default class GatewayMethods {
    * @param ChannelObject - chanel object, only required prop is name
    */
   public CreateGuildChannel(GuildId: string, ChannelObject: IEndpointChannelObject): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.POST, '/guilds/'+GuildId+'/channels', ChannelObject)
+    return this.Requester.SendRequest(HTTP_CONSTANTS.POST, '/guilds/' + GuildId + '/channels', ChannelObject);
   }
 
   /**
@@ -76,9 +77,9 @@ export default class GatewayMethods {
   public ModifyGuildChanelPosition(GuildId: string, ChannelId: string, Position: number): Promise<any> {
     const Data = {
       id: ChannelId,
-      position: Position
+      position: Position,
     };
-    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/'+GuildId+'/channels', Data);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/' + GuildId + '/channels', Data);
   }
 
   /**
@@ -87,7 +88,7 @@ export default class GatewayMethods {
    * @param UserId - the user id of the member
    */
   public GetGuildMember(GuildId: string, UserId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/members/'+UserId);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId + '/members/' + UserId);
   }
 
   /**
@@ -97,19 +98,18 @@ export default class GatewayMethods {
    * @param After - the last user id of the previous page
    */
   public ListGuildMembers(GuildId: string, Limit?: number, After?: string): Promise<any> {
-    let QueryString: string = "";
-    if(Limit){
-      QueryString += "?limit="+(Limit > 1000 ? 1000 : Limit);
+    let QueryString: string = '';
+    if (Limit) {
+      QueryString += '?limit=' + (Limit > 1000 ? 1000 : Limit);
     }
-    if(After){
-      if(QueryString !== ""){
-        QueryString += "&after="+After;
-      }
-      else{
-        QueryString += "?after="+After;
+    if (After) {
+      if (QueryString !== '') {
+        QueryString += '&after=' + After;
+      } else {
+        QueryString += '?after=' + After;
       }
     }
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/members'+QueryString);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId + '/members' + QueryString);
   }
 
   /**
@@ -119,7 +119,11 @@ export default class GatewayMethods {
    * @param GuildMemberObject - the join object, a valid access_token is required for the user
    */
   public AddGuildMember(GuildId: string, UserId: string, GuildMemberObject: IEndpointGuildMemberObject): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.PUT, '/guilds/'+GuildId+'/members/'+UserId, GuildMemberObject);
+    return this.Requester.SendRequest(
+      HTTP_CONSTANTS.PUT,
+      '/guilds/' + GuildId + '/members/' + UserId,
+      GuildMemberObject,
+    );
   }
 
   /**
@@ -128,8 +132,16 @@ export default class GatewayMethods {
    * @param UserId - the user id
    * @param ModifyGuildMemberObject - the modified guild member object
    */
-  public ModifyGuildMember(GuildId: string, UserId: string, ModifyGuildMemberObject: IEndpointModifyGuildMemberObject): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/'+GuildId+'/members/'+UserId, ModifyGuildMemberObject);
+  public ModifyGuildMember(
+    GuildId: string,
+    UserId: string,
+    ModifyGuildMemberObject: IEndpointModifyGuildMemberObject,
+  ): Promise<any> {
+    return this.Requester.SendRequest(
+      HTTP_CONSTANTS.PATCH,
+      '/guilds/' + GuildId + '/members/' + UserId,
+      ModifyGuildMemberObject,
+    );
   }
 
   /**
@@ -138,7 +150,9 @@ export default class GatewayMethods {
    * @param Nickname - the new nickname to use
    */
   public ModifyCurrentUserNick(GuildId: string, Nickname: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/'+GuildId+'/members/@me/nick', {nick: Nickname});
+    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/' + GuildId + '/members/@me/nick', {
+      nick: Nickname,
+    });
   }
 
   /**
@@ -148,7 +162,10 @@ export default class GatewayMethods {
    * @param RoleId - the role id to add to the user
    */
   public AddGuildMemberRole(GuildId: string, UserId: string, RoleId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.PUT, '/guilds/'+GuildId+'/members/'+UserId+'/roles/'+RoleId);
+    return this.Requester.SendRequest(
+      HTTP_CONSTANTS.PUT,
+      '/guilds/' + GuildId + '/members/' + UserId + '/roles/' + RoleId,
+    );
   }
 
   /**
@@ -158,7 +175,10 @@ export default class GatewayMethods {
    * @param RoleId - the role id to remove from the user
    */
   public RemoveGuildMemberRole(GuildId: string, UserId: string, RoleId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.DELETE, '/guilds/'+GuildId+'/members/'+UserId+'/roles/'+RoleId);
+    return this.Requester.SendRequest(
+      HTTP_CONSTANTS.DELETE,
+      '/guilds/' + GuildId + '/members/' + UserId + '/roles/' + RoleId,
+    );
   }
 
   /**
@@ -167,7 +187,7 @@ export default class GatewayMethods {
    * @param UserId - the user id of the user
    */
   public RemoveGuildMember(GuildId: string, UserId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.DELETE, '/guilds/'+GuildId+'/members/'+UserId);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.DELETE, '/guilds/' + GuildId + '/members/' + UserId);
   }
 
   /**
@@ -175,7 +195,7 @@ export default class GatewayMethods {
    * @param GuildId - the id of the guild to get bans for
    */
   public GetGuildBans(GuildId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/bans');
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId + '/bans');
   }
 
   /**
@@ -184,7 +204,7 @@ export default class GatewayMethods {
    * @param UserId - the queried user's id
    */
   public GetGuildBan(GuildId: string, UserId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/bans/'+UserId);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId + '/bans/' + UserId);
   }
 
   /**
@@ -196,10 +216,10 @@ export default class GatewayMethods {
    */
   public CreateGuildBan(GuildId: string, UserId: string, DeleteMessageDays?: number, Reason?: string): Promise<any> {
     const Data = {
-      "delete-message-days": (DeleteMessageDays ? (DeleteMessageDays > 7 ? 7 : DeleteMessageDays) : undefined),
-      "reason": Reason
+      'delete-message-days': DeleteMessageDays ? (DeleteMessageDays > 7 ? 7 : DeleteMessageDays) : undefined,
+      reason: Reason,
     };
-    return this.Requester.SendRequest(HTTP_CONSTANTS.PUT, '/guilds/'+GuildId+'/bans/'+UserId, Data);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.PUT, '/guilds/' + GuildId + '/bans/' + UserId, Data);
   }
 
   /**
@@ -208,7 +228,7 @@ export default class GatewayMethods {
    * @param UserId - the id of the user to unban
    */
   public RemoveGuildBan(GuildId: string, UserId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.DELETE, '/guilds/'+GuildId+'/bans/'+UserId);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.DELETE, '/guilds/' + GuildId + '/bans/' + UserId);
   }
 
   /**
@@ -216,7 +236,7 @@ export default class GatewayMethods {
    * @param GuildId - the id o the guild of which to get roles for
    */
   public GetGuildRoles(GuildId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/roles');
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId + '/roles');
   }
 
   /**
@@ -225,7 +245,7 @@ export default class GatewayMethods {
    * @param RoleObject - the new role object
    */
   public CreateGuildRole(GuildId: string, RoleObject: IEndpointGuildRole): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.POST, '/guilds/'+GuildId+'/roles', RoleObject);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.POST, '/guilds/' + GuildId + '/roles', RoleObject);
   }
 
   /**
@@ -237,9 +257,9 @@ export default class GatewayMethods {
   public ModifyGuildRolePosition(GuildId: string, RoleId: string, Position: number): Promise<any> {
     const Data = {
       id: RoleId,
-      position: Position
+      position: Position,
     };
-    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/'+GuildId+'/roles', Data);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/' + GuildId + '/roles', Data);
   }
 
   /**
@@ -249,7 +269,7 @@ export default class GatewayMethods {
    * @param RoleObject - the properties of the role to change
    */
   public ModifyGuildRole(GuildId: string, RoleId: string, RoleObject: IEndpointGuildRole): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/'+GuildId+'/roles/'+RoleId, RoleObject);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/' + GuildId + '/roles/' + RoleId, RoleObject);
   }
 
   /**
@@ -258,7 +278,7 @@ export default class GatewayMethods {
    * @param RoleId - the id of the role to be removed
    */
   public DeleteGuildRole(GuildId: string, RoleId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.DELETE, '/guilds/'+GuildId+'/roles/'+RoleId);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.DELETE, '/guilds/' + GuildId + '/roles/' + RoleId);
   }
 
   /**
@@ -267,7 +287,10 @@ export default class GatewayMethods {
    * @param Days - the number of days to count prune for (1 or more)
    */
   public GetGuildPruneCount(GuildId: string, Days: number): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/prune?days='+(Days < 1 ? 1 : Days));
+    return this.Requester.SendRequest(
+      HTTP_CONSTANTS.GET,
+      '/guilds/' + GuildId + '/prune?days=' + (Days < 1 ? 1 : Days),
+    );
   }
 
   /**
@@ -277,7 +300,10 @@ export default class GatewayMethods {
    * @param ComputePruneCount - Whether pruned should be returned, discouraged for large guilds
    */
   public BeginGuildPrune(GuildId: string, Days: number, ComputePruneCount: boolean = false): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.POST, '/guilds/'+GuildId+'/prune?days='+(Days < 1 ? 1 : Days)+'&compute_prune_count='+ComputePruneCount);
+    return this.Requester.SendRequest(
+      HTTP_CONSTANTS.POST,
+      '/guilds/' + GuildId + '/prune?days=' + (Days < 1 ? 1 : Days) + '&compute_prune_count=' + ComputePruneCount,
+    );
   }
 
   /**
@@ -285,7 +311,7 @@ export default class GatewayMethods {
    * @param GuildId - the guild id of which to fetch voice regions for
    */
   public GetGuildVoiceRegions(GuildId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/regions');
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId + '/regions');
   }
 
   /**
@@ -293,7 +319,7 @@ export default class GatewayMethods {
    * @param GuildId - the id of the guild to fetch invites for
    */
   public GetGuildInvites(GuildId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/invites');
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId + '/invites');
   }
 
   /**
@@ -301,7 +327,7 @@ export default class GatewayMethods {
    * @param GuildId - id of guild to fetch integrations for
    */
   public GetGuildIntegrations(GuildId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/integrations');
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId + '/integrations');
   }
 
   /**
@@ -311,7 +337,7 @@ export default class GatewayMethods {
    * @constructor
    */
   public CreateGuildIntegration(GuildId: string, IntegrationObject: IEndpointIntegrationObject): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.POST, '/guilds/'+GuildId+'/integrations', IntegrationObject);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.POST, '/guilds/' + GuildId + '/integrations', IntegrationObject);
   }
 
   /**
@@ -320,8 +346,16 @@ export default class GatewayMethods {
    * @param IntegrationId - the id of the integration to modify
    * @param ModifyIntegrationObject - properties to modify
    */
-  public ModifyGuildIntegration(GuildId: string, IntegrationId: string, ModifyIntegrationObject: IEndpointModifyIntegrationObject): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/'+GuildId+'/integrations/'+IntegrationId, ModifyIntegrationObject);
+  public ModifyGuildIntegration(
+    GuildId: string,
+    IntegrationId: string,
+    ModifyIntegrationObject: IEndpointModifyIntegrationObject,
+  ): Promise<any> {
+    return this.Requester.SendRequest(
+      HTTP_CONSTANTS.PATCH,
+      '/guilds/' + GuildId + '/integrations/' + IntegrationId,
+      ModifyIntegrationObject,
+    );
   }
 
   /**
@@ -330,7 +364,7 @@ export default class GatewayMethods {
    * @param IntegrationId - the id of the integration to delete
    */
   public DeleteGuildIntegration(GuildId: string, IntegrationId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.DELETE, '/guilds/'+GuildId+'/integrations/'+IntegrationId);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.DELETE, '/guilds/' + GuildId + '/integrations/' + IntegrationId);
   }
 
   /**
@@ -339,15 +373,18 @@ export default class GatewayMethods {
    * @param IntegrationId - the id of the integration to sync
    */
   public SyncGuildIntegration(GuildId: string, IntegrationId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.POST, '/guilds/'+GuildId+'/integrations/'+IntegrationId+'/sync');
+    return this.Requester.SendRequest(
+      HTTP_CONSTANTS.POST,
+      '/guilds/' + GuildId + '/integrations/' + IntegrationId + '/sync',
+    );
   }
 
   /**
    * GET /guilds/{guild.id}/embed
    * @param GuildId - the id of the guild to fetch the embed for
    */
-  public GetGuildEndpoint(GuildId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/embed');
+  public GetGuildEmbed(GuildId: string): Promise<any> {
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId + '/embed');
   }
 
   /**
@@ -357,7 +394,7 @@ export default class GatewayMethods {
    * @constructor
    */
   public ModifyGuildEmbed(GuildId: string, GuildEmbedObject: IEndpointGuildEmbedObject): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/'+GuildId+'/embed', GuildEmbedObject);
+    return this.Requester.SendRequest(HTTP_CONSTANTS.PATCH, '/guilds/' + GuildId + '/embed', GuildEmbedObject);
   }
 
   /**
@@ -365,7 +402,7 @@ export default class GatewayMethods {
    * @param GuildId - the id of the guild of which to get the vanity url
    */
   public GetGuildVanityURL(GuildId: string): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/vanity-url');
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId + '/vanity-url');
   }
 
   /**
@@ -373,8 +410,7 @@ export default class GatewayMethods {
    * @param GuildId - the id of the guild of which to get the widget
    * @param Style - the style of the widget
    */
-  public GetGuildWidgetImage(GuildId: string, Style: string = "shield"): Promise<any> {
-    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/'+GuildId+'/widget.png?style='+Style)
+  public GetGuildWidgetImage(GuildId: string, Style: string = 'shield'): Promise<any> {
+    return this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/guilds/' + GuildId + '/widget.png?style=' + Style);
   }
-
 }

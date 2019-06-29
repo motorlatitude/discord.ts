@@ -20,9 +20,10 @@ export default class GuildRoleEvent extends ClientDispatcherEvent {
   /**
    * Handles GUILD_ROLE_CREATE event
    */
-  public HandleRoleCreate(): Promise<{Guild: Guild, Role: Role}> {
+  public HandleRoleCreate(): Promise<{ Guild: Guild; Role: Role }> {
     return new Promise((resolve, reject) => {
-      this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
+      this.Client.Guilds.Fetch(this.Message.guild_id)
+        .then((AffectedGuild: Guild) => {
           if (this.Message.role) {
             const role = new Role(this.Message.role);
             AffectedGuild.Roles.AddRole(role);
@@ -34,11 +35,11 @@ export default class GuildRoleEvent extends ClientDispatcherEvent {
             this.Handle();
             resolve({
               Guild: AffectedGuild,
-              Role: role
-            })
+              Role: role,
+            });
           } else {
             // Shouldn't happen
-            reject(new Error("We got a GUILD_ROLE_CREATE event but no role was supplied"));
+            reject(new Error('We got a GUILD_ROLE_CREATE event but no role was supplied'));
           }
         })
         .catch((err: Error) => {
@@ -50,58 +51,61 @@ export default class GuildRoleEvent extends ClientDispatcherEvent {
   /**
    * Handles GUILD_ROLE_UPDATE event
    */
-  public HandleRoleUpdate(): Promise<{Guild: Guild, Role: Role}> {
+  public HandleRoleUpdate(): Promise<{ Guild: Guild; Role: Role }> {
     return new Promise((resolve, reject) => {
-      this.Client.Guilds.Fetch(this.Message.guild_id).then((AffectedGuild: Guild) => {
-        if (this.Message.role) {
-          const UpdatedRole = new Role(this.Message.role);
-          AffectedGuild.Roles.UpdateRole(this.Message.role.id, UpdatedRole);
+      this.Client.Guilds.Fetch(this.Message.guild_id)
+        .then((AffectedGuild: Guild) => {
+          if (this.Message.role) {
+            const UpdatedRole = new Role(this.Message.role);
+            AffectedGuild.Roles.UpdateRole(this.Message.role.id, UpdatedRole);
 
-          this.EventName = 'GUILD_ROLE_UPDATE';
-          this.EventGuildObject = AffectedGuild;
-          this.EventRoleObject = UpdatedRole;
+            this.EventName = 'GUILD_ROLE_UPDATE';
+            this.EventGuildObject = AffectedGuild;
+            this.EventRoleObject = UpdatedRole;
 
-          this.Handle();
-          resolve({
-            Guild: AffectedGuild,
-            Role: UpdatedRole
-          })
-        } else {
-          // Shouldn't happen
-          reject(new Error('We got a GUILD_ROLE_UPDATE event but no role was supplied'))
-        }
-      })
-      .catch((err: Error) => {
-        reject(err);
-      });
+            this.Handle();
+            resolve({
+              Guild: AffectedGuild,
+              Role: UpdatedRole,
+            });
+          } else {
+            // Shouldn't happen
+            reject(new Error('We got a GUILD_ROLE_UPDATE event but no role was supplied'));
+          }
+        })
+        .catch((err: Error) => {
+          reject(err);
+        });
     });
   }
 
   /**
    * Handles GUILD_ROLE_DELETE event
    */
-  public HandleRoleDelete(): Promise<{Guild: Guild, Role: Role}> {
+  public HandleRoleDelete(): Promise<{ Guild: Guild; Role: Role }> {
     return new Promise((resolve, reject) => {
       let AffectedGuild: Guild;
-      this.Client.Guilds.Fetch(this.Message.guild_id).then((FoundGuild: Guild) => {
-        AffectedGuild = FoundGuild;
-        return AffectedGuild.Roles.Fetch(this.Message.role_id as string);
-      }).then((AffectedRole: Role) => {
-        AffectedGuild.Roles.RemoveRole(AffectedRole.id);
-
-        this.EventName = 'GUILD_ROLE_DELETE';
-        this.EventGuildObject = AffectedGuild;
-        this.EventRoleObject = AffectedRole;
-
-        this.Handle();
-        resolve({
-          Guild: AffectedGuild,
-          Role: AffectedRole
+      this.Client.Guilds.Fetch(this.Message.guild_id)
+        .then((FoundGuild: Guild) => {
+          AffectedGuild = FoundGuild;
+          return AffectedGuild.Roles.Fetch(this.Message.role_id as string);
         })
-      })
-      .catch((err: Error) => {
-        reject(err);
-      });
+        .then((AffectedRole: Role) => {
+          AffectedGuild.Roles.RemoveRole(AffectedRole.id);
+
+          this.EventName = 'GUILD_ROLE_DELETE';
+          this.EventGuildObject = AffectedGuild;
+          this.EventRoleObject = AffectedRole;
+
+          this.Handle();
+          resolve({
+            Guild: AffectedGuild,
+            Role: AffectedRole,
+          });
+        })
+        .catch((err: Error) => {
+          reject(err);
+        });
     });
   }
 

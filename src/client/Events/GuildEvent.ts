@@ -22,7 +22,7 @@ export default class GuildEvent extends ClientDispatcherEvent {
    * @param Message GUILD_CREATE event package
    */
   public HandleCreate(Message: IDiscordGuild): Promise<Guild> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.EventName = 'GUILD_CREATE';
 
       this.EventObject = new Guild(this.Client, Message);
@@ -39,7 +39,7 @@ export default class GuildEvent extends ClientDispatcherEvent {
    * @param Message GUILD_UPDATE event package
    */
   public HandleUpdate(Message: IDiscordGuild): Promise<Guild> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.EventName = 'GUILD_UPDATE';
 
       this.EventObject = new Guild(this.Client, Message);
@@ -48,7 +48,7 @@ export default class GuildEvent extends ClientDispatcherEvent {
 
       this.Handle();
       resolve(this.EventObject);
-    })
+    });
   }
 
   /**
@@ -56,7 +56,7 @@ export default class GuildEvent extends ClientDispatcherEvent {
    * @param Message GUILD_DELETE event package
    */
   public HandleDelete(Message: IDiscordUnavailableGuildObject): Promise<IGuildDeleteEventObject> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.EventName = 'GUILD_DELETE';
 
       let WasKicked: boolean = false;
@@ -74,7 +74,7 @@ export default class GuildEvent extends ClientDispatcherEvent {
 
       this.Handle();
       resolve(this.EventDeleteObject);
-    })
+    });
   }
 
   public EmitEvent(): void {

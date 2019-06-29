@@ -45,11 +45,10 @@ export default class GuildStore extends Store {
    */
   public Fetch(GuildId: string): Promise<Guild> {
     return new Promise((resolve, reject) => {
-      if(this.Get(GuildId)){
+      if (this.Get(GuildId)) {
         resolve(this.Get(GuildId));
-      }
-      else{
-        reject(new Error("No Guild With That Id Exists"))
+      } else {
+        reject(new Error('No Guild With That Id Exists'));
       }
     });
   }

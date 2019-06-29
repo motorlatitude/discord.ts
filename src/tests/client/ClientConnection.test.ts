@@ -54,27 +54,26 @@ describe('ClientConnection WebSocket', () => {
   });
 
   it('Should Return True When Valid URL Passed', () => {
-    expect(instance.Connect("ws://localhost:4005")).toEqual(true)
+    expect(instance.Connect('ws://localhost:4005')).toEqual(true);
   });
 
-  it('Should Connect To WS', async (done) => {
-    LocalWebSocket.on("connection", () => {
+  it('Should Connect To WS', async done => {
+    LocalWebSocket.on('connection', () => {
       done();
     });
-    instance.Connect("ws://localhost:4005")
+    instance.Connect('ws://localhost:4005');
   });
 
-  it('Should Disconnect and Close the Active Connection', async (done) => {
-    LocalWebSocket.on("connection", (ws) => {
-
-      ws.on("close", () => {
+  it('Should Disconnect and Close the Active Connection', async done => {
+    LocalWebSocket.on('connection', ws => {
+      ws.on('close', () => {
         // Connection Has been closed
         done();
       });
 
       instance.Disconnect();
     });
-    instance.Connect("ws://localhost:4005")
+    instance.Connect('ws://localhost:4005');
   });
 
   it('Should Send Presence Update', async done => {
@@ -320,8 +319,7 @@ describe('ClientConnection WebSocket', () => {
             Closed = true;
             ws.close();
           }
-        }
-        else if(data.op === 1){
+        } else if (data.op === 1) {
           // Heartbeat received
           if (Closed) {
             done();
@@ -361,15 +359,14 @@ describe('ClientConnection WebSocket', () => {
             Closed = true;
             ws.close();
           }
-        }
-        else if(data.op === 6){
+        } else if (data.op === 6) {
           // Resume payload received
           if (Closed) {
             ws.send(
               zlib.deflateSync(
                 JSON.stringify({
                   d: {
-                    _trace: ['string']
+                    _trace: ['string'],
                   },
                   op: 0,
                   s: 1,
@@ -378,9 +375,8 @@ describe('ClientConnection WebSocket', () => {
               ),
             );
           }
-        }
-        else if(data.op === 1){
-          if(Closed){
+        } else if (data.op === 1) {
+          if (Closed) {
             // Heartbeat after close received
             expect(instance.resuming).toEqual(false);
             done();
@@ -494,15 +490,14 @@ describe('ClientConnection WebSocket', () => {
         }
         if (data.op === 2) {
           // instance is ready to receive
-          if(!Closed){
+          if (!Closed) {
             ws.close();
             Closed = true;
-          }
-          else if(SentInvalidSession){
+          } else if (SentInvalidSession) {
             done();
           }
         } else if (data.op === 6) {
-          if(Closed) {
+          if (Closed) {
             ws.send(
               JSON.stringify({
                 d: false,
@@ -550,7 +545,7 @@ describe('ClientConnection WebSocket', () => {
           ); // send invalid session opcode 9 with d true, session is resumable
           SentInvalidSession = true;
         } else if (data.op === 6) {
-          if(SentInvalidSession){
+          if (SentInvalidSession) {
             done();
           }
         }
@@ -568,7 +563,7 @@ describe('ClientConnection WebSocket', () => {
       );
     });
     instance.Connect('ws://localhost:4005');
-  },10000);
+  }, 10000);
 
   it('Should Stop if INVALID_SESSION is not resumable, assume authentication issue', async done => {
     LocalWebSocket.on('connection', ws => {
@@ -605,7 +600,7 @@ describe('ClientConnection WebSocket', () => {
       );
     });
     instance.Connect('ws://localhost:4005');
-  },15000);
+  }, 15000);
 
   it('Should Handle Unhandled OpCodes gracefully', async done => {
     let SentInvalidOpCode = false;
@@ -629,7 +624,7 @@ describe('ClientConnection WebSocket', () => {
           );
           SentInvalidOpCode = true;
         } else if (data.op === 1) {
-          if(SentInvalidOpCode){
+          if (SentInvalidOpCode) {
             done();
           }
         }

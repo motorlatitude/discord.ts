@@ -316,6 +316,11 @@ export interface IDiscordVoiceState {
   suppress: boolean;
 }
 
+export interface IDiscordBan {
+  reason?: string,
+  user: IDiscordUser
+}
+
 // Discord Gateway Interfaces
 
 export interface IDefaultDiscordGatewayPackage {

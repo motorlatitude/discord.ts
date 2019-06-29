@@ -1,14 +1,16 @@
 import CHANNEL_TYPES from '../../common/constants/channeltypes';
 import {
+  IDiscordBan,
   IDiscordChannel,
   IDiscordEmoji,
   IDiscordGuild,
-  IDiscordGuildMember,
+  IDiscordGuildMember, IDiscordHTTPResponse,
   IDiscordPresenceUpdate,
   IDiscordRole,
   IDiscordVoiceServerGatewayEvent,
   IDiscordVoiceState,
 } from '../../common/types';
+import { IEndpointChannelObject, IEndpointGuildMemberObject } from '../../common/types/GuildEndpoint.types';
 import DiscordClient from '../../DiscordClient';
 import ChannelStore from '../../stores/ChannelStore';
 import EmojiStore from '../../stores/EmojiStore';
@@ -131,6 +133,11 @@ export default class Guild {
     this.Splash = GuildObject.splash;
   }
 
+  /**
+   * Creates a new voice connection for this guild
+   * @param Token - token provided as part of the voice server update event payload
+   * @param Endpoint - endpoint provided as part of the voice server update event payload
+   */
   public CreateVoiceConnection(Token: string, Endpoint: string): Promise<VoiceManager> {
     return new Promise((resolve, reject) => {
       if (this.Client.User) {
@@ -154,6 +161,185 @@ export default class Guild {
         reject(new Error('Client has no User'));
       }
     });
+  }
+
+  /**
+   * Modify this guild, this will call the API
+   * @param Parameters - parameters to alter https://discordapp.com/developers/docs/resources/guild#modify-guild-json-params
+   */
+  public Modify(Parameters: any): Promise<IDiscordGuild> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().ModifyGuild(this.id, Parameters).then((Response: IDiscordHTTPResponse) => {
+        resolve(Response.body);
+      }).catch((err) => {
+        reject(err);
+      })
+    });
+  }
+
+  /**
+   * Deletes this guild, this will call the API
+   */
+  public Delete(): Promise<undefined> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().DeleteGuild(this.id).then((Response: IDiscordHTTPResponse) => {
+        resolve();
+      }).catch((err) => {
+        reject(err);
+      })
+    });
+  }
+
+  /**
+   * Request Guild Channels, this will call the API
+   */
+  public GetChannels(): Promise<IDiscordChannel[]> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().GetGuildChannels(this.id).then((Response: IDiscordHTTPResponse) => {
+        resolve(Response.body);
+      }).catch((err) => {
+        reject(err);
+      })
+    });
+  }
+
+  /**
+   * Create a new channel in this guild, this will call the API
+   * @param NewChannelObject - the new channel object
+   */
+  public CreateNewChannel(NewChannelObject: IEndpointChannelObject): Promise<IDiscordChannel> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().CreateGuildChannel(this.id, NewChannelObject).then((Response: IDiscordHTTPResponse) => {
+        resolve(Response.body);
+      }).catch((err) => {
+        reject(err);
+      })
+    })
+  }
+
+  /**
+   * Get a specific guild member, this will call the API
+   * @param UserId - the user id of the guild member to call
+   */
+  public GetMember(UserId: string): Promise<IDiscordGuildMember> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().GetGuildMember(this.id, UserId).then((Response: IDiscordHTTPResponse) => {
+        resolve(Response.body);
+      }).catch((err) => {
+        reject(err);
+      })
+    })
+  }
+
+  /**
+   * Get all guild members
+   * @constructor
+   */
+  public GetAllMembers(): Promise<IDiscordGuildMember[]> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().ListGuildMembers(this.id).then((Response: IDiscordHTTPResponse) => {
+        resolve(Response.body);
+      }).catch((err) => {
+        reject(err);
+      });
+    })
+  }
+
+  /**
+   * Add a new member to this guild
+   * @param UserId - the user id of the user to add to the guild
+   * @param GuildMemberObject - an object containing member information
+   */
+  public AddMember(UserId: string, GuildMemberObject: IEndpointGuildMemberObject): Promise<IDiscordGuildMember> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().AddGuildMember(this.id, UserId, GuildMemberObject).then((Response: IDiscordHTTPResponse) => {
+        resolve(Response.body);
+      }).catch((err) => {
+        reject(err);
+      });
+    });
+  }
+
+  /**
+   * Set the current users nickname in this guild
+   * @param Nickname - the new nickname to use
+   */
+  public SetNick(Nickname: string): Promise<{nick: string}> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().ModifyCurrentUserNick(this.id, Nickname).then((Response: IDiscordHTTPResponse) => {
+        resolve(Response.body)
+      }).catch((err) => {
+        reject(err);
+      })
+    })
+  }
+
+  /**
+   * Remove a member from the guild
+   * @param UserId - the user id of the member to be removed
+   */
+  public RemoveMember(UserId: string): Promise<undefined> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().RemoveGuildMember(this.id, UserId).then((Response: IDiscordHTTPResponse) => {
+        resolve();
+      }).catch((err) => {
+        reject(err);
+      })
+    })
+  }
+
+  /**
+   * Get all banned members for this guild
+   */
+  public GetBans(): Promise<IDiscordBan[]> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().GetGuildBans(this.id).then((Response: IDiscordHTTPResponse) => {
+        resolve(Response.body);
+      }).catch((err) => {
+        reject(err);
+      })
+    })
+  }
+
+  /**
+   * Get ban for a specific user
+   * @param UserId - the user id of the member that is banned
+   */
+  public GetBanForUser(UserId: string): Promise<IDiscordBan> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().GetGuildBan(this.id, UserId).then((Response: IDiscordHTTPResponse) => {
+        resolve(Response.body);
+      }).catch((err => {
+        reject(err);
+      }));
+    });
+  }
+
+  /**
+   * Unban a user that has been banned
+   * @param UserId - the user id of the user to be unbanned
+   */
+  public UnbanUser(UserId: string): Promise<undefined> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().RemoveGuildBan(this.id, UserId).then((Response: IDiscordHTTPResponse) => {
+        resolve();
+      }).catch((err) => {
+        reject(err);
+      })
+    })
+  }
+
+  /**
+   * Get roles in this guild
+   */
+  public GetRoles(): Promise<IDiscordRole[]> {
+    return new Promise((resolve, reject) => {
+      this.Client.DiscordAPIManager.Methods().GuildMethods().GetGuildRoles(this.id).then((Response: IDiscordHTTPResponse) => {
+        resolve(Response.body);
+      }).catch((err) => {
+        reject(err);
+      })
+    })
   }
 
   private ResolveVoiceStates(VoiceStates: IDiscordVoiceState[]): void {

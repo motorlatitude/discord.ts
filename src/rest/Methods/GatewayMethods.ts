@@ -11,9 +11,8 @@ export default class GatewayMethods {
   }
 
   public GatewayForBot(): Promise<IGatewayResponse> {
-    const self = this;
     return new Promise((resolve, reject) => {
-      self.Requester.SendRequest(HTTP_CONSTANTS.GET, '/gateway/bot?v=6')
+      this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/gateway/bot?v=6')
         .then(response => {
           resolve({
             ping: response.httpResponse.elapsedTime,

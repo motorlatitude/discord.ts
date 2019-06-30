@@ -381,6 +381,48 @@ export interface IDiscordVanityURL {
   code: string;
 }
 
+export interface IDiscordAuditLog {
+  webhooks: IDiscordWebhook[],
+  users: IDiscordUser[],
+  audit_log_entries: IDiscordAuditLogEntry[]
+}
+
+export interface IDiscordAuditLogEntry {
+  target_id?: string,
+  changes?: IDiscordAuditLogChange[],
+  user_id: string,
+  id: string,
+  action_type: number,
+  options?: IDiscordAuditEntryInfo,
+  reason?: string
+}
+
+export interface IDiscordAuditEntryInfo {
+  delete_member_days: string,
+  members_removed: string,
+  channel_id: string,
+  count: string,
+  id: string,
+  type: string,
+  role_name: string
+}
+
+export interface IDiscordAuditLogChange {
+  new_value?: any,
+  old_value?: any,
+  key: string
+}
+
+export interface IDiscordWebhook {
+  id: string,
+  guild_id?: string,
+  channel_id: string,
+  user?: IDiscordUser,
+  name?: string,
+  avatar?: string,
+  token: string
+}
+
 // Discord Gateway Interfaces
 
 export interface IDefaultDiscordGatewayPackage {

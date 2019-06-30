@@ -31,7 +31,8 @@
     DiscordTS will take over the role of caching and parsing incoming events and updating relevant internal components,
     keeping its state up-to-date. Projects should first see if cached values are available before sending API requests
     through the <code>DiscordAPIManager</code> so to avoid excessive or unnecessary API calls. Any API calls made will
-    update internal components and are hence also cached.
+    not be cached, however, many of the API calls directly trigger Gateway events and those will be cached and update
+    internal components.
 </p>
 <h3>HTTPS/REST API</h3>
 <p>

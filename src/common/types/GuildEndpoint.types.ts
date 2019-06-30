@@ -70,3 +70,10 @@ export interface IEndpointGuildEmbedObject {
   enabled: boolean;
   channel_id: string;
 }
+
+export interface IEndpointAuditOptions {
+  user_id?: string,
+  action_type?: number,
+  before?: string,
+  limit?: number
+}

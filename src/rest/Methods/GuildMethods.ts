@@ -11,7 +11,7 @@ import {
 import DiscordRequester from '../DiscordRequester';
 import HTTP_CONSTANTS from './../../common/constants/http';
 
-export default class GatewayMethods {
+export default class GuildMethods {
   public Requester: DiscordRequester;
 
   constructor(r: DiscordRequester) {

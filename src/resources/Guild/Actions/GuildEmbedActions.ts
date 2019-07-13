@@ -1,25 +1,14 @@
 import { IDiscordEmbed, IDiscordHTTPResponse } from '../../../common/types';
 import { IEndpointGuildEmbedObject } from '../../../common/types/GuildEndpoint.types';
-import DiscordClient from '../../../DiscordClient';
-import Guild from '../Guild';
+import GuildAction from './GuildAction';
 
-export default class GuildEmbedActions {
-  private Client: DiscordClient;
-  private Guild: Guild;
-
-  constructor(client: DiscordClient, guild: Guild) {
-    this.Guild = guild;
-    this.Client = client;
-  }
-
+export default class GuildEmbedActions extends GuildAction {
   /**
    * Get this guilds embed
    */
   public GetEmbed(): Promise<IDiscordEmbed> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .GetGuildEmbed(this.Guild.id)
+      this.Endpoint.GetGuildEmbed(this.Guild.id)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -35,9 +24,7 @@ export default class GuildEmbedActions {
    */
   public ModifyEmbed(NewGuildEmbed: IEndpointGuildEmbedObject): Promise<IDiscordEmbed> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .ModifyGuildEmbed(this.Guild.id, NewGuildEmbed)
+      this.Endpoint.ModifyGuildEmbed(this.Guild.id, NewGuildEmbed)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })

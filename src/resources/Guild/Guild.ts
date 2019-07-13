@@ -163,7 +163,7 @@ export default class Guild {
   }
 
   /**
-   * Carry out actions on this guild
+   * Carry out actions on this guild (these will call Discords REST API)
    */
   public Actions(): GuildActions {
     return new GuildActions(this.Client, this);

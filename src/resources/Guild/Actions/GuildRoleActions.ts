@@ -1,25 +1,14 @@
 import { IDiscordHTTPResponse, IDiscordRole } from '../../../common/types';
 import { IEndpointGuildRole } from '../../../common/types/GuildEndpoint.types';
-import DiscordClient from '../../../DiscordClient';
-import Guild from '../Guild';
+import GuildAction from './GuildAction';
 
-export default class GuildRoleActions {
-  private Client: DiscordClient;
-  private Guild: Guild;
-
-  constructor(client: DiscordClient, guild: Guild) {
-    this.Guild = guild;
-    this.Client = client;
-  }
-
+export default class GuildRoleActions extends GuildAction {
   /**
    * Get roles in this guild
    */
   public GetRoles(): Promise<IDiscordRole[]> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .GetGuildRoles(this.Guild.id)
+      this.Endpoint.GetGuildRoles(this.Guild.id)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -35,9 +24,7 @@ export default class GuildRoleActions {
    */
   public CreateRole(NewGuildRole: IEndpointGuildRole): Promise<IDiscordRole> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .CreateGuildRole(this.Guild.id, NewGuildRole)
+      this.Endpoint.CreateGuildRole(this.Guild.id, NewGuildRole)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })

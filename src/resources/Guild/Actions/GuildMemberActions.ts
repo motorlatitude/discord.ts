@@ -1,26 +1,15 @@
 import { IDiscordGuildMember, IDiscordHTTPResponse } from '../../../common/types';
 import { IEndpointGuildMemberObject } from '../../../common/types/GuildEndpoint.types';
-import DiscordClient from '../../../DiscordClient';
-import Guild from '../Guild';
+import GuildAction from './GuildAction';
 
-export default class GuildMemberActions {
-  private Client: DiscordClient;
-  private Guild: Guild;
-
-  constructor(client: DiscordClient, guild: Guild) {
-    this.Guild = guild;
-    this.Client = client;
-  }
-
+export default class GuildMemberActions extends GuildAction {
   /**
    * Get a specific guild member, this will call the API
    * @param UserId - the user id of the guild member to call
    */
   public GetMember(UserId: string): Promise<IDiscordGuildMember> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .GetGuildMember(this.Guild.id, UserId)
+      this.Endpoint.GetGuildMember(this.Guild.id, UserId)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -36,9 +25,7 @@ export default class GuildMemberActions {
    */
   public GetAllMembers(): Promise<IDiscordGuildMember[]> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .ListGuildMembers(this.Guild.id)
+      this.Endpoint.ListGuildMembers(this.Guild.id)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -55,9 +42,7 @@ export default class GuildMemberActions {
    */
   public AddMember(UserId: string, GuildMemberObject: IEndpointGuildMemberObject): Promise<IDiscordGuildMember> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .AddGuildMember(this.Guild.id, UserId, GuildMemberObject)
+      this.Endpoint.AddGuildMember(this.Guild.id, UserId, GuildMemberObject)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -73,9 +58,7 @@ export default class GuildMemberActions {
    */
   public RemoveMember(UserId: string): Promise<undefined> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .RemoveGuildMember(this.Guild.id, UserId)
+      this.Endpoint.RemoveGuildMember(this.Guild.id, UserId)
         .then(() => {
           resolve();
         })

@@ -3,26 +3,15 @@ import {
   IEndpointIntegrationObject,
   IEndpointModifyIntegrationObject,
 } from '../../../common/types/GuildEndpoint.types';
-import DiscordClient from '../../../DiscordClient';
-import Guild from '../Guild';
+import GuildAction from './GuildAction';
 
-export default class GuildIntegrationActions {
-  private Client: DiscordClient;
-  private Guild: Guild;
-
-  constructor(client: DiscordClient, guild: Guild) {
-    this.Guild = guild;
-    this.Client = client;
-  }
-
+export default class GuildIntegrationActions extends GuildAction {
   /**
    * List a guilds integrations
    */
   public GetIntegrations(): Promise<IDiscordIntegration[]> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .GetGuildIntegrations(this.Guild.id)
+      this.Endpoint.GetGuildIntegrations(this.Guild.id)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -38,9 +27,7 @@ export default class GuildIntegrationActions {
    */
   public CreateIntegration(NewIntegrationObject: IEndpointIntegrationObject): Promise<undefined> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .CreateGuildIntegration(this.Guild.id, NewIntegrationObject)
+      this.Endpoint.CreateGuildIntegration(this.Guild.id, NewIntegrationObject)
         .then(() => {
           resolve();
         })
@@ -60,9 +47,7 @@ export default class GuildIntegrationActions {
     IntegrationModifyObject: IEndpointModifyIntegrationObject,
   ): Promise<undefined> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .ModifyGuildIntegration(this.Guild.id, IntegrationId, IntegrationModifyObject)
+      this.Endpoint.ModifyGuildIntegration(this.Guild.id, IntegrationId, IntegrationModifyObject)
         .then(() => {
           resolve();
         })
@@ -78,9 +63,7 @@ export default class GuildIntegrationActions {
    */
   public DeleteIntegration(IntegrationId: string): Promise<undefined> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .DeleteGuildIntegration(this.Guild.id, IntegrationId)
+      this.Endpoint.DeleteGuildIntegration(this.Guild.id, IntegrationId)
         .then(() => {
           resolve();
         })
@@ -96,9 +79,7 @@ export default class GuildIntegrationActions {
    */
   public SyncIntegration(IntegrationId: string): Promise<undefined> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .SyncGuildIntegration(this.Guild.id, IntegrationId)
+      this.Endpoint.SyncGuildIntegration(this.Guild.id, IntegrationId)
         .then(() => {
           resolve();
         })

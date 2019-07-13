@@ -1,6 +1,5 @@
 import { IDiscordGuild, IDiscordHTTPResponse } from '../../../common/types';
-import DiscordClient from '../../../DiscordClient';
-import Guild from '../Guild';
+import GuildAction from './GuildAction';
 import GuildAuditActions from './GuildAuditActions';
 import GuildBanActions from './GuildBanActions';
 import GuildChannelActions from './GuildChannelActions';
@@ -14,15 +13,7 @@ import GuildUserActions from './GuildUserActions';
 import GuildVanityURLActions from './GuildVanityURLActions';
 import GuildVoiceRegionActions from './GuildVoiceRegionActions';
 
-export default class GuildActions {
-  private Client: DiscordClient;
-  private Guild: Guild;
-
-  constructor(client: DiscordClient, guild: Guild) {
-    this.Guild = guild;
-    this.Client = client;
-  }
-
+export default class GuildActions extends GuildAction {
   /**
    * Carry out channel actions on this guild
    */
@@ -113,9 +104,7 @@ export default class GuildActions {
    */
   public Modify(Parameters: any): Promise<IDiscordGuild> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .ModifyGuild(this.Guild.id, Parameters)
+      this.Endpoint.ModifyGuild(this.Guild.id, Parameters)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -130,9 +119,7 @@ export default class GuildActions {
    */
   public Delete(): Promise<undefined> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .DeleteGuild(this.Guild.id)
+      this.Endpoint.DeleteGuild(this.Guild.id)
         .then(() => {
           resolve();
         })

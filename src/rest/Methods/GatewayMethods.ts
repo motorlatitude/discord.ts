@@ -25,7 +25,18 @@ export default class GatewayMethods {
     });
   }
 
-  public GatewayForUser(): void {
-    this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/gateway?v=6');
+  public GatewayForUser(): Promise<IGatewayResponse> {
+    return new Promise((resolve, reject) => {
+      this.Requester.SendRequest(HTTP_CONSTANTS.GET, '/gateway?v=6')
+        .then(response => {
+          resolve({
+            ping: response.httpResponse.elapsedTime,
+            url: response.body.url,
+          });
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 }

@@ -1,25 +1,14 @@
 import { IDiscordChannel, IDiscordHTTPResponse } from '../../../common/types';
 import { IEndpointChannelObject } from '../../../common/types/GuildEndpoint.types';
-import DiscordClient from '../../../DiscordClient';
-import Guild from '../Guild';
+import GuildAction from './GuildAction';
 
-export default class GuildChannelActions {
-  private Client: DiscordClient;
-  private Guild: Guild;
-
-  constructor(client: DiscordClient, guild: Guild) {
-    this.Guild = guild;
-    this.Client = client;
-  }
-
+export default class GuildChannelActions extends GuildAction {
   /**
    * Request Guild Channels, this will call the API
    */
   public GetChannels(): Promise<IDiscordChannel[]> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .GetGuildChannels(this.Guild.id)
+      this.Endpoint.GetGuildChannels(this.Guild.id)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -35,9 +24,7 @@ export default class GuildChannelActions {
    */
   public CreateNewChannel(NewChannelObject: IEndpointChannelObject): Promise<IDiscordChannel> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .CreateGuildChannel(this.Guild.id, NewChannelObject)
+      this.Endpoint.CreateGuildChannel(this.Guild.id, NewChannelObject)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })

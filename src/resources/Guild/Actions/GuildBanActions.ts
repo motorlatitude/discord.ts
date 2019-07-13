@@ -1,24 +1,13 @@
 import { IDiscordBan, IDiscordHTTPResponse } from '../../../common/types';
-import DiscordClient from '../../../DiscordClient';
-import Guild from '../Guild';
+import GuildAction from './GuildAction';
 
-export default class GuildBanActions {
-  private Client: DiscordClient;
-  private Guild: Guild;
-
-  constructor(client: DiscordClient, guild: Guild) {
-    this.Guild = guild;
-    this.Client = client;
-  }
-
+export default class GuildBanActions extends GuildAction {
   /**
    * Get all banned members for this guild
    */
   public GetBans(): Promise<IDiscordBan[]> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .GetGuildBans(this.Guild.id)
+      this.Endpoint.GetGuildBans(this.Guild.id)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -34,9 +23,7 @@ export default class GuildBanActions {
    */
   public GetBanForUser(UserId: string): Promise<IDiscordBan> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .GetGuildBan(this.Guild.id, UserId)
+      this.Endpoint.GetGuildBan(this.Guild.id, UserId)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -52,9 +39,7 @@ export default class GuildBanActions {
    */
   public UnbanUser(UserId: string): Promise<undefined> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .RemoveGuildBan(this.Guild.id, UserId)
+      this.Endpoint.RemoveGuildBan(this.Guild.id, UserId)
         .then(() => {
           resolve();
         })

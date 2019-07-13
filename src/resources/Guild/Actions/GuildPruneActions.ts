@@ -1,25 +1,14 @@
 import { IDiscordHTTPResponse, IDiscordPruneCount } from '../../../common/types';
-import DiscordClient from '../../../DiscordClient';
-import Guild from '../Guild';
+import GuildAction from './GuildAction';
 
-export default class GuildPruneActions {
-  private Client: DiscordClient;
-  private Guild: Guild;
-
-  constructor(client: DiscordClient, guild: Guild) {
-    this.Guild = guild;
-    this.Client = client;
-  }
-
+export default class GuildPruneActions extends GuildAction {
   /**
    * Gets number of people that would be pruned
    * @param Days - number of days to count prune for
    */
   public GetPruneCount(Days: number = 1): Promise<IDiscordPruneCount> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .GetGuildPruneCount(this.Guild.id, Days)
+      this.Endpoint.GetGuildPruneCount(this.Guild.id, Days)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -36,9 +25,7 @@ export default class GuildPruneActions {
    */
   public Prune(Days: number, ComputePruneCount: boolean = false): Promise<IDiscordPruneCount> {
     return new Promise((resolve, reject) => {
-      this.Client.DiscordAPIManager.Methods()
-        .GuildMethods()
-        .BeginGuildPrune(this.Guild.id, Days, ComputePruneCount)
+      this.Endpoint.BeginGuildPrune(this.Guild.id, Days, ComputePruneCount)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })

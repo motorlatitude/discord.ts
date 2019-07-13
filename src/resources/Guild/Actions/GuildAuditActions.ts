@@ -1,17 +1,8 @@
 import { IDiscordAuditLog, IDiscordHTTPResponse } from '../../../common/types';
 import { IEndpointAuditOptions } from '../../../common/types/GuildEndpoint.types';
-import DiscordClient from '../../../DiscordClient';
-import Guild from '../Guild';
+import GuildAction from './GuildAction';
 
-export default class GuildAuditActions {
-  private Client: DiscordClient;
-  private Guild: Guild;
-
-  constructor(client: DiscordClient, guild: Guild) {
-    this.Guild = guild;
-    this.Client = client;
-  }
-
+export default class GuildAuditActions extends GuildAction {
   /**
    * Fetch the audit log for this guild
    * @param Options - options to retrieve the audit log

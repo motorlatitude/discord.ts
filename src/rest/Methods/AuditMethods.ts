@@ -15,11 +15,11 @@ export default class AuditMethods {
    * @param Options - query options to attach to this request
    */
   public GetGuildAuditLog(GuildId: string, Options: IEndpointAuditOptions): Promise<any> {
-    let QueryOptions = "?";
-    Object.entries(Options).forEach(
-      ([key, value]) => QueryOptions += key+"="+value+"&"
+    let QueryOptions = '?';
+    Object.entries(Options).forEach(([key, value]) => (QueryOptions += key + '=' + value + '&'));
+    return this.Requester.SendRequest(
+      HTTP_CONSTANTS.POST,
+      '/guilds/' + GuildId + '/audit-logs' + QueryOptions.slice(0, -1),
     );
-    return this.Requester.SendRequest(HTTP_CONSTANTS.POST, '/guilds/'+GuildId+'/audit-logs'+QueryOptions.slice(0,-1));
   }
-
 }

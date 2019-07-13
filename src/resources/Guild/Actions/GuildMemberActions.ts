@@ -4,10 +4,8 @@ import DiscordClient from '../../../DiscordClient';
 import Guild from '../Guild';
 
 export default class GuildMemberActions {
-
   private Client: DiscordClient;
   private Guild: Guild;
-
 
   constructor(client: DiscordClient, guild: Guild) {
     this.Guild = guild;
@@ -86,5 +84,4 @@ export default class GuildMemberActions {
         });
     });
   }
-
 }

@@ -3,16 +3,13 @@ import DiscordClient from '../../../DiscordClient';
 import Guild from '../Guild';
 
 export default class GuildBanActions {
-
   private Client: DiscordClient;
   private Guild: Guild;
-
 
   constructor(client: DiscordClient, guild: Guild) {
     this.Guild = guild;
     this.Client = client;
   }
-
 
   /**
    * Get all banned members for this guild
@@ -66,6 +63,4 @@ export default class GuildBanActions {
         });
     });
   }
-
-
 }

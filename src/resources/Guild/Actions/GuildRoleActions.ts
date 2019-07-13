@@ -1,9 +1,9 @@
-import { IDiscordChannel, IDiscordHTTPResponse } from '../../../common/types';
-import { IEndpointChannelObject } from '../../../common/types/GuildEndpoint.types';
+import { IDiscordHTTPResponse, IDiscordRole } from '../../../common/types';
+import { IEndpointGuildRole } from '../../../common/types/GuildEndpoint.types';
 import DiscordClient from '../../../DiscordClient';
 import Guild from '../Guild';
 
-export default class GuildChannelActions {
+export default class GuildRoleActions {
   private Client: DiscordClient;
   private Guild: Guild;
 
@@ -13,13 +13,13 @@ export default class GuildChannelActions {
   }
 
   /**
-   * Request Guild Channels, this will call the API
+   * Get roles in this guild
    */
-  public GetChannels(): Promise<IDiscordChannel[]> {
+  public GetRoles(): Promise<IDiscordRole[]> {
     return new Promise((resolve, reject) => {
       this.Client.DiscordAPIManager.Methods()
         .GuildMethods()
-        .GetGuildChannels(this.Guild.id)
+        .GetGuildRoles(this.Guild.id)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -30,14 +30,14 @@ export default class GuildChannelActions {
   }
 
   /**
-   * Create a new channel in this guild, this will call the API
-   * @param NewChannelObject - the new channel object
+   * Creates a new role in this guild
+   * @param NewGuildRole - role object containing the new role's properties
    */
-  public CreateNewChannel(NewChannelObject: IEndpointChannelObject): Promise<IDiscordChannel> {
+  public CreateRole(NewGuildRole: IEndpointGuildRole): Promise<IDiscordRole> {
     return new Promise((resolve, reject) => {
       this.Client.DiscordAPIManager.Methods()
         .GuildMethods()
-        .CreateGuildChannel(this.Guild.id, NewChannelObject)
+        .CreateGuildRole(this.Guild.id, NewGuildRole)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })

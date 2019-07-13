@@ -72,8 +72,8 @@ export interface IEndpointGuildEmbedObject {
 }
 
 export interface IEndpointAuditOptions {
-  user_id?: string,
-  action_type?: number,
-  before?: string,
-  limit?: number
+  user_id?: string;
+  action_type?: number;
+  before?: string;
+  limit?: number;
 }

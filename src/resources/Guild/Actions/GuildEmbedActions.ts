@@ -1,9 +1,9 @@
-import { IDiscordChannel, IDiscordHTTPResponse } from '../../../common/types';
-import { IEndpointChannelObject } from '../../../common/types/GuildEndpoint.types';
+import { IDiscordEmbed, IDiscordHTTPResponse } from '../../../common/types';
+import { IEndpointGuildEmbedObject } from '../../../common/types/GuildEndpoint.types';
 import DiscordClient from '../../../DiscordClient';
 import Guild from '../Guild';
 
-export default class GuildChannelActions {
+export default class GuildEmbedActions {
   private Client: DiscordClient;
   private Guild: Guild;
 
@@ -13,13 +13,13 @@ export default class GuildChannelActions {
   }
 
   /**
-   * Request Guild Channels, this will call the API
+   * Get this guilds embed
    */
-  public GetChannels(): Promise<IDiscordChannel[]> {
+  public GetEmbed(): Promise<IDiscordEmbed> {
     return new Promise((resolve, reject) => {
       this.Client.DiscordAPIManager.Methods()
         .GuildMethods()
-        .GetGuildChannels(this.Guild.id)
+        .GetGuildEmbed(this.Guild.id)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })
@@ -30,14 +30,14 @@ export default class GuildChannelActions {
   }
 
   /**
-   * Create a new channel in this guild, this will call the API
-   * @param NewChannelObject - the new channel object
+   * Modify the guild embed
+   * @param NewGuildEmbed - the altered properties of the embed
    */
-  public CreateNewChannel(NewChannelObject: IEndpointChannelObject): Promise<IDiscordChannel> {
+  public ModifyEmbed(NewGuildEmbed: IEndpointGuildEmbedObject): Promise<IDiscordEmbed> {
     return new Promise((resolve, reject) => {
       this.Client.DiscordAPIManager.Methods()
         .GuildMethods()
-        .CreateGuildChannel(this.Guild.id, NewChannelObject)
+        .ModifyGuildEmbed(this.Guild.id, NewGuildEmbed)
         .then((Response: IDiscordHTTPResponse) => {
           resolve(Response.body);
         })

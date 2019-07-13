@@ -26,5 +26,4 @@ export default class DiscordMethods {
   public AuditMethods(): AuditMethods {
     return new AuditMethods(this.Requester);
   }
-
 }

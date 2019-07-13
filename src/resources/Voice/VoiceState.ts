@@ -19,6 +19,8 @@ export default class VoiceState {
   public VoiceChannel?: VoiceChannel;
   public GuildMember?: GuildMember;
 
+  private Client: DiscordClient;
+
   /**
    * Create A VoiceState
    * WARN the guild parameter should only be set when loading from a GUILD_CREATE event
@@ -36,22 +38,15 @@ export default class VoiceState {
     this.SelfMute = VoiceStateObject.self_mute;
     this.Suppress = VoiceStateObject.suppress;
 
+    this.Client = Client;
+
     this.ChannelId = VoiceStateObject.channel_id;
     if (guild) {
       this.GuildId = guild.id;
       this.Guild = guild;
       this.GuildMember = this.Guild.Members.Get(this.UserId);
       if (this.ChannelId) {
-        this.Guild.Channels.FetchVoiceChannel(this.ChannelId)
-          .then((AffectedChannel: VoiceChannel) => {
-            this.VoiceChannel = AffectedChannel;
-          })
-          .catch((err: Error) => {
-            Client.logger.write().error({
-              message: err,
-              service: 'Guild.VoiceState',
-            });
-          });
+        this.SetVoiceChannel(this.ChannelId)
       } else {
         // Left A Guild Voice Channel
       }
@@ -62,34 +57,29 @@ export default class VoiceState {
           this.Guild = AffectedGuild;
           this.GuildMember = this.Guild.Members.Get(this.UserId);
           if (this.ChannelId) {
-            this.Guild.Channels.FetchVoiceChannel(this.ChannelId)
-              .then((AffectedChannel: VoiceChannel) => {
-                this.VoiceChannel = AffectedChannel;
-              })
-              .catch((err: Error) => {
-                Client.logger.write().error({
-                  message: err,
-                  service: 'Guild.VoiceState',
-                });
-              });
+            this.SetVoiceChannel(this.ChannelId)
           } else {
             // Left A Guild Voice Channel
           }
         });
       } else if (this.ChannelId) {
-        Client.Channels.FetchVoiceChannel(this.ChannelId)
-          .then((AffectChannel: VoiceChannel) => {
-            this.VoiceChannel = AffectChannel;
-          })
-          .catch((err: Error) => {
-            Client.logger.write().error({
-              message: err,
-              service: 'Guild.VoiceState',
-            });
-          });
+        this.SetVoiceChannel(this.ChannelId)
       } else {
         // Left A Private Voice Channel
       }
     }
+  }
+
+  private SetVoiceChannel(ChannelId: string): void {
+    this.Client.Channels.FetchVoiceChannel(ChannelId)
+      .then((AffectChannel: VoiceChannel) => {
+        this.VoiceChannel = AffectChannel;
+      })
+      .catch((err: Error) => {
+        this.Client.logger.write().error({
+          message: err,
+          service: 'Guild.VoiceState',
+        });
+      });
   }
 }

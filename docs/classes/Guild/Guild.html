@@ -1,0 +1,60 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> Guild
+</div>
+
+<div class="doc-type">Instance</div>
+<h1 class="reduced">Guild</h1>
+<p class="class-blurb">
+    A Discord guild.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript">class Guild</code></pre>
+<h2>Overview</h2>
+<p>
+    The <code>Guild</code> instance corresponds to a single Discord guild. It will contain all relevant properties of
+    a Discord guild and allows API methods to be called from it through the use of <code>Actions</code>.
+</p>
+<h3>Actions</h3>
+<p>
+    <code>Actions</code> are methods that can be called from the <code>Guild</code> instance and will call Discord's
+    REST/HTTP API. The <code>Actions</code> will always return a promise resolve or reject based on if the request was
+    successful or unsuccessful. The values of these requests will not be cached, however, a large number of these requests
+    will trigger gateway events to fire, these will update the library's state.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">Topics</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Creating a Guild Instance
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/Guild/topics/constructor"></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Guild-Specific Properties
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/Guild/properties/id"></li>
+                    <li data-load="classes/Guild/properties/Name"></li>
+                    <li data-load="classes/Guild/properties/OwnerId"></li>
+                    <li data-load="classes/Guild/properties/Region"></li>
+                    <li data-load="classes/Guild/properties/AfkTimeout"></li>
+                    <li data-load="classes/Guild/properties/VerificationLevel"></li>
+                    <li data-load="classes/Guild/properties/DefaultMessageNotification"></li>
+                    <li data-load="classes/Guild/properties/ExplicitContentFilter"></li>
+                    <li data-load="classes/Guild/properties/Features"></li>
+                    <li data-load="classes/Guild/properties/MFALevel"></li>
+                    <li data-load="classes/Guild/properties/PremiumTier"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

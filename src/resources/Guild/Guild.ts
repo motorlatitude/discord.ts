@@ -41,7 +41,6 @@ export default class Guild {
   public Emojis: EmojiStore;
   public Features: string[];
   public MFALevel: number;
-  public MaxMembers: number;
   public PremiumTier: number;
 
   public VoiceConnection?: VoiceConnection;
@@ -53,6 +52,7 @@ export default class Guild {
   public Description: string | undefined;
   public VanityURLCode: string | undefined;
   public MaxPresences: number | undefined;
+  public MaxMembers?: number;
   public Presences: PresenceStore;
   public Channels: ChannelStore;
   public Members: GuildMemberStore;
@@ -94,13 +94,13 @@ export default class Guild {
     this.ResolveEmojis(GuildObject.emojis);
     this.Features = GuildObject.features || [];
     this.MFALevel = GuildObject.mfa_level;
-    this.MaxMembers = GuildObject.max_members;
     this.PremiumTier = GuildObject.premium_tier;
 
     this.PremiumSubscriptionCount = GuildObject.premium_subscription_count;
     this.Banner = GuildObject.banner;
     this.Description = GuildObject.description;
     this.VanityURLCode = GuildObject.vanity_url_code;
+    this.MaxMembers = GuildObject.max_members;
     this.MaxPresences = GuildObject.max_presences;
     this.Channels = new ChannelStore(this.Client);
     if (GuildObject.channels) {

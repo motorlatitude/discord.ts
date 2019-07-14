@@ -36,7 +36,12 @@ export default class VoiceStateEvent extends ClientDispatcherEvent {
             this.EventType = 'JOINED';
           }
 
-          if (AffectedGuild.PendingVoiceConnection && AffectedGuild.PendingVoiceServerDetails) {
+          if (
+            this.Client.User &&
+            this.Message.user_id === this.Client.User.id &&
+            AffectedGuild.PendingVoiceConnection &&
+            AffectedGuild.PendingVoiceServerDetails
+          ) {
             const voiceServerUpdateEvent = new VoiceServerUpdateEvent(
               this.Client,
               AffectedGuild.PendingVoiceServerDetails,

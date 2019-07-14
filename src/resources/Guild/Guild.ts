@@ -44,20 +44,18 @@ export default class Guild {
   public PremiumTier: number;
 
   public VoiceConnection?: VoiceConnection;
-  public PendingVoiceConnection?: boolean;
-  public PendingVoiceServerDetails?: IDiscordVoiceServerGatewayEvent;
 
-  public PremiumSubscriptionCount: number | undefined;
-  public Banner: string | undefined;
-  public Description: string | undefined;
-  public VanityURLCode: string | undefined;
-  public MaxPresences: number | undefined;
+  public PremiumSubscriptionCount: number;
+  public Banner?: string;
+  public Description?: string;
+  public VanityURLCode?: string;
+  public MaxPresences: number;
   public MaxMembers?: number;
   public Presences: PresenceStore;
   public Channels: ChannelStore;
   public Members: GuildMemberStore;
   public VoiceStates: VoiceStateStore;
-  public MemberCount: number | undefined;
+  public MemberCount: number | undefined; // TODO update for MEMBER events
   public Unavailable: boolean | undefined;
   public Large: boolean | undefined;
   public JoinedAt: number | undefined;
@@ -74,6 +72,28 @@ export default class Guild {
   public Splash: string | undefined;
 
   private readonly Client: DiscordClient;
+
+  private _PendingVoiceConnection?: boolean;
+  private _PendingVoiceServerDetails?: IDiscordVoiceServerGatewayEvent;
+
+  public get PendingVoiceConnection(): boolean {
+    if (this._PendingVoiceConnection) {
+      return this._PendingVoiceConnection;
+    }
+    return false;
+  }
+
+  public set PendingVoiceConnection(PVC: boolean) {
+    this._PendingVoiceConnection = PVC;
+  }
+
+  public get PendingVoiceServerDetails(): IDiscordVoiceServerGatewayEvent | undefined {
+    return this._PendingVoiceServerDetails;
+  }
+
+  public set PendingVoiceServerDetails(PVSD: IDiscordVoiceServerGatewayEvent | undefined) {
+    this._PendingVoiceServerDetails = PVSD;
+  }
 
   constructor(client: DiscordClient, GuildObject: IDiscordGuild) {
     this.Client = client;
@@ -96,12 +116,13 @@ export default class Guild {
     this.MFALevel = GuildObject.mfa_level;
     this.PremiumTier = GuildObject.premium_tier;
 
-    this.PremiumSubscriptionCount = GuildObject.premium_subscription_count;
-    this.Banner = GuildObject.banner;
-    this.Description = GuildObject.description;
-    this.VanityURLCode = GuildObject.vanity_url_code;
+    this.PremiumSubscriptionCount = GuildObject.premium_subscription_count ? GuildObject.premium_subscription_count : 0;
+    this.Banner = GuildObject.banner === '' ? undefined : GuildObject.banner;
+    this.Description = GuildObject.description === '' ? undefined : GuildObject.description;
+    this.VanityURLCode = GuildObject.vanity_url_code === '' ? undefined : GuildObject.vanity_url_code;
     this.MaxMembers = GuildObject.max_members;
-    this.MaxPresences = GuildObject.max_presences;
+    this.MaxPresences =
+      GuildObject.max_presences === undefined || GuildObject.max_presences === null ? 5000 : GuildObject.max_presences;
     this.Channels = new ChannelStore(this.Client);
     if (GuildObject.channels) {
       this.ResolveChannels(GuildObject.channels);
@@ -123,9 +144,9 @@ export default class Guild {
     this.WidgetChannelId = GuildObject.widget_channel_id;
     this.WidgetEnabled = GuildObject.widget_enabled;
     this.ApplicationId = GuildObject.application_id;
-    this.EmbedChannelId = GuildObject.embed_channel_id;
+    this.EmbedChannelId = GuildObject.embed_channel_id === null ? undefined : GuildObject.embed_channel_id;
     this.EmbedEnabled = GuildObject.embed_enabled;
-    this.AfkChannelId = GuildObject.afk_channel_id;
+    this.AfkChannelId = GuildObject.afk_channel_id === null ? undefined : GuildObject.afk_channel_id;
     this.Permissions = GuildObject.permissions;
     this.Owner = GuildObject.owner;
     this.Icon = GuildObject.icon;

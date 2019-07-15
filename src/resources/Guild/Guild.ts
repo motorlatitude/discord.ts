@@ -55,7 +55,7 @@ export default class Guild {
   public Channels: ChannelStore;
   public Members: GuildMemberStore;
   public VoiceStates: VoiceStateStore;
-  public MemberCount: number | undefined; // TODO update for MEMBER events
+  public MemberCount: number;
   public Unavailable: boolean | undefined;
   public Large: boolean | undefined;
   public JoinedAt: number | undefined;
@@ -136,7 +136,7 @@ export default class Guild {
     if (GuildObject.voice_states) {
       this.ResolveVoiceStates(GuildObject.voice_states);
     }
-    this.MemberCount = GuildObject.member_count;
+    this.MemberCount = GuildObject.member_count ? GuildObject.member_count : 0;
     this.Unavailable = GuildObject.unavailable;
     this.Large = GuildObject.large;
     this.JoinedAt = GuildObject.joined_at;

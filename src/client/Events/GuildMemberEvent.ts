@@ -37,6 +37,7 @@ export default class GuildMemberEvent extends ClientDispatcherEvent {
         .then((AffectedGuild: Guild) => {
           const NewGuildMember = new GuildMember(Message);
           AffectedGuild.Members.AddGuildMember(NewGuildMember);
+          AffectedGuild.MemberCount++;
 
           this.EventName = 'GUILD_MEMBER_ADD';
 
@@ -71,6 +72,7 @@ export default class GuildMemberEvent extends ClientDispatcherEvent {
         })
         .then((AffectedMember: GuildMember) => {
           AffectedGuild.Members.RemoveGuildMember(Message.user.id);
+          AffectedGuild.MemberCount--;
 
           this.EventName = 'GUILD_MEMBER_REMOVE';
 
@@ -143,6 +145,7 @@ export default class GuildMemberEvent extends ClientDispatcherEvent {
             AffectedGuild.Members.UpdateGuildMember(member.user.id, NewMember);
             EventMemberList.push(NewMember);
           }
+          AffectedGuild.MemberCount = AffectedGuild.Members.Length();
           this.EventName = 'GUILD_MEMBERS_CHUNK';
 
           this.EventGuildObject = AffectedGuild;

@@ -11,11 +11,11 @@ export default class GatewayMethods {
   }
 
   public GatewayForBot(): Promise<IGatewayResponse> {
-    return this.GetGateway('/gateway/bot?v=6')
+    return this.GetGateway('/gateway/bot?v=6');
   }
 
   public GatewayForUser(): Promise<IGatewayResponse> {
-    return this.GetGateway('/gateway?v=6')
+    return this.GetGateway('/gateway?v=6');
   }
 
   private GetGateway(url: string): Promise<IGatewayResponse> {

@@ -46,7 +46,7 @@ export default class VoiceState {
       this.Guild = guild;
       this.GuildMember = this.Guild.Members.Get(this.UserId);
       if (this.ChannelId) {
-        this.SetVoiceChannel(this.ChannelId)
+        this.SetVoiceChannel(this.ChannelId);
       } else {
         // Left A Guild Voice Channel
       }
@@ -57,13 +57,13 @@ export default class VoiceState {
           this.Guild = AffectedGuild;
           this.GuildMember = this.Guild.Members.Get(this.UserId);
           if (this.ChannelId) {
-            this.SetVoiceChannel(this.ChannelId)
+            this.SetVoiceChannel(this.ChannelId);
           } else {
             // Left A Guild Voice Channel
           }
         });
       } else if (this.ChannelId) {
-        this.SetVoiceChannel(this.ChannelId)
+        this.SetVoiceChannel(this.ChannelId);
       } else {
         // Left A Private Voice Channel
       }

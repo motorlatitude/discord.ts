@@ -52,13 +52,6 @@ export default class GuildMemberStore extends Store {
   }
 
   /**
-   * Get amount of members in a guild
-   */
-  public Length(): number {
-    return Object.keys(this.GetAll()).length;
-  }
-
-  /**
    * Remove an existing guild member
    * @param UserId - User id of the guild member to remove
    */

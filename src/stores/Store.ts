@@ -24,8 +24,19 @@ export default class Store {
     });
   }
 
+  /**
+   * Get item with key from store
+   * @param key - the key of the item
+   */
   public Get(key: string): any {
     return this.StoredItems[key];
+  }
+
+  /**
+   * Get the number of objects in the store
+   */
+  public Length(): number {
+    return Object.keys(this.StoredItems).length;
   }
 
   public GetAllForKeys(keys: string[]): any {

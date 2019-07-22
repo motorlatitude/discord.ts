@@ -21,51 +21,60 @@ export default class GuildEvent extends ClientDispatcherEvent {
    * https://discordapp.com/developers/docs/topics/gateway#guild-create
    * @param Message GUILD_CREATE event package
    */
-  public HandleCreate(Message: IDiscordGuild): void {
-    this.EventName = 'GUILD_CREATE';
+  public HandleCreate(Message: IDiscordGuild): Promise<Guild> {
+    return new Promise(resolve => {
+      this.EventName = 'GUILD_CREATE';
 
-    this.EventObject = new Guild(this.Client, Message);
+      this.EventObject = new Guild(this.Client, Message);
 
-    this.Client.Guilds.AddGuild(this.EventObject);
+      this.Client.Guilds.AddGuild(this.EventObject);
 
-    this.Handle();
+      this.Handle();
+      resolve(this.EventObject);
+    });
   }
 
   /**
    * Handles GUILD_UPDATE event
    * @param Message GUILD_UPDATE event package
    */
-  public HandleUpdate(Message: IDiscordGuild): void {
-    this.EventName = 'GUILD_UPDATE';
+  public HandleUpdate(Message: IDiscordGuild): Promise<Guild> {
+    return new Promise(resolve => {
+      this.EventName = 'GUILD_UPDATE';
 
-    this.EventObject = new Guild(this.Client, Message);
+      this.EventObject = new Guild(this.Client, Message);
 
-    this.Client.Guilds.ReplaceGuild(Message.id, this.EventObject);
+      this.Client.Guilds.ReplaceGuild(Message.id, this.EventObject);
 
-    this.Handle();
+      this.Handle();
+      resolve(this.EventObject);
+    });
   }
 
   /**
    * Handles GUILD_DELETE event
    * @param Message GUILD_DELETE event package
    */
-  public HandleDelete(Message: IDiscordUnavailableGuildObject): void {
-    this.EventName = 'GUILD_DELETE';
+  public HandleDelete(Message: IDiscordUnavailableGuildObject): Promise<IGuildDeleteEventObject> {
+    return new Promise(resolve => {
+      this.EventName = 'GUILD_DELETE';
 
-    let WasKicked: boolean = false;
-    if (Message.unavailable === undefined || Message.unavailable === null) {
-      WasKicked = true;
-    }
+      let WasKicked: boolean = false;
+      if (Message.unavailable === undefined || Message.unavailable === null) {
+        WasKicked = true;
+      }
 
-    this.EventDeleteObject = {
-      Unavailable: Message.unavailable,
-      WasRemoved: WasKicked,
-      id: Message.id,
-    };
+      this.EventDeleteObject = {
+        Unavailable: Message.unavailable,
+        WasRemoved: WasKicked,
+        id: Message.id,
+      };
 
-    this.Client.Guilds.RemoveGuild(Message.id);
+      this.Client.Guilds.RemoveGuild(Message.id);
 
-    this.Handle();
+      this.Handle();
+      resolve(this.EventDeleteObject);
+    });
   }
 
   public EmitEvent(): void {

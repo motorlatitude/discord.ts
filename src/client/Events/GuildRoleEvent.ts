@@ -20,102 +20,93 @@ export default class GuildRoleEvent extends ClientDispatcherEvent {
   /**
    * Handles GUILD_ROLE_CREATE event
    */
-  public HandleRoleCreate(): void {
-    this.Client.Guilds.Fetch(this.Message.guild_id)
-      .then((AffectedGuild: Guild) => {
-        if (this.Message.role) {
-          const role = new Role(this.Message.role);
-          AffectedGuild.Roles.AddRole(role);
+  public HandleRoleCreate(): Promise<{ Guild: Guild; Role: Role }> {
+    return new Promise((resolve, reject) => {
+      this.Client.Guilds.Fetch(this.Message.guild_id)
+        .then((AffectedGuild: Guild) => {
+          if (this.Message.role) {
+            const role = new Role(this.Message.role);
+            AffectedGuild.Roles.AddRole(role);
 
-          this.EventName = 'GUILD_ROLE_CREATE';
-          this.EventGuildObject = AffectedGuild;
-          this.EventRoleObject = role;
+            this.EventName = 'GUILD_ROLE_CREATE';
+            this.EventGuildObject = AffectedGuild;
+            this.EventRoleObject = role;
 
-          this.Handle();
-        } else {
-          // Shouldn't happen
-          this.Client.logger.write().warn({
-            message: 'We got a GUILD_ROLE_CREATE event but no role was supplied',
-            service: 'ClientDispatcher.Events.GuildRoleEvent.HandleRoleCreate',
-          });
-        }
-      })
-      .catch((err: Error) => {
-        this.Client.logger.write().warn({
-          message: err,
-          service: 'ClientDispatcher.Events.GuildRoleEvent.HandleRoleCreate',
+            this.Handle();
+            resolve({
+              Guild: AffectedGuild,
+              Role: role,
+            });
+          } else {
+            // Shouldn't happen
+            reject(new Error('We got a GUILD_ROLE_CREATE event but no role was supplied'));
+          }
+        })
+        .catch((err: Error) => {
+          reject(err);
         });
-      });
+    });
   }
 
   /**
    * Handles GUILD_ROLE_UPDATE event
    */
-  public HandleRoleUpdate(): void {
-    this.Client.Guilds.Fetch(this.Message.guild_id)
-      .then((AffectedGuild: Guild) => {
-        if (this.Message.role) {
-          const UpdatedRole = new Role(this.Message.role);
-          AffectedGuild.Roles.UpdateRole(this.Message.role.id, UpdatedRole);
+  public HandleRoleUpdate(): Promise<{ Guild: Guild; Role: Role }> {
+    return new Promise((resolve, reject) => {
+      this.Client.Guilds.Fetch(this.Message.guild_id)
+        .then((AffectedGuild: Guild) => {
+          if (this.Message.role) {
+            const UpdatedRole = new Role(this.Message.role);
+            AffectedGuild.Roles.UpdateRole(this.Message.role.id, UpdatedRole);
 
-          this.EventName = 'GUILD_ROLE_UPDATE';
-          this.EventGuildObject = AffectedGuild;
-          this.EventRoleObject = UpdatedRole;
+            this.EventName = 'GUILD_ROLE_UPDATE';
+            this.EventGuildObject = AffectedGuild;
+            this.EventRoleObject = UpdatedRole;
 
-          this.Handle();
-        } else {
-          // Shouldn't happen
-          this.Client.logger.write().warn({
-            message: 'We got a GUILD_ROLE_UPDATE event but no role was supplied',
-            service: 'ClientDispatcher.Events.GuildRoleEvent.HandleRoleUpdate',
-          });
-        }
-      })
-      .catch((err: Error) => {
-        this.Client.logger.write().warn({
-          message: err,
-          service: 'ClientDispatcher.Events.GuildRoleEvent.HandleRoleUpdate',
+            this.Handle();
+            resolve({
+              Guild: AffectedGuild,
+              Role: UpdatedRole,
+            });
+          } else {
+            // Shouldn't happen
+            reject(new Error('We got a GUILD_ROLE_UPDATE event but no role was supplied'));
+          }
+        })
+        .catch((err: Error) => {
+          reject(err);
         });
-      });
+    });
   }
 
   /**
    * Handles GUILD_ROLE_DELETE event
    */
-  public HandleRoleDelete(): void {
-    this.Client.Guilds.Fetch(this.Message.guild_id)
-      .then((AffectedGuild: Guild) => {
-        if (this.Message.role_id) {
-          AffectedGuild.Roles.Fetch(this.Message.role_id)
-            .then((AffectedRole: Role) => {
-              AffectedGuild.Roles.RemoveRole(AffectedRole.id);
+  public HandleRoleDelete(): Promise<{ Guild: Guild; Role: Role }> {
+    return new Promise((resolve, reject) => {
+      let AffectedGuild: Guild;
+      this.Client.Guilds.Fetch(this.Message.guild_id)
+        .then((FoundGuild: Guild) => {
+          AffectedGuild = FoundGuild;
+          return AffectedGuild.Roles.Fetch(this.Message.role_id as string);
+        })
+        .then((AffectedRole: Role) => {
+          AffectedGuild.Roles.RemoveRole(AffectedRole.id);
 
-              this.EventName = 'GUILD_ROLE_DELETE';
-              this.EventGuildObject = AffectedGuild;
-              this.EventRoleObject = AffectedRole;
+          this.EventName = 'GUILD_ROLE_DELETE';
+          this.EventGuildObject = AffectedGuild;
+          this.EventRoleObject = AffectedRole;
 
-              this.Handle();
-            })
-            .catch((err: Error) => {
-              this.Client.logger.write().warn({
-                message: err,
-                service: 'ClientDispatcher.Events.GuildRoleEvent.HandleRoleDelete',
-              });
-            });
-        } else {
-          // Shouldn't happen
-          this.Client.logger.write().warn({
-            message: 'We got a GUILD_ROLE_DELETE event but no role_id was supplied',
-            service: 'ClientDispatcher.Events.GuildRoleEvent.HandleRoleDelete',
+          this.Handle();
+          resolve({
+            Guild: AffectedGuild,
+            Role: AffectedRole,
           });
-        }
-      })
-      .catch((err: Error) => {
-        this.Client.logger.write().warn({
-          message: err,
-          service: 'ClientDispatcher.Events.GuildRoleEvent.HandleRoleDelete',
+        })
+        .catch((err: Error) => {
+          reject(err);
         });
-      });
+    });
   }
 
   public EmitEvent(): void {

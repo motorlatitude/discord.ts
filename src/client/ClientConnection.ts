@@ -21,7 +21,7 @@ export default class ClientConnection {
 
   public resuming: boolean = false;
 
-  private GatewayWebsocket: WebSocket | undefined;
+  public GatewayWebsocket: WebSocket | undefined;
 
   private Client: DiscordClient;
 
@@ -50,7 +50,7 @@ export default class ClientConnection {
    * @param LocalGatewayURL - Discord Gateway Url Retrieved From Discord Gateway Endpoint
    * @returns GatewayWebsocket - Websocket connection
    */
-  public Connect(LocalGatewayURL?: string): void {
+  public Connect(LocalGatewayURL?: string): boolean {
     this.Client.logger.write().debug({
       message: 'Creating New Gateway Connection',
       service: 'ClientConnection.Connect',
@@ -59,36 +59,44 @@ export default class ClientConnection {
       // LocalGatewayURL is not required when reconnecting, we use cached version
       // Additional Gateway URL Parameters as defined https://discordapp.com/developers/docs/topics/gateway#connecting-gateway-url-params
       this.GatewayURL =
-        LocalGatewayURL + '/?v=6&encoding=json' + (this.CanUseCompression() ? 'compress=zlib-stream' : '');
+        LocalGatewayURL + '/?v=6&encoding=json' + (this.CanUseCompression() ? '&compress=zlib-stream' : '');
     }
     if (this.GatewayURL) {
+      this.Client.logger.write().debug({
+        message: this.GatewayURL,
+        service: 'ClientConnection.Connect',
+      });
       this.GatewayWebsocket = new WebSocket(this.GatewayURL);
       // Handle websocket events
       this.GatewayWebsocket.once('open', this.GatewayOpen.bind(this));
       this.GatewayWebsocket.once('close', this.GatewayClose.bind(this));
       this.GatewayWebsocket.once('error', this.GatewayError.bind(this));
       this.GatewayWebsocket.on('message', this.GatewayMessage.bind(this));
+      return true;
     } else {
       this.Client.logger.write().error({
         message: "Couldn't find a valid gateway url",
         service: 'ClientConnection.Connect',
       });
+      return false;
     }
   }
 
   /**
    * Disconnect from the discord gateway
    */
-  public Disconnect(): void {
+  public Disconnect(): boolean {
     if (this.GatewayWebsocket) {
       this.ExpectedClosure = true;
       clearInterval(this.GatewayHeartbeat);
       this.GatewayWebsocket.close();
+      return true;
     } else {
       this.Client.logger.write().error({
         message: new Error("Can't close a connection that isn't available"),
         service: 'ClientConnection.Disconnect',
       });
+      return false;
     }
   }
 
@@ -97,7 +105,7 @@ export default class ClientConnection {
    * @param op - OpCode for message
    * @param data - message body
    */
-  public send(op: number, data: any): void {
+  public send(op: number, data: any): boolean {
     const GatewayPackage: IDefaultDiscordGatewayPackage = {
       d: data,
       op,
@@ -109,12 +117,14 @@ export default class ClientConnection {
         message: 'Successfully Sent A Message To Discord Gateway Server With OpCode: ' + op,
         service: 'ClientConnection.send',
       });
+      return true;
     } else {
       this.Client.logger.write().warn({
         details: GatewayPackage,
         message: "Couldn't Send A Message To Discord Gateway Server: Socket Not Open",
         service: 'ClientConnection.send',
       });
+      return false;
     }
   }
 
@@ -136,7 +146,7 @@ export default class ClientConnection {
       since,
       status: state,
     };
-    this.send(3, DataMessage);
+    this.send(GATEWAY.STATUS_UPDATE, DataMessage);
   }
 
   public JoinVoiceChannel(GuildId: string, VoiceChannelId: string, mute: boolean = false, deaf = false): void {

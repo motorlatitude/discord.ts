@@ -7,7 +7,7 @@ export default class ClientDispatcherEvent {
     this.Client = client;
   }
 
-  public Handle(): void {
+  public Handle(EventType?: string): void {
     this.EmitEvent();
   }
 

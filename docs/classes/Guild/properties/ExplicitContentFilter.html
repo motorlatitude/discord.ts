@@ -1,0 +1,59 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> Guild <i class="fas fa-chevron-right"></i> ExplicitContentFilter
+</div>
+
+<div class="doc-type">Instance Property</div>
+<h1 class="reduced">ExplicitContentFilter</h1>
+<p class="class-blurb">
+    Defines which users' messages are scanned for explicit content.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="var <span>ExplicitContentFilter</span>: number">var ExplicitContentFilter: number</code></pre>
+<h2>Discussion</h2>
+<p>
+    This property corresponds to which messages from which users to scan for explicit content. The value is a number
+    between and including 0 - 2.
+</p>
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Level</th>
+            <th>Integer</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>DISABLED</code></td>
+            <td style="text-align: center;"><code>0</code></td>
+            <td>No messages are scanned for explicit content</td>
+        </tr>
+        <tr>
+            <td><code>MEMBERS_WITHOUT_ROLES</code></td>
+            <td style="text-align: center;"><code>1</code></td>
+            <td>Only messages sent by users without a role are scanned for explicit content</td>
+        </tr>
+        <tr>
+            <td><code>ALL_MEMBERS</code></td>
+            <td style="text-align: center;"><code>2</code></td>
+            <td>Scan all messages for explicit content</td>
+        </tr>
+    </tbody>
+</table>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Creating a Guild Instance
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/Guild/topics/constructor"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -12,7 +12,10 @@
 <pre><code class="language-typescript" id="declaration" data-topic="function <span>Connect</span>(): void">function Connect(): void</code></pre>
 <h2>Discussion</h2>
 <p>
-    This method will go and determine the suitable gateway bot endpoint and establish a WebSocket connection.
+    This method will go and determine the suitable gateway bot endpoint and establish a WebSocket connection. This method
+    will trigger a <code>READY</code> event if it successfully found a suitable URL and established a gateway connection.
+    It will fire a <code>DISCONNECT</code> event if there was an error during the connection flow and a connection
+    could not be established.
 </p>
 <br/><br/>
 <div class="block">
@@ -26,6 +29,7 @@
                 <ul>
                     <li data-load="classes/DiscordClient/topics/events"></li>
                     <li data-load="classes/DiscordClient/events/READY"></li>
+                    <li data-load="classes/DiscordClient/events/DISCONNECT"></li>
                 </ul>
             </td>
         </tr>

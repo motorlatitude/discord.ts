@@ -35,7 +35,7 @@ export default class ClientDispatcher {
    * @param message - message object
    */
   public Parse(message: IDefaultDiscordGatewayPackage): void {
-    this.connection.GatewaySequence = message.s || 0;
+    this.connection.GatewaySequence = message.s as number;
     this.Client.logger.write().info({
       message: 'Received ' + message.t + ' Event',
       service: 'ClientConnection.ClientDispatcher.Parse',
@@ -48,113 +48,219 @@ export default class ClientDispatcher {
         break;
       }
       case GATEWAY_EVENTS.RESUMED: {
+        this.connection.resuming = false;
         const resumedEvent = new ResumedEvent(this.Client, message.d);
         resumedEvent.Handle();
         break;
       }
       case GATEWAY_EVENTS.CHANNEL_CREATE: {
         const channel = new ChannelEvent(this.Client, message.d);
-        channel.HandleCreate();
+        channel.HandleCreate().catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.CHANNEL_CREATE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.CHANNEL_UPDATE: {
         const channel = new ChannelEvent(this.Client, message.d);
-        channel.HandleUpdate();
+        channel.HandleUpdate().catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.CHANNEL_UPDATE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.CHANNEL_DELETE: {
         const channel = new ChannelEvent(this.Client, message.d);
-        channel.HandleDelete();
+        channel.HandleDelete().catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.CHANNEL_DELETE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.CHANNEL_PINS_UPDATE: {
         const channelPins = new ChannelPinsUpdateEvent(this.Client, message.d);
-        channelPins.Handle();
+        channelPins.Handle().catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.CHANNEL_PINS_UPDATE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_CREATE: {
         const guild = new GuildEvent(this.Client);
-        guild.HandleCreate(message.d);
+        guild.HandleCreate(message.d).catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_CREATE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_UPDATE: {
         const guild = new GuildEvent(this.Client);
-        guild.HandleUpdate(message.d);
+        guild.HandleUpdate(message.d).catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_UPDATE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_DELETE: {
         const guild = new GuildEvent(this.Client);
-        guild.HandleDelete(message.d);
+        guild.HandleDelete(message.d).catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_DELETE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_BAN_ADD: {
         const guildBan = new GuildBanEvent(this.Client, message.d);
-        guildBan.HandleBanAdd();
+        guildBan.HandleBanAdd().catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_BAN_ADD',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_BAN_REMOVE: {
         const guildBan = new GuildBanEvent(this.Client, message.d);
-        guildBan.HandleBanRemove();
+        guildBan.HandleBanRemove().catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_BAN_REMOVE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_EMOJIS_UPDATE: {
         const guildEmoji = new GuildEmojisUpdateEvent(this.Client, message.d);
-        guildEmoji.Handle();
+        guildEmoji.Handle().catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_EMOJIS_UPDATE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_INTEGRATIONS_UPDATE: {
         const guildIntegration = new GuildIntegrationEvent(this.Client, message.d);
-        guildIntegration.Handle();
+        guildIntegration.Handle().catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_INTEGRATIONS_UPDATE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_MEMBER_ADD: {
         const guildMemberEvent = new GuildMemberEvent(this.Client);
-        guildMemberEvent.HandleMemberAdd(message.d);
+        guildMemberEvent.HandleMemberAdd(message.d).catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_MEMBER_ADD',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_MEMBER_REMOVE: {
         const guildMemberEvent = new GuildMemberEvent(this.Client);
-        guildMemberEvent.HandleMemberRemove(message.d);
+        guildMemberEvent.HandleMemberRemove(message.d).catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_MEMBER_REMOVE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_MEMBER_UPDATE: {
         const guildMemberEvent = new GuildMemberEvent(this.Client);
-        guildMemberEvent.HandleMemberUpdate(message.d);
+        guildMemberEvent.HandleMemberUpdate(message.d).catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_MEMBER_UPDATE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_MEMBERS_CHUNK: {
         const guildMemberEvent = new GuildMemberEvent(this.Client);
-        guildMemberEvent.HandleMemberChunk(message.d);
+        guildMemberEvent.HandleMembersChunk(message.d).catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_MEMBERS_CHUNK',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_ROLE_CREATE: {
         const guildRoleEvent = new GuildRoleEvent(this.Client, message.d);
-        guildRoleEvent.HandleRoleCreate();
+        guildRoleEvent.HandleRoleCreate().catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_ROLE_CREATE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_ROLE_UPDATE: {
         const guildRoleEvent = new GuildRoleEvent(this.Client, message.d);
-        guildRoleEvent.HandleRoleUpdate();
+        guildRoleEvent.HandleRoleUpdate().catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_ROLE_UPDATE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.GUILD_ROLE_DELETE: {
         const guildRoleEvent = new GuildRoleEvent(this.Client, message.d);
-        guildRoleEvent.HandleRoleDelete();
+        guildRoleEvent.HandleRoleDelete().catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.GUILD_ROLE_DELETE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.MESSAGE_CREATE: {
         const messageEvent = new MessageEvent(this.Client);
-        messageEvent.HandleMessageCreate(message.d);
+        messageEvent.HandleMessageCreate(message.d).catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.MESSAGE_CREATE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.MESSAGE_UPDATE: {
         const messageEvent = new MessageEvent(this.Client);
-        messageEvent.HandleMessageUpdate(message.d);
+        messageEvent.HandleMessageUpdate(message.d).catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.MESSAGE_UPDATE',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.MESSAGE_DELETE || GATEWAY_EVENTS.MESSAGE_DELETE_BULK: {
         const messageEvent = new MessageEvent(this.Client);
-        messageEvent.HandleMessageDelete(message.d);
+        messageEvent.HandleMessageDelete(message.d).catch((err: Error) => {
+          this.Client.logger.write().error({
+            message: err,
+            service: 'ClientConnection.ClientDispatcher.Parse.MESSAGE_DELETE | MESSAGE_DELETE_BULK',
+          });
+        });
         break;
       }
       case GATEWAY_EVENTS.MESSAGE_REACTION_ADD: {

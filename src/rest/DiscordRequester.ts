@@ -60,4 +60,56 @@ export default class DiscordRequester {
       );
     });
   }
+
+
+  public SendFormRequest(method: string, endpoint: string, data: any, filename: string, file: any): Promise<IDiscordHTTPResponse> {
+    return new Promise((resolve, reject) => {
+      const FormRequest = req(
+        {
+          headers: {
+            Authorization: 'Bot ' + this.token,
+            'Content-Type': 'multipart/form-data',
+            'User-Agent':
+              'DiscordBot (https://github.com/motorlatitude/discord.ts, ' +
+              require('./../../package.json').version +
+              ')',
+          },
+          method,
+          time: true,
+          url: this.host + endpoint,
+        },
+        (err, httpResponse, body) => {
+          if (httpResponse) {
+            const status = httpResponse.statusCode;
+
+            if (err) {
+              reject(err);
+            } else if (
+              status === 400 ||
+              status === 401 ||
+              status === 403 ||
+              status === 404 ||
+              status === 405 ||
+              status === 502 ||
+              status === 500
+            ) {
+              reject({
+                body,
+                httpResponse,
+                statusCode: status,
+                statusMessage: httpResponse.statusMessage,
+              });
+            } else {
+              resolve({ httpResponse, body });
+            }
+          } else {
+            reject({ statusCode: 500, statusMessage: 'No Response', httpResponse, body });
+          }
+        },
+      );
+      const Form = FormRequest.form();
+      Form.append('file', file, {filename});
+      Form.append('payload_json', JSON.stringify(data))
+    });
+  }
 }

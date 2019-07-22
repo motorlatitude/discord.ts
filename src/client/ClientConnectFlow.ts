@@ -76,6 +76,10 @@ export default class ClientConnectFlow {
       message: 'Trying To Reconnect, Sending Resume Payload',
       service: 'ClientConnection.ClientConnectFlow.Reconnect',
     });
+    // @ts-ignore
+    this.Connection.GatewayHeartbeat = setInterval(() => {
+      this.SendHeartbeat();
+    }, this.Connection.GatewayHeartbeatInterval);
     this.Connection.send(GATEWAY.RESUME, {
       seq: this.Connection.GatewaySequence,
       session_id: this.Connection.GatewaySessionId,

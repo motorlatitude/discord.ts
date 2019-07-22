@@ -29,93 +29,102 @@ export default class GuildMemberEvent extends ClientDispatcherEvent {
    * Handles GUILD_MEMBER_ADD event
    * @param Message - Message Data for the event
    */
-  public HandleMemberAdd(Message: IDiscordGuildMemberAddGatewayEvent): void {
-    this.Client.Guilds.Fetch(Message.guild_id)
-      .then((AffectedGuild: Guild) => {
-        const NewGuildMember = new GuildMember(Message);
-        AffectedGuild.Members.AddGuildMember(NewGuildMember);
+  public HandleMemberAdd(
+    Message: IDiscordGuildMemberAddGatewayEvent,
+  ): Promise<{ Guild: Guild; GuildMember: GuildMember }> {
+    return new Promise((resolve, reject) => {
+      this.Client.Guilds.Fetch(Message.guild_id)
+        .then((AffectedGuild: Guild) => {
+          const NewGuildMember = new GuildMember(Message);
+          AffectedGuild.Members.AddGuildMember(NewGuildMember);
+          AffectedGuild.MemberCount++;
 
-        this.EventName = 'GUILD_MEMBER_ADD';
+          this.EventName = 'GUILD_MEMBER_ADD';
 
-        this.EventGuildObject = AffectedGuild;
-        this.EventGuildMemberObject = NewGuildMember;
+          this.EventGuildObject = AffectedGuild;
+          this.EventGuildMemberObject = NewGuildMember;
 
-        this.Handle();
-      })
-      .catch((err: Error) => {
-        this.Client.logger.write().error({
-          message: err,
-          service: 'ClientDispatcher.Events.GuildMemberEvent.HandleMemberAdd',
+          this.Handle();
+          resolve({
+            Guild: this.EventGuildObject,
+            GuildMember: this.EventGuildMemberObject,
+          });
+        })
+        .catch((err: Error) => {
+          reject(err);
         });
-      });
+    });
   }
 
   /**
    * Handles GUILD_MEMBER_REMOVE event
    * @param Message - Message Data for the event
    */
-  public HandleMemberRemove(Message: IDiscordGuildMemberRemoveGatewayEvent): void {
-    this.Client.Guilds.Fetch(Message.guild_id)
-      .then((AffectedGuild: Guild) => {
-        AffectedGuild.Members.Fetch(Message.user.id)
-          .then((AffectedMember: GuildMember) => {
-            AffectedGuild.Members.RemoveGuildMember(Message.user.id);
+  public HandleMemberRemove(
+    Message: IDiscordGuildMemberRemoveGatewayEvent,
+  ): Promise<{ Guild: Guild; GuildMember: GuildMember }> {
+    return new Promise((resolve, reject) => {
+      let AffectedGuild: Guild;
+      this.Client.Guilds.Fetch(Message.guild_id)
+        .then((FoundGuild: Guild) => {
+          AffectedGuild = FoundGuild;
+          return AffectedGuild.Members.Fetch(Message.user.id);
+        })
+        .then((AffectedMember: GuildMember) => {
+          AffectedGuild.Members.RemoveGuildMember(Message.user.id);
+          AffectedGuild.MemberCount--;
 
-            this.EventName = 'GUILD_MEMBER_REMOVE';
+          this.EventName = 'GUILD_MEMBER_REMOVE';
 
-            this.EventGuildObject = AffectedGuild;
-            this.EventGuildMemberObject = AffectedMember;
+          this.EventGuildObject = AffectedGuild;
+          this.EventGuildMemberObject = AffectedMember;
 
-            this.Handle();
-          })
-          .catch((err: Error) => {
-            this.Client.logger.write().error({
-              message: err,
-              service: 'ClientDispatcher.Events.GuildMemberEvent.HandleMemberAdd',
-            });
+          this.Handle();
+          resolve({
+            Guild: AffectedGuild,
+            GuildMember: AffectedMember,
           });
-      })
-      .catch((err: Error) => {
-        this.Client.logger.write().error({
-          message: err,
-          service: 'ClientDispatcher.Events.GuildMemberEvent.HandleMemberAdd',
+        })
+        .catch((err: Error) => {
+          reject(err);
         });
-      });
+    });
   }
 
   /**
    * Handles GUILD_MEMBER_UPDATE event
    * @param Message - Message Data for the event
    */
-  public HandleMemberUpdate(Message: IDiscordGuildMemberUpdateGatewayEvent): void {
-    this.Client.Guilds.Fetch(Message.guild_id)
-      .then((AffectedGuild: Guild) => {
-        AffectedGuild.Members.Fetch(Message.user.id)
-          .then((AffectedMember: GuildMember) => {
-            AffectedMember.Roles = Message.roles;
-            AffectedMember.User = new User(Message.user);
-            AffectedMember.Nick = Message.nick;
+  public HandleMemberUpdate(
+    Message: IDiscordGuildMemberUpdateGatewayEvent,
+  ): Promise<{ Guild: Guild; GuildMember: GuildMember }> {
+    return new Promise((resolve, reject) => {
+      let AffectedGuild: Guild;
+      this.Client.Guilds.Fetch(Message.guild_id)
+        .then((FoundGuild: Guild) => {
+          AffectedGuild = FoundGuild;
+          return AffectedGuild.Members.Fetch(Message.user.id);
+        })
+        .then((AffectedMember: GuildMember) => {
+          AffectedMember.Roles = Message.roles;
+          AffectedMember.User = new User(Message.user);
+          AffectedMember.Nick = Message.nick;
 
-            this.EventName = 'GUILD_MEMBER_UPDATE';
+          this.EventName = 'GUILD_MEMBER_UPDATE';
 
-            this.EventGuildObject = AffectedGuild;
-            this.EventGuildMemberObject = AffectedMember;
+          this.EventGuildObject = AffectedGuild;
+          this.EventGuildMemberObject = AffectedMember;
 
-            this.Handle();
-          })
-          .catch((err: Error) => {
-            this.Client.logger.write().error({
-              message: err,
-              service: 'ClientDispatcher.Events.GuildMemberEvent.HandleMemberUpdate',
-            });
+          this.Handle();
+          resolve({
+            Guild: AffectedGuild,
+            GuildMember: this.EventGuildMemberObject,
           });
-      })
-      .catch((err: Error) => {
-        this.Client.logger.write().error({
-          message: err,
-          service: 'ClientDispatcher.Events.GuildMemberEvent.HandleMemberUpdate',
+        })
+        .catch((err: Error) => {
+          reject(err);
         });
-      });
+    });
   }
 
   /**
@@ -123,29 +132,35 @@ export default class GuildMemberEvent extends ClientDispatcherEvent {
    * Sent in response to Guild Request Members.
    * @param Message - Message Data for the event
    */
-  public HandleMemberChunk(Message: IDiscordGuildMembersChunkGatewayEvent): void {
-    this.Client.Guilds.Fetch(Message.guild_id)
-      .then((AffectedGuild: Guild) => {
-        const EventMemberList: GuildMember[] = [];
+  public HandleMembersChunk(
+    Message: IDiscordGuildMembersChunkGatewayEvent,
+  ): Promise<{ Guild: Guild; GuildMembers: GuildMember[] }> {
+    return new Promise((resolve, reject) => {
+      this.Client.Guilds.Fetch(Message.guild_id)
+        .then((AffectedGuild: Guild) => {
+          const EventMemberList: GuildMember[] = [];
 
-        for (const member of Message.members) {
-          const NewMember = new GuildMember(member);
-          AffectedGuild.Members.UpdateGuildMember(member.user.id, NewMember);
-          EventMemberList.push(NewMember);
-        }
-        this.EventName = 'GUILD_MEMBERS_CHUNK';
+          for (const member of Message.members) {
+            const NewMember = new GuildMember(member);
+            AffectedGuild.Members.UpdateGuildMember(member.user.id, NewMember);
+            EventMemberList.push(NewMember);
+          }
+          AffectedGuild.MemberCount = AffectedGuild.Members.Length();
+          this.EventName = 'GUILD_MEMBERS_CHUNK';
 
-        this.EventGuildObject = AffectedGuild;
-        this.EventGuildMemberChunkObject = EventMemberList;
+          this.EventGuildObject = AffectedGuild;
+          this.EventGuildMemberChunkObject = EventMemberList;
 
-        this.Handle();
-      })
-      .catch((err: Error) => {
-        this.Client.logger.write().error({
-          message: err,
-          service: 'ClientDispatcher.Events.GuildMemberEvent.HandleMemberChunk',
+          this.Handle();
+          resolve({
+            Guild: AffectedGuild,
+            GuildMembers: EventMemberList,
+          });
+        })
+        .catch((err: Error) => {
+          reject(err);
         });
-      });
+    });
   }
 
   public EmitEvent(): void {

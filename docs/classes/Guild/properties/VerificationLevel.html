@@ -1,0 +1,73 @@
+<div class="location">
+    Classes <i class="fas fa-chevron-right"></i> Guild <i class="fas fa-chevron-right"></i> VerificationLevel
+</div>
+
+<div class="doc-type">Instance Property</div>
+<h1 class="reduced">VerificationLevel</h1>
+<p class="class-blurb">
+    The verification level required to send messages.
+</p>
+<hr>
+<h2>Declaration</h2>
+<pre><code class="language-typescript" id="declaration" data-topic="var <span>VerificationLevel</span>: number">var VerificationLevel: number</code></pre>
+<h2>Discussion</h2>
+<p>
+    The minimum level a user must be verified for them to be allowed to send messages in a text channel or to initiate
+    direct message conversations. If the user is assigned a role this will not apply. It corresponds to a number value
+    between and including 0 - 4.
+</p>
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Level</th>
+            <th>Integer</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>NONE</code></td>
+            <td style="text-align: center;"><code>0</code></td>
+            <td>Unrestricted, any user can join and send messages</td>
+        </tr>
+        <tr>
+            <td><code>LOW</code></td>
+            <td style="text-align: center;"><code>1</code></td>
+            <td>The user must have a verified email associated with their account</td>
+        </tr>
+        <tr>
+            <td><code>MEDIUM</code></td>
+            <td style="text-align: center;"><code>2</code></td>
+            <td>A user must have been registered on discord for longer than 5 minutes</td>
+        </tr>
+        <tr>
+            <td><code>HIGH</code></td>
+            <td style="text-align: center;"><code>3</code></td>
+            <td>A user is required to have been a member of the server for more than 10 minutes</td>
+        </tr>
+        <tr>
+            <td><code>VERY_HIGH</code></td>
+            <td style="text-align: center;"><code>4</code></td>
+            <td>A user is required to also have a verified phone number</td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    The higher levels will include the requirements of the lower levels as well.
+</p>
+<br/><br/>
+<div class="block">
+    <h2 class="reduced">See Also</h2>
+    <table class="topic-table">
+        <tr>
+            <td>
+                Creating a Guild Instance
+            </td>
+            <td>
+                <ul>
+                    <li data-load="classes/Guild/topics/constructor"></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>

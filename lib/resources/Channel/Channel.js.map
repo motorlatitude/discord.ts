@@ -1,1 +1,0 @@
-{"version":3,"file":"Channel.js","sourceRoot":"","sources":["../../../src/resources/Channel/Channel.ts"],"names":[],"mappings":";;AAGA;IAME,iBAAY,MAAqB,EAAE,aAA8B;QAC/D,IAAI,CAAC,MAAM,GAAG,MAAM,CAAC;QAErB,IAAI,CAAC,EAAE,GAAG,aAAa,CAAC,EAAE,CAAC;QAC3B,IAAI,CAAC,IAAI,GAAG,aAAa,CAAC,IAAI,CAAC;IACjC,CAAC;IACH,cAAC;AAAD,CAAC,AAZD,IAYC"}

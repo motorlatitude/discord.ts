@@ -1,1 +1,0 @@
-{"version":3,"file":"DiscordManager.js","sourceRoot":"","sources":["../../src/rest/DiscordManager.ts"],"names":[],"mappings":";;AAAA,mDAA8C;AAC9C,uDAAkD;AAElD;IAGE,wBAAY,KAAa;QACvB,IAAI,CAAC,SAAS,GAAG,IAAI,0BAAgB,CAAC,KAAK,CAAC,CAAC;IAC/C,CAAC;IAEM,gCAAO,GAAd;QACE,OAAO,IAAI,wBAAc,CAAC,IAAI,CAAC,SAAS,CAAC,CAAC;IAC5C,CAAC;IACH,qBAAC;AAAD,CAAC,AAVD,IAUC"}

@@ -19,9 +19,21 @@ export default class Presence {
   public ClientStatus?: IDiscordClientStatus;
   public Game?: Activity;
 
-  constructor(Client: DiscordClient, PresenceObject: IDiscordPresenceUpdate) {
+  constructor(Client: DiscordClient, PresenceObject: IDiscordPresenceUpdate, GuildInstance?: Guild) {
     this.User = { id: PresenceObject.user.id };
-    if (PresenceObject.guild_id) {
+    if(GuildInstance){
+      GuildInstance.Members.Fetch(PresenceObject.user.id)
+        .then((AffectedMember: GuildMember) => {
+          this.User = AffectedMember.User;
+        })
+        .catch((err: Error) => {
+          Client.logger.write().error({
+            message: err,
+            service: 'User.Presence',
+          });
+        });
+    }
+    else if (PresenceObject.guild_id) {
       // good we got a starting point
       Client.Guilds.Fetch(PresenceObject.guild_id)
         .then((AffectedGuild: Guild) => {

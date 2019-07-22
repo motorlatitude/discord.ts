@@ -7,6 +7,6 @@ export default class GuildIntegrationEvent extends ClientDispatcherEvent {
     readonly EventName: 'GUILD_INTEGRATION_UPDATE';
     EventObject?: Guild;
     constructor(client: DiscordClient, msg: IDiscordGuildIntegrationUpdateGatewayEvent);
-    Handle(): void;
+    Handle(): Promise<Guild>;
     EmitEvent(): void;
 }

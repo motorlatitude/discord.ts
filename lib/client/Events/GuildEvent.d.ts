@@ -16,16 +16,16 @@ export default class GuildEvent extends ClientDispatcherEvent {
      * https://discordapp.com/developers/docs/topics/gateway#guild-create
      * @param Message GUILD_CREATE event package
      */
-    HandleCreate(Message: IDiscordGuild): void;
+    HandleCreate(Message: IDiscordGuild): Promise<Guild>;
     /**
      * Handles GUILD_UPDATE event
      * @param Message GUILD_UPDATE event package
      */
-    HandleUpdate(Message: IDiscordGuild): void;
+    HandleUpdate(Message: IDiscordGuild): Promise<Guild>;
     /**
      * Handles GUILD_DELETE event
      * @param Message GUILD_DELETE event package
      */
-    HandleDelete(Message: IDiscordUnavailableGuildObject): void;
+    HandleDelete(Message: IDiscordUnavailableGuildObject): Promise<IGuildDeleteEventObject>;
     EmitEvent(): void;
 }

@@ -17,22 +17,34 @@ export default class GuildMemberEvent extends ClientDispatcherEvent {
      * Handles GUILD_MEMBER_ADD event
      * @param Message - Message Data for the event
      */
-    HandleMemberAdd(Message: IDiscordGuildMemberAddGatewayEvent): void;
+    HandleMemberAdd(Message: IDiscordGuildMemberAddGatewayEvent): Promise<{
+        Guild: Guild;
+        GuildMember: GuildMember;
+    }>;
     /**
      * Handles GUILD_MEMBER_REMOVE event
      * @param Message - Message Data for the event
      */
-    HandleMemberRemove(Message: IDiscordGuildMemberRemoveGatewayEvent): void;
+    HandleMemberRemove(Message: IDiscordGuildMemberRemoveGatewayEvent): Promise<{
+        Guild: Guild;
+        GuildMember: GuildMember;
+    }>;
     /**
      * Handles GUILD_MEMBER_UPDATE event
      * @param Message - Message Data for the event
      */
-    HandleMemberUpdate(Message: IDiscordGuildMemberUpdateGatewayEvent): void;
+    HandleMemberUpdate(Message: IDiscordGuildMemberUpdateGatewayEvent): Promise<{
+        Guild: Guild;
+        GuildMember: GuildMember;
+    }>;
     /**
      * Handles GUILD_MEMBERS_CHUNK
      * Sent in response to Guild Request Members.
      * @param Message - Message Data for the event
      */
-    HandleMemberChunk(Message: IDiscordGuildMembersChunkGatewayEvent): void;
+    HandleMembersChunk(Message: IDiscordGuildMembersChunkGatewayEvent): Promise<{
+        Guild: Guild;
+        GuildMembers: GuildMember[];
+    }>;
     EmitEvent(): void;
 }

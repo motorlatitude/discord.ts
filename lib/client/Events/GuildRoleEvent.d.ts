@@ -12,14 +12,23 @@ export default class GuildRoleEvent extends ClientDispatcherEvent {
     /**
      * Handles GUILD_ROLE_CREATE event
      */
-    HandleRoleCreate(): void;
+    HandleRoleCreate(): Promise<{
+        Guild: Guild;
+        Role: Role;
+    }>;
     /**
      * Handles GUILD_ROLE_UPDATE event
      */
-    HandleRoleUpdate(): void;
+    HandleRoleUpdate(): Promise<{
+        Guild: Guild;
+        Role: Role;
+    }>;
     /**
      * Handles GUILD_ROLE_DELETE event
      */
-    HandleRoleDelete(): void;
+    HandleRoleDelete(): Promise<{
+        Guild: Guild;
+        Role: Role;
+    }>;
     EmitEvent(): void;
 }

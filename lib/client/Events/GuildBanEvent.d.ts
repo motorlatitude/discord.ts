@@ -12,10 +12,16 @@ export default class GuildBanEvent extends ClientDispatcherEvent {
     /**
      * Sent when a user is banned from a guild
      */
-    HandleBanAdd(): void;
+    HandleBanAdd(): Promise<{
+        Guild: Guild;
+        User: User;
+    }>;
     /**
      * Sent when a banned user is unbanned from the guild
      */
-    HandleBanRemove(): void;
+    HandleBanRemove(): Promise<{
+        Guild: Guild;
+        User: User;
+    }>;
     EmitEvent(): void;
 }

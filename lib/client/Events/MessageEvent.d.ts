@@ -20,16 +20,38 @@ export default class MessageEvent extends ClientDispatcherEvent {
      * Handles MESSAGE_CREATE event
      * @param msg - the created message
      */
-    HandleMessageCreate(msg: IDiscordMessage): void;
+    HandleMessageCreate(msg: IDiscordMessage): Promise<{
+        Content: Message;
+        Channel: TextChannel | DirectMessageChannel;
+        Author: User;
+        AffectedGuild?: Guild;
+        AffectedGuildMember?: GuildMember;
+    }>;
     /**
      * Handles MESSAGE_UPDATE event
      * @param msg - partial message object, must contain id and channel_id and will contain guild_id if message is part of a guild
      */
-    HandleMessageUpdate(msg: IDiscordMessageUpdateGatewayEvent): void;
+    HandleMessageUpdate(msg: IDiscordMessageUpdateGatewayEvent): Promise<{
+        Content: Message;
+        Channel: TextChannel | DirectMessageChannel;
+        Author: User;
+        AffectedGuild?: Guild;
+        AffectedGuildMember?: GuildMember;
+    }>;
     /**
      * Handles MESSAGE_DELETE and MESSAGE_DELETE_BULK events
      * @param msg - message ids, channel id and guild_id
      */
-    HandleMessageDelete(msg: IDiscordMessageDeleteGatewayEvent): void;
+    HandleMessageDelete(msg: IDiscordMessageDeleteGatewayEvent): Promise<{
+        Content: Message;
+        Channel: TextChannel | DirectMessageChannel;
+        Author: User;
+        AffectedGuild?: Guild;
+        AffectedGuildMember?: GuildMember;
+    } | {
+        Messages: Message[];
+        Channel: TextChannel | DirectMessageChannel;
+        AffectedGuild?: Guild;
+    }>;
     EmitEvent(): void;
 }

@@ -1,3 +1,4 @@
+import * as WebSocket from 'ws';
 import DiscordClient from '../DiscordClient';
 /**
  * Handles Connection With The Discord Gateway Server
@@ -11,7 +12,7 @@ export default class ClientConnection {
     GatewayHeartbeatInterval: number;
     GatewayProtocolVersion: number;
     resuming: boolean;
-    private GatewayWebsocket;
+    GatewayWebsocket: WebSocket | undefined;
     private Client;
     private dispatcher;
     private connector;
@@ -27,17 +28,17 @@ export default class ClientConnection {
      * @param LocalGatewayURL - Discord Gateway Url Retrieved From Discord Gateway Endpoint
      * @returns GatewayWebsocket - Websocket connection
      */
-    Connect(LocalGatewayURL?: string): void;
+    Connect(LocalGatewayURL?: string): boolean;
     /**
      * Disconnect from the discord gateway
      */
-    Disconnect(): void;
+    Disconnect(): boolean;
     /**
      * Send Message To Gateway Websocket Server
      * @param op - OpCode for message
      * @param data - message body
      */
-    send(op: number, data: any): void;
+    send(op: number, data: any): boolean;
     SetStatus(status?: string, type?: number, state?: string): void;
     JoinVoiceChannel(GuildId: string, VoiceChannelId: string, mute?: boolean, deaf?: boolean): void;
     LeaveVoiceChannel(GuildId: string): void;

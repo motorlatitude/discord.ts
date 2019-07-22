@@ -6,6 +6,11 @@ export default class ChannelPinsUpdateEvent extends ClientDispatcherEvent {
     readonly EventName: string;
     EventObject: IChannelPinsUpdateEventObject | undefined;
     constructor(client: DiscordClient, message: IDiscordChannelPinsUpdateGatewayEvent);
-    Handle(): void;
+    Handle(): Promise<IChannelPinsUpdateEventObject>;
     EmitEvent(): void;
+    /**
+     * Handles Pins Update in Guild
+     * @param GuildId - the id of the relevant guild
+     */
+    private GuildBasedChannel;
 }

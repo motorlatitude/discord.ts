@@ -4,5 +4,6 @@ export default class GatewayMethods {
     Requester: DiscordRequester;
     constructor(r: DiscordRequester);
     GatewayForBot(): Promise<IGatewayResponse>;
-    GatewayForUser(): void;
+    GatewayForUser(): Promise<IGatewayResponse>;
+    private GetGateway;
 }

@@ -9,6 +9,9 @@ export default class GuildEmojisUpdateEvent extends ClientDispatcherEvent {
     EventGuildObject?: Guild;
     EventEmojisObject?: Emoji[];
     constructor(client: DiscordClient, msg: IDiscordGuildEmojiUpdateGatewayEvent);
-    Handle(): void;
+    Handle(): Promise<{
+        Guild: Guild;
+        Emojis: Emoji[];
+    }>;
     EmitEvent(): void;
 }

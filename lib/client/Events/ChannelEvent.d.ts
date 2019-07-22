@@ -1,6 +1,10 @@
-import { IDiscordChannel } from '../../common/types';
+import { IChannelDeleteEventObject, IDiscordChannel } from '../../common/types';
 import DiscordClient from '../../DiscordClient';
 import ClientDispatcherEvent from './ClientDispatcherEvent';
+import TextChannel from '../../resources/Channel/TextChannel';
+import CategoryChannel from '../../resources/Channel/CategoryChannel';
+import DirectMessageChannel from '../../resources/Channel/DirectMessageChannel';
+import VoiceChannel from '../../resources/Channel/VoiceChannel';
 export default class ChannelEvent extends ClientDispatcherEvent {
     readonly Message: IDiscordChannel;
     private EventName;
@@ -10,15 +14,15 @@ export default class ChannelEvent extends ClientDispatcherEvent {
     /**
      * Handle CHANNEL_CREATE event
      */
-    HandleCreate(): void;
+    HandleCreate(): Promise<TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel>;
     /**
      * Handle CHANNEL_UPDATE event
      */
-    HandleUpdate(): void;
+    HandleUpdate(): Promise<TextChannel | VoiceChannel | DirectMessageChannel | CategoryChannel>;
     /**
      * Handle CHANNEL_DELETE
      */
-    HandleDelete(): void;
+    HandleDelete(): Promise<IChannelDeleteEventObject>;
     /**
      * Handle Emitting To Client
      * @override

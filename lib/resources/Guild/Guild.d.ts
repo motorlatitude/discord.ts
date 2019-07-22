@@ -8,6 +8,7 @@ import RoleStore from '../../stores/RoleStore';
 import VoiceStateStore from '../../stores/VoiceStateStore';
 import VoiceConnection from '../../voice/VoiceConnection';
 import VoiceManager from '../../voice/VoiceManager';
+import GuildActions from './Actions/GuildActions';
 export default class Guild {
     id: string;
     Name: string;
@@ -21,21 +22,19 @@ export default class Guild {
     Emojis: EmojiStore;
     Features: string[];
     MFALevel: number;
-    MaxMembers: number;
     PremiumTier: number;
     VoiceConnection?: VoiceConnection;
-    PendingVoiceConnection?: boolean;
-    PendingVoiceServerDetails?: IDiscordVoiceServerGatewayEvent;
-    PremiumSubscriptionCount: number | undefined;
-    Banner: string | undefined;
-    Description: string | undefined;
-    VanityURLCode: string | undefined;
-    MaxPresences: number | undefined;
+    PremiumSubscriptionCount: number;
+    Banner?: string;
+    Description?: string;
+    VanityURLCode?: string;
+    MaxPresences: number;
+    MaxMembers?: number;
     Presences: PresenceStore;
     Channels: ChannelStore;
     Members: GuildMemberStore;
     VoiceStates: VoiceStateStore;
-    MemberCount: number | undefined;
+    MemberCount: number;
     Unavailable: boolean | undefined;
     Large: boolean | undefined;
     JoinedAt: number | undefined;
@@ -51,8 +50,21 @@ export default class Guild {
     Icon: string | undefined;
     Splash: string | undefined;
     private readonly Client;
+    private _PendingVoiceConnection?;
+    private _PendingVoiceServerDetails?;
+    PendingVoiceConnection: boolean;
+    PendingVoiceServerDetails: IDiscordVoiceServerGatewayEvent | undefined;
     constructor(client: DiscordClient, GuildObject: IDiscordGuild);
+    /**
+     * Creates a new voice connection for this guild
+     * @param Token - token provided as part of the voice server update event payload
+     * @param Endpoint - endpoint provided as part of the voice server update event payload
+     */
     CreateVoiceConnection(Token: string, Endpoint: string): Promise<VoiceManager>;
+    /**
+     * Carry out actions on this guild (these will call Discords REST API)
+     */
+    Actions(): GuildActions;
     private ResolveVoiceStates;
     private ResolvePresences;
     private ResolveRoles;

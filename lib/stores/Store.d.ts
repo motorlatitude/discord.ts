@@ -9,7 +9,15 @@ export default class Store {
      * Add Item To Store
      */
     Add(key: string, item: any): Promise<null | Error>;
+    /**
+     * Get item with key from store
+     * @param key - the key of the item
+     */
     Get(key: string): any;
+    /**
+     * Get the number of objects in the store
+     */
+    Length(): number;
     GetAllForKeys(keys: string[]): any;
     GetAll(): any;
     Delete(key: string): Promise<null | Error>;

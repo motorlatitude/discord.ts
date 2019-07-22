@@ -200,7 +200,7 @@ export default class Guild {
   private ResolvePresences(presences: IDiscordPresenceUpdate[]): void {
     for (const presence of presences) {
       presence.guild_id = this.id;
-      const NewPresence = new Presence(this.Client, presence);
+      const NewPresence = new Presence(this.Client, presence, this);
       this.Presences.AddPresence(NewPresence);
     }
   }

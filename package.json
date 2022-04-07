@@ -42,7 +42,7 @@
     "node-opus": "^0.3.2",
     "request": "^2.88.0",
     "tweetnacl": "^1.0.1",
-    "winston": "^3.2.1",
+    "winston": "^3.3.0",
     "ws": "^7.1.0"
   }
 }
